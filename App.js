@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import { Text, TextInput, LogBox } from 'react-native';
-
 import {
   useFonts,
   Quicksand_700Bold,
@@ -12,6 +11,8 @@ import {
 } from '@expo-google-fonts/quicksand';
 import Routes from './src/navigation/routes';
 import { PortalProvider } from './src/components';
+
+import ProfileVideo from './src/screens/Profile/ProfileVideo';
 
 // Disable unnecessary warnings
 LogBox.ignoreLogs(['Require cycle:']);
@@ -34,6 +35,8 @@ export default function App() {
 
   // TODO: Update this to use splash screen
   if (!fontsLoaded) return <></>;
+
+  // return <ProfileVideo></ProfileVideo>;
 
   return (
     <PortalProvider>
