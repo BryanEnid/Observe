@@ -42,9 +42,11 @@ export default function ProfileVideo({ route }) {
         style={styles.video}
         source={{ uri }}
         resizeMode={ResizeMode.COVER}
-        onLoad={() => setLoading(false)}
         isLooping
-        onLayout={() => video.current.playAsync()}
+        onLoad={() => {
+          setLoading(false);
+          video.current.playAsync();
+        }}
         volume={100}
         // onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
