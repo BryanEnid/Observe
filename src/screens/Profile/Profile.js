@@ -2,7 +2,15 @@
 // https://medium.com/@linjunghsuan/implementing-a-collapsible-header-with-react-native-tab-view-24f15a685e07
 
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Dimensions, Animated, KeyboardAvoidingView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import Header from './Header';
 import { TabView } from 'react-native-tab-view';
 import RenderTabBar from './TabBar';
@@ -13,6 +21,7 @@ import { DummyData } from '../../controllers';
 const TabBarHeight = 30;
 const TabBarHeightDetails = 70;
 const HeaderHeight = 280;
+const windowHeight = Dimensions.get('window').height;
 
 const TabScene = ({
   children,
@@ -22,16 +31,13 @@ const TabScene = ({
   onMomentumScrollEnd,
   onMomentumScrollBegin,
 }) => {
-  const windowHeight = Dimensions.get('window').height;
-
   return (
     <Animated.ScrollView
       scrollToOverflowEnabled={true}
       ref={onGetRef}
       scrollEventThrottle={16}
-      onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-        useNativeDriver: true,
-      })}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
       onMomentumScrollBegin={onMomentumScrollBegin}
       onScrollEndDrag={onScrollEndDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
@@ -39,8 +45,9 @@ const TabScene = ({
         paddingTop: HeaderHeight + TabBarHeight + TabBarHeightDetails,
         minHeight: windowHeight - TabBarHeight,
       }}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
+      onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+        useNativeDriver: true,
+      })}
     >
       {children}
     </Animated.ScrollView>
@@ -52,7 +59,7 @@ const CollapsibleTabView = () => {
   const [tabIndex, setIndex] = useState(0);
   const [routes] = useState(TabBarElements);
   const [profile, setProfile] = useState(profileMock);
-  const [videoURI, setVideo] = useState({});
+  const [videoURI, setVideo] = useState(null);
   const [user] = useState({ quote: 'Seagulls are the eagles of the sea.' });
   const scrollY = useRef(new Animated.Value(0)).current;
   let listRefArr = useRef([]);
@@ -60,6 +67,7 @@ const CollapsibleTabView = () => {
   let isListGliding = useRef(false);
 
   // -- LIFE CYCLES --
+
   // Setting current tab and scroll state
   useEffect(() => {
     scrollY.addListener(({ value }) => {
@@ -75,7 +83,10 @@ const CollapsibleTabView = () => {
   useEffect(() => {
     DummyData.getRandomUsers(1).then(({ results }) => setProfile(results[0]));
     const randomNumber = Math.round(Math.random() * 79);
-    DummyData.getRandomVideos().then(({ videos }) => setVideo(videos[randomNumber].video_files[0]));
+    DummyData.getRandomVideos().then(({ videos }) => {
+      console.log(videos[randomNumber].video_files[0]);
+      setVideo(videos[randomNumber].video_files[0].link);
+    });
   }, []);
 
   // -- ANIMATIONS --
@@ -182,6 +193,8 @@ const CollapsibleTabView = () => {
       />
     );
   };
+
+  if (!videoURI) return <></>;
 
   return (
     <View style={{ flex: 1 }}>

@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Video } from 'expo-av';
+import { View, StyleSheet, Text, Dimensions } from 'react-native';
+import { Video, ResizeMode } from 'expo-av';
+
+const { height, width } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -13,23 +15,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loading: {
+    height,
+    width,
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default function ProfileVideo({ route }) {
   const { uri } = route.params;
   const video = useRef(null);
+  const [isLoading, setLoading] = React.useState(true);
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.loading}>
+          <Text style={{ color: 'white' }}>Loading...</Text>
+        </View>
+      )}
       <Video
         ref={video}
         style={styles.video}
         source={{ uri }}
-        resizeMode={Video.RESIZE_MODE_COVER}
+        resizeMode={ResizeMode.COVER}
         isLooping
-        onLayout={() => video.current.playAsync()}
+        onLoad={() => {
+          setLoading(false);
+          video.current.playAsync();
+        }}
         volume={100}
-        useNativeControls
         // onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
     </View>
