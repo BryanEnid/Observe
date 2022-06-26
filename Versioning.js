@@ -1,9 +1,8 @@
 /* eslint-disable camelcase */
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
 import { NavigationContainer, DefaultTheme, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { navigationRef } from '../controllers/NavigationController';
 import RoutesV1 from './src/v1/navigation/routes';
 import RoutesV2 from './src/v2/navigation/routes';
 
@@ -48,7 +47,7 @@ export const Versioning = () => {
 
 export const Routes = () => {
   return (
-    <NavigationContainer ref={navigationRef} theme={MyTheme}>
+    <NavigationContainer>
       <Stack.Navigator initialRouteName="Versioning" screenOptions={screenConfig}>
         <Stack.Screen name="Versioning" component={Versioning} />
 

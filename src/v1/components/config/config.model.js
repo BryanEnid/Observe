@@ -69,7 +69,7 @@ export const SKILLS_CONFIG = [
   },
 ];
 
-const img = require('../../../assets/school.jpg');
+const img = require('../../../../assets/school.jpg');
 
 export const MOCK_EXPERIENCE_CONFIG = [
   {

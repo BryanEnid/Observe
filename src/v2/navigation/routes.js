@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { navigationRef } from '../controllers/NavigationController';
-import { Profile, ProfileVideo } from '../screens';
+import { Profile } from '../screens/Profile/Profile';
+import { useKeepAwake } from 'expo-keep-awake';
+import { NativeBaseProvider, extendTheme } from 'native-base';
+// import { navigationRef } from '../controllers/NavigationController';
 
 const Stack = createStackNavigator();
 
@@ -10,27 +12,26 @@ const screenConfig = {
   headerShown: false,
 };
 
-const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: 'white',
-  },
+const theme_config = {};
+
+const config = {
+  // rest of the config keys like dependencies can go here
+  strictMode: 'warn',
 };
 
 export default function Routes() {
+  // Hooks
+  useKeepAwake();
+
+  const theme = extendTheme();
+
   return (
-    <NavigationContainer ref={navigationRef} theme={MyTheme}>
-      <Stack.Navigator initialRouteName="root" screenOptions={screenConfig}>
-        <Stack.Screen
-          name="root"
-          component={() => (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text>New version!</Text>
-            </View>
-          )}
-        />
+    <NativeBaseProvider config={config} theme={theme}>
+      {/* <NavigationContainer ref={navigationRef} theme={MyTheme}> */}
+      <Stack.Navigator initialRouteName="root" screenOptions={screenConfig} independent>
+        <Stack.Screen name="root" component={Profile} />
       </Stack.Navigator>
-    </NavigationContainer>
+      {/* </NavigationContainer> */}
+    </NativeBaseProvider>
   );
 }
