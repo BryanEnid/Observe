@@ -10,6 +10,7 @@ import {
   Quicksand_300Light,
 } from "@expo-google-fonts/quicksand";
 import { Routes } from "./Versioning";
+import { App as V2 } from "./src/v2/App";
 
 // Disable unnecessary warnings
 LogBox.ignoreLogs(["Require cycle:"]);
@@ -33,5 +34,7 @@ export default function App() {
   // TODO: Update this to use splash screen
   if (!fontsLoaded) return <></>;
 
-  return <Routes />;
+  return <V2 />;
+
+  // return <Routes />;
 }

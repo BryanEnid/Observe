@@ -17,10 +17,17 @@ import {
   HStack,
   View,
 } from "native-base";
+import Animated from "react-native-reanimated";
 import { useRandomVideos } from "../../hooks/query/useRandomVideos";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 
 const profileSize = { width: 180, height: 180, padding: 20 };
+
+const SCREENS = [
+  ["1", "2", "3", "4", "5"],
+  ["1", "2", "3", "4", "5", "6", "7", "8"],
+  ["1"],
+];
 
 const styles = StyleSheet.create({
   profile_picture: {
@@ -53,7 +60,7 @@ export const Profile = () => {
     setScreen(index);
   };
 
-  if (!profile?.name && !videoURI) return <></>;
+  if (!profile?.name || !videoURI) return <></>;
 
   return (
     <>
@@ -97,7 +104,9 @@ export const Profile = () => {
       <Navbar onChange={handleNavSelect} value={selectedScreen} />
 
       {/* RENDER SUB SCREENS */}
-      <View></View>
+      <Animated.ScrollView
+        style={{ flex: 1, backgroundColor: "red" }}
+      ></Animated.ScrollView>
     </>
   );
 };
@@ -113,17 +122,17 @@ const Navbar = () => {
 
   return (
     <Box>
-      {/* <ScrollView
+      <ScrollView
         horizontal
         centerContent
         showsHorizontalScrollIndicator={false}
-      > */}
-      <Item>Portfolio</Item>
-      <Item>Audio</Item>
-      <Item>Video</Item>
-      <Item>Quests</Item>
-      <Item>Recommendation</Item>
-      {/* </ScrollView>  */}
+      >
+        <Item>Portfolio</Item>
+        <Item>Audio</Item>
+        <Item>Video</Item>
+        <Item>Quests</Item>
+        <Item>Recommendation</Item>
+      </ScrollView>
     </Box>
   );
 };
