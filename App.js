@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
-import React from 'react';
-import { Text, TextInput, LogBox } from 'react-native';
-// import { NativeBaseProvider } from 'native-base';
+import React from "react";
+import { Text, TextInput, LogBox } from "react-native";
 import {
   useFonts,
   Quicksand_700Bold,
@@ -9,11 +8,11 @@ import {
   Quicksand_500Medium,
   Quicksand_400Regular,
   Quicksand_300Light,
-} from '@expo-google-fonts/quicksand';
-import { Routes } from './Versioning';
+} from "@expo-google-fonts/quicksand";
+import { Routes } from "./Versioning";
 
 // Disable unnecessary warnings
-LogBox.ignoreLogs(['Require cycle:']);
+LogBox.ignoreLogs(["Require cycle:"]);
 
 //  Disable Font Scaling
 Text.defaultProps = Text.defaultProps || {};
@@ -21,8 +20,8 @@ Text.defaultProps.allowFontScaling = false;
 TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
-// Fonts
 export default function App() {
+  // Fonts
   const [fontsLoaded] = useFonts({
     Quicksand_700: Quicksand_700Bold,
     Quicksand_600: Quicksand_600SemiBold,
