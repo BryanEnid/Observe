@@ -47,7 +47,7 @@ const RANDOM_USER = {
 };
 
 export const Profile = () => {
-  // Hooks
+  // * Hooks
   const { width, height } = useWindowDimensions();
   const { data: videoURI } = useRandomVideos({
     select: ({ videos }) => {
@@ -63,13 +63,14 @@ export const Profile = () => {
     }),
   });
 
-  // State
+  // * State
   const scrollview_x_ref = React.useRef();
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const nav_translate_y = useSharedValue(0);
   const nav_translate_x = useSharedValue(0);
 
-  // Functions
+  // * Functions
   const updateNavTranslate = () => {
     nav_translate_x.value = interpolate(
       translateX.value,
@@ -78,7 +79,7 @@ export const Profile = () => {
     );
   };
 
-  // Styles
+  // * Styles
   const styles = StyleSheet.create({
     profile_picture: {
       width: PROFILE_DIMENSIONS.width - PROFILE_DIMENSIONS.padding,
@@ -91,6 +92,7 @@ export const Profile = () => {
       left: width / 2,
       width: HEADER_W,
       height: HEADER_H,
+      zIndex: 2,
     },
     navbar: {
       position: "absolute",
@@ -102,18 +104,23 @@ export const Profile = () => {
     },
   });
 
-  // Handlers
+  // * Handlers
   const nav_handler = (event, index) => {
     scrollview_x_ref.current.scrollTo({ x: index * width });
   };
 
-  // Worklets
+  // * Worklets
   const subscreen_scroll_x_handler = useAnimatedScrollHandler((event) => {
     translateX.value = event.contentOffset.x;
   });
 
   const subscreen_scroll_y_handler = useAnimatedScrollHandler((event) => {
     translateY.value = event.contentOffset.y;
+    nav_translate_y.value = interpolate(
+      translateY.value,
+      [0, PROFILE_H, PROFILE_H + 1],
+      [0, 0, 1]
+    );
   });
 
   const clamped_nav_scroll_x = useDerivedValue(() => {
@@ -142,7 +149,7 @@ export const Profile = () => {
     },
   });
 
-  // Animations
+  // * Animations
   const r_header = useAnimatedStyle(() => {
     const r_translateY = interpolate(translateY.value, [0, 1], [0, -1]);
     return {
@@ -162,14 +169,13 @@ export const Profile = () => {
   const r_nav_y_translate = useAnimatedStyle(() => {
     const r_translateY = interpolate(
       translateY.value,
-      [-1, 0, 1, HEADER_H - PROFILE_NAME_H, HEADER_H - PROFILE_NAME_H + 1],
-      [1, 0, -1, -(HEADER_H - PROFILE_NAME_H), -(HEADER_H - PROFILE_NAME_H)]
+      [0, PROFILE_H, PROFILE_H + 1],
+      [0, 0, 1]
     );
-    return { transform: [{ translateY: r_translateY }] };
-  });
 
-  const r_nav_x_translate_gesture = useAnimatedStyle(() => {
-    return { transform: [{ translateX: clamped_nav_scroll_x.value }] };
+    return {
+      transform: [{ translateY: r_translateY }],
+    };
   });
 
   const r_nav_x_translate = useAnimatedStyle(() => {
@@ -178,12 +184,24 @@ export const Profile = () => {
       [0, width],
       [0, -Number(NAV_BTN_W)]
     );
-    return { transform: [{ translateX: r_translateX }] };
+
+    return {
+      transform: [
+        { translateX: r_translateX },
+        { translateY: nav_translate_y.value },
+      ],
+    };
+  });
+
+  const r_nav_x_translate_gesture = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: clamped_nav_scroll_x.value }],
+    };
   });
 
   if (!profile?.name) return <></>;
 
-  // Components
+  // * Components
   const Navbar = ({ onChange }) => {
     const Item = ({ children, index }) => (
       <Button
@@ -227,7 +245,11 @@ export const Profile = () => {
           <Box safeAreaTop>
             <Box height={PROFILE_H} justifyContent="space-evenly">
               <Center>
-                <Pressable onPress={() => {}}>
+                <Pressable
+                  onPress={() => {
+                    console.log("it works");
+                  }}
+                >
                   <Box>
                     <Image
                       source={{ uri: profile?.picture?.large }}
@@ -265,13 +287,13 @@ export const Profile = () => {
               </Center>
             </Animated.View>
           </Box>
-        </Animated.View>
 
-        <Navbar
-          translateX={translateX}
-          translateY={translateY}
-          onChange={nav_handler}
-        />
+          <Navbar
+            translateX={translateX}
+            translateY={translateY}
+            onChange={nav_handler}
+          />
+        </Animated.View>
 
         {/* RENDER SUB SCREENS */}
         <Box height={height} safeAreaTop>
