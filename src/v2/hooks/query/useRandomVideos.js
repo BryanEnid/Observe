@@ -13,6 +13,7 @@ export const useRandomVideos = (props) => {
   const query = useQuery("random_videos", getRandomVideos, {
     ...props,
     ...{ staleTime: Infinity },
+    retry: false,
   });
 
   return query;

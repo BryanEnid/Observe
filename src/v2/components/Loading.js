@@ -1,8 +1,9 @@
 import { HStack, Spinner, Heading, Box, Center } from "native-base";
-import { Dimensions } from "react-native";
+import React from "react";
+import { useWindowDimensions } from "react-native";
 
 export const Loading = () => {
-  const { width, height } = Dimensions.get("screen");
+  const { width, height } = useWindowDimensions();
 
   return (
     <Center flex={1} position={"absolute"} style={{ width, height }}>

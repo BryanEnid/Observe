@@ -13,6 +13,7 @@ export const useRandomUsers = (props) => {
   const query = useQuery("random_users", getRandomUsers, {
     ...props,
     ...{ staleTime: Infinity },
+    retry: false,
   });
 
   return query;
