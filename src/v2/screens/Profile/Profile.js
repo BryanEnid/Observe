@@ -11,10 +11,12 @@ import {
   Button,
 } from "native-base";
 import Animated, {
+  cancelAnimation,
   interpolate,
   useAnimatedGestureHandler,
   useAnimatedScrollHandler,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withDecay,
   withSpring,
@@ -35,8 +37,9 @@ const PROFILE_H = 255;
 const PROFILE_NAME_H = 50;
 const HEADER_H = PROFILE_H + PROFILE_NAME_H;
 const HEADER_W = 400;
-const NAVBAR_H = 50;
 const NAV_BTN_W = 140;
+const NAVBAR_H = 50;
+const NAVBAR_W = NAV_BTN_W * SCREENS.length;
 const RANDOM_VIDEO = {};
 const RANDOM_USER = {
   quote: "Seagulls are the eagles of the sea.",
@@ -94,6 +97,7 @@ export const Profile = () => {
       left: width / 2 - NAV_BTN_W / 2,
       top: HEADER_H,
       padding: 0,
+      width: NAVBAR_W,
       zIndex: 2,
     },
   });
@@ -112,22 +116,29 @@ export const Profile = () => {
     translateY.value = event.contentOffset.y;
   });
 
+  const clamped_nav_scroll_x = useDerivedValue(() => {
+    const Limits = -NAV_BTN_W * (SCREENS.length - 1);
+    return Math.max(Math.min(nav_translate_x.value, 0), Limits);
+  });
+
   const nav_scroll_x_handler = useAnimatedGestureHandler({
     onStart: (event, context) => {
-      context.translateX = nav_translate_x.value;
+      context.translateX = clamped_nav_scroll_x.value;
+
+      cancelAnimation(nav_translate_x);
     },
     onActive: (event, context) => {
       nav_translate_x.value = event.translationX + context.translateX;
     },
     onEnd: (event, context) => {
       nav_translate_x.value = withDecay({ velocity: event.velocityX });
-      if (nav_translate_x.value > 0) nav_translate_x.value = withSpring(0);
+      // if (nav_translate_x.value > 0) nav_translate_x.value = withSpring(0);
 
       // // TODO: convert nav width into a constant
-      if (nav_translate_x.value < -600)
-        nav_translate_x.value = withSpring(-600);
+      // if (nav_translate_x.value < -NAVBAR_W)
+      // nav_translate_x.value = withSpring(-NAVBAR_W);
 
-      nav_translate_x.value = withDecay({ velocity: event.velocityX });
+      // nav_translate_x.value = withDecay({ velocity: event.velocityX });
     },
   });
 
@@ -158,7 +169,7 @@ export const Profile = () => {
   });
 
   const r_nav_x_translate_gesture = useAnimatedStyle(() => {
-    return { transform: [{ translateX: nav_translate_x.value }] };
+    return { transform: [{ translateX: clamped_nav_scroll_x.value }] };
   });
 
   const r_nav_x_translate = useAnimatedStyle(() => {
