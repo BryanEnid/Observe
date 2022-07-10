@@ -14,7 +14,6 @@ import Animated, {
   cancelAnimation,
   interpolate,
   runOnJS,
-  scrollTo,
   useAnimatedGestureHandler,
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -22,13 +21,13 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
   withDecay,
-  use,
 } from "react-native-reanimated";
 import { useRandomVideos } from "../../hooks/query/useRandomVideos";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import * as Haptics from "expo-haptics";
+import { scrollTo } from "../../utils/scrollTo";
 
 const statusBarHeight = getStatusBarHeight();
 
@@ -136,15 +135,12 @@ export const Profile = () => {
   });
 
   const handleNavSelect = (event, index) => {
-    console.log(current_screen.value);
     refs.map((ref, i) => {
       if (i === current_screen.value) return;
-      ref.current.scrollTo({
-        y: translateY.value > 254 ? 255 : translateY.value,
-        animated: false,
-      });
+      const y = translateY.value > 254 ? 255 : translateY.value;
+      scrollTo(ref, { y, animated: false });
     });
-    sv_x_ref.current.scrollTo({ x: index * width });
+    scrollTo(sv_x_ref, { x: index * width });
   };
 
   // Worklets
@@ -153,12 +149,8 @@ export const Profile = () => {
     onBeginDrag: (event, context) => {
       refs.map((ref, index) => {
         if (index === current_screen.value) return;
-        scrollTo(
-          ref,
-          0,
-          translateY.value > 254 ? 255 : translateY.value,
-          false
-        );
+        const y = translateY.value > 254 ? 255 : translateY.value;
+        scrollTo(ref, { y, animated: false }, true);
       });
     },
     onScroll: (event, context) => {
@@ -221,8 +213,6 @@ export const Profile = () => {
   });
 
   const r_nav_x_translate_gesture = useAnimatedStyle(() => {
-    // const range = Math.abs((clamped_nav_scroll_x.value / NAV_BTN_W) % 1); // 0 -> 1
-    // runOnJS(Haptics.selectionAsync)();
     return {
       transform: [
         { translateX: clamped_nav_scroll_x.value },
