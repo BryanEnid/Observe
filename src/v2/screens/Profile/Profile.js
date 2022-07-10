@@ -13,6 +13,7 @@ import {
 import Animated, {
   cancelAnimation,
   interpolate,
+  runOnJS,
   scrollTo,
   useAnimatedGestureHandler,
   useAnimatedRef,
@@ -21,11 +22,13 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
   withDecay,
+  use,
 } from "react-native-reanimated";
 import { useRandomVideos } from "../../hooks/query/useRandomVideos";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-status-bar-height";
+import * as Haptics from "expo-haptics";
 
 const statusBarHeight = getStatusBarHeight();
 
@@ -35,13 +38,13 @@ const SCREENS = [
   ["Audio", "green.500", "1", "2", "3", "4", "5", "6", "7", "8"],
   ["Video", "blue.500", "1"],
   ["Quests", "green.100", "1", "2", "3", "4", "5", "6", "7", "8"],
-  ["Recommendation", "blue.100", "1"],
+  ["Reco", "blue.100", "1"],
 ];
 
 const PROFILE_NAME_H = 50;
 const PROFILE_NAME_W = 250;
 const PROFILE_H = 255;
-const NAV_BTN_W = 140;
+const NAV_BTN_W = 82;
 const NAVBAR_H = 50;
 const NAVBAR_W = NAV_BTN_W * SCREENS.length;
 const HEADER_W = 400;
@@ -218,6 +221,8 @@ export const Profile = () => {
   });
 
   const r_nav_x_translate_gesture = useAnimatedStyle(() => {
+    const range = Math.abs((clamped_nav_scroll_x.value / NAV_BTN_W) % 1); // 0 -> 1
+    runOnJS(Haptics.selectionAsync)();
     return {
       transform: [
         { translateX: clamped_nav_scroll_x.value },
@@ -359,6 +364,7 @@ export const Profile = () => {
                       mx={10}
                       borderRadius={3}
                       key={item}
+                      onPress={() => Haptics.selectionAsync()}
                     >
                       <Center>{item}</Center>
                     </Pressable>
