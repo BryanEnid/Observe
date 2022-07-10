@@ -221,8 +221,8 @@ export const Profile = () => {
   });
 
   const r_nav_x_translate_gesture = useAnimatedStyle(() => {
-    const range = Math.abs((clamped_nav_scroll_x.value / NAV_BTN_W) % 1); // 0 -> 1
-    runOnJS(Haptics.selectionAsync)();
+    // const range = Math.abs((clamped_nav_scroll_x.value / NAV_BTN_W) % 1); // 0 -> 1
+    // runOnJS(Haptics.selectionAsync)();
     return {
       transform: [
         { translateX: clamped_nav_scroll_x.value },
