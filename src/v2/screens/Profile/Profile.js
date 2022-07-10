@@ -133,6 +133,14 @@ export const Profile = () => {
   });
 
   const handleNavSelect = (event, index) => {
+    console.log(current_screen.value);
+    refs.map((ref, i) => {
+      if (i === current_screen.value) return;
+      ref.current.scrollTo({
+        y: translateY.value > 254 ? 255 : translateY.value,
+        animated: false,
+      });
+    });
     sv_x_ref.current.scrollTo({ x: index * width });
   };
 
