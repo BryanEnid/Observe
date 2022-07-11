@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import { NativeBaseProvider, extendTheme, Text } from "native-base";
-import { PortalProvider } from "../../v1/components";
+import { PortalProvider } from "./Portal";
 
 // React Query config: Create a client
 const queryClient = new QueryClient();
