@@ -84,7 +84,7 @@ export const ObserveMenu = () => {
 
   // Handlers
   const handleLongPressEvent = ({ nativeEvent }) => {
-    log(nativeEvent);
+    tron.warn(React);
     if (nativeEvent.state === State.BEGAN) {
       startWavesAnimation();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
