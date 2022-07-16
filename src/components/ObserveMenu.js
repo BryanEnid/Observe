@@ -24,7 +24,7 @@ export const ObserveMenu = () => {
 
   // Hooks
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  // const { width } = useWindowDimensions();
 
   const styles = StyleSheet.create({
     menu: {
