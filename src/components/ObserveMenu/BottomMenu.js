@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, HStack } from "native-base";
+import { Box, Row } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ObserveSphere } from "./ObserveSphere";
@@ -29,6 +29,7 @@ export const BottomMenu = () => {
       shadowOpacity: 0.24,
       shadowRadius: 16.41,
       elevation: 20,
+      zIndex: 0,
     },
   });
 
@@ -46,19 +47,22 @@ export const BottomMenu = () => {
   );
 
   return (
-    <Box style={styles.menu}>
-      <HStack justifyContent={"space-evenly"}>
-        <MenuItem iconName="life-buoy" />
-        <MenuItem iconName="map" />
-        <Box w={MENU_ITEM_W}>
-          <ObserveSphere />
-        </Box>
-        <MenuItem iconName="message-square" />
-        <MenuItem iconName="anchor" />
-      </HStack>
+    <>
+      {/* Bottom Menu */}
+      <Box style={styles.menu}>
+        <Row justifyContent={"space-evenly"} zIndex={1}>
+          <MenuItem iconName="life-buoy" />
+          <MenuItem iconName="map" />
+          <Box w={MENU_ITEM_W} zIndex={2}>
+            <ObserveSphere />
+          </Box>
+          <MenuItem iconName="message-square" />
+          <MenuItem iconName="anchor" />
+        </Row>
 
-      {/* Safe area */}
-      <Box safeAreaBottom />
-    </Box>
+        {/* Safe area */}
+        <Box safeAreaBottom />
+      </Box>
+    </>
   );
 };

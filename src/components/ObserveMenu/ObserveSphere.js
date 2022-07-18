@@ -8,6 +8,7 @@ import whale from "../../../assets/whale.png";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import Animated, {
   cancelAnimation,
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -18,12 +19,12 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-export const ObserveSphere = () => {
+export const ObserveSphere = ({ onClick, onLongPress }) => {
   // Constants
   const OBSERVE_SPHERE_W = 80;
 
   // Hooks
-  const insets = useSafeAreaInsets();
+  // const insets = useSafeAreaInsets();
   // const { width } = useWindowDimensions();
 
   const styles = StyleSheet.create({
@@ -38,6 +39,17 @@ export const ObserveSphere = () => {
       borderRadius: OBSERVE_SPHERE_W / 2,
       borderColor: "#609ff7",
       borderWidth: 4,
+    },
+    drawer: {
+      width: OBSERVE_SPHERE_W,
+      height: OBSERVE_SPHERE_W,
+      position: "absolute",
+      left: "50%",
+      top: -25,
+      overflow: "hidden",
+      backgroundColor: "#333",
+      borderRadius: OBSERVE_SPHERE_W / 2,
+      opacity: 0.7,
     },
     whale: {
       position: "absolute",
@@ -58,6 +70,7 @@ export const ObserveSphere = () => {
   const translateX_wave_1 = useSharedValue(0);
   const translateX_wave_2 = useSharedValue(0);
   const scale_menu = useSharedValue(1);
+  const drawer_open = useSharedValue(false);
 
   // Functions
   const startWavesAnimation = () => {
@@ -84,17 +97,24 @@ export const ObserveSphere = () => {
 
   // Handlers
   const handleLongPressEvent = ({ nativeEvent }) => {
-    tron.warn("clicked");
     if (nativeEvent.state === State.BEGAN) {
-      startWavesAnimation();
+      // Animations
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       scale_menu.value = withDelay(1000, withSpring(1.2, { velocity: 5 }));
+      drawer_open.value = !drawer_open.value;
+
+      // Callbacks
+      startWavesAnimation();
+      onClick && onClick();
     }
     if (nativeEvent.state === State.FAILED) {
       scale_menu.value = withSpring(1);
     }
     if (nativeEvent.state === State.ACTIVE) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
+      // Callback
+      onLongPress && onLongPress();
     }
     if (nativeEvent.state === State.CANCELLED) {
       scale_menu.value = withSpring(1);
@@ -114,6 +134,20 @@ export const ObserveSphere = () => {
     };
   });
 
+  const r_drawer = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: -OBSERVE_SPHERE_W / 2 },
+        {
+          scale: withTiming(drawer_open.value ? 6 : 0, {
+            easing: Easing.sin,
+            duration: 150,
+          }),
+        },
+      ],
+    };
+  });
+
   const r_wave_1 = useAnimatedStyle(() => {
     return { transform: [{ translateX: translateX_wave_1.value }] };
   });
@@ -122,24 +156,32 @@ export const ObserveSphere = () => {
     return { transform: [{ translateX: translateX_wave_2.value }] };
   });
 
+  const Drawer = () => (
+    <Animated.View style={[styles.drawer, r_drawer]} zIndex={1} />
+  );
+
   return (
-    <LongPressGestureHandler
-      minDurationMs={1000}
-      onHandlerStateChange={handleLongPressEvent}
-    >
-      <Pressable>
-        <Animated.View style={[styles.menu, r_menu]}>
-          <Animated.View style={[r_wave_1]}>
-            <Image alt="wave" source={wave_1} style={styles.wave_1} />
-          </Animated.View>
+    <>
+      <LongPressGestureHandler
+        minDurationMs={1000}
+        onHandlerStateChange={handleLongPressEvent}
+      >
+        <Pressable zIndex={2}>
+          <Animated.View style={[styles.menu, r_menu]}>
+            <Animated.View style={[r_wave_1]}>
+              <Image alt="wave" source={wave_1} style={styles.wave_1} />
+            </Animated.View>
 
-          <Image alt="whale" source={whale} style={styles.whale} />
+            <Image alt="whale" source={whale} style={styles.whale} />
 
-          <Animated.View style={[r_wave_2]}>
-            <Image alt="wave" source={wave_2} style={styles.wave_2} />
+            <Animated.View style={[r_wave_2]}>
+              <Image alt="wave" source={wave_2} style={styles.wave_2} />
+            </Animated.View>
           </Animated.View>
-        </Animated.View>
-      </Pressable>
-    </LongPressGestureHandler>
+        </Pressable>
+      </LongPressGestureHandler>
+
+      <Drawer />
+    </>
   );
 };
