@@ -5,7 +5,7 @@ import { useKeepAwake } from "expo-keep-awake";
 import { useIsFetching } from "react-query";
 import { Loading } from "../components/Loading";
 import { NavigationContainer } from "@react-navigation/native";
-import { ObserveMenu } from "../components/ObserveMenu";
+import { BottomMenu } from "../components/ObserveMenu/BottomMenu";
 
 const linking = {
   prefixes: ["https://mychat.com", "mychat://"],
@@ -42,7 +42,7 @@ export default function Routes() {
 
       {!!isFetching && <Loading />}
 
-      <ObserveMenu />
+      <BottomMenu />
     </>
   );
 }

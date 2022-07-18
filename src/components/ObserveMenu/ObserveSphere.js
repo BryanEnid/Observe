@@ -2,9 +2,9 @@ import React from "react";
 import { Image, Pressable } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import wave_1 from "../../assets/wave_1.png";
-import wave_2 from "../../assets/wave_2.png";
-import whale from "../../assets/whale.png";
+import wave_1 from "../../../assets/wave_1.png";
+import wave_2 from "../../../assets/wave_2.png";
+import whale from "../../../assets/whale.png";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import Animated, {
   cancelAnimation,
@@ -18,7 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-export const ObserveMenu = () => {
+export const ObserveSphere = () => {
   // Constants
   const OBSERVE_SPHERE_W = 80;
 
@@ -31,17 +31,17 @@ export const ObserveMenu = () => {
       width: OBSERVE_SPHERE_W,
       height: OBSERVE_SPHERE_W,
       position: "absolute",
-      bottom: insets.bottom + 10,
       left: "50%",
+      top: -25,
       overflow: "hidden",
       backgroundColor: "#609ff7",
       borderRadius: OBSERVE_SPHERE_W / 2,
-      borderWidth: 4,
       borderColor: "#609ff7",
+      borderWidth: 4,
     },
     whale: {
       position: "absolute",
-      transform: [{ scale: 0.3 }, { translateX: -245 }, { translateY: -240 }],
+      transform: [{ scale: 0.35 }, { translateX: -215 }, { translateY: -210 }],
     },
     wave_1: {
       position: "absolute",
@@ -84,7 +84,7 @@ export const ObserveMenu = () => {
 
   // Handlers
   const handleLongPressEvent = ({ nativeEvent }) => {
-    tron.warn(React);
+    tron.warn("clicked");
     if (nativeEvent.state === State.BEGAN) {
       startWavesAnimation();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
