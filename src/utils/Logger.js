@@ -10,6 +10,6 @@ import "../config/ReactotronConfig";
 
 export class Logger {
   static initialize = () => {
-    global.tron = ReactoTron;
+    global.ReactoTron = ReactoTron;
   };
 }

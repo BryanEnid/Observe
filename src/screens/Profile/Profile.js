@@ -5,7 +5,7 @@ import {
   Text,
   Box,
   Pressable,
-  VStack,
+  Column,
   Center,
   Image,
   Button,
@@ -337,7 +337,7 @@ export const Profile = () => {
                 ref={refs[index]}
               >
                 <Box height={PROFILE_H} />
-                <VStack
+                <Column
                   flex={1}
                   space={10}
                   backgroundColor={content[1]}
@@ -360,7 +360,7 @@ export const Profile = () => {
                     </Pressable>
                   ))}
                   <Box />
-                </VStack>
+                </Column>
               </Animated.ScrollView>
             ))}
           </Animated.ScrollView>
