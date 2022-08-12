@@ -13,7 +13,6 @@ import {
 import Animated, {
   cancelAnimation,
   interpolate,
-  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -22,23 +21,20 @@ import Animated, {
   useSharedValue,
   withDecay,
 } from "react-native-reanimated";
-import { useRandomVideos } from "../../hooks/query/useRandomVideos";
-import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import * as Haptics from "expo-haptics";
+
+import { useRandomVideos } from "../../hooks/query/useRandomVideos";
+import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { scrollTo } from "../../utils/scrollTo";
+import { BucketScreen } from "./Buckets/Buckets";
+import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
 
 const statusBarHeight = getStatusBarHeight();
 
 const PROFILE_DIMENSIONS = { width: 180, height: 180, padding: 20 };
-const SCREENS = [
-  ["Portfolio", "red.500", "1", "2", "3", "4", "5"],
-  ["Audio", "green.500", "1", "2", "3", "4", "5", "6", "7", "8"],
-  ["Video", "blue.500", "1"],
-  ["Quests", "green.100", "1", "2", "3", "4", "5", "6", "7", "8"],
-  ["Reco", "blue.100", "1"],
-];
+const SCREENS = [["Bucket", BucketScreen]];
 
 const PROFILE_NAME_H = 50;
 const PROFILE_NAME_W = 250;
@@ -47,11 +43,6 @@ const NAV_BTN_W = 82;
 const NAVBAR_H = 50;
 const NAVBAR_W = NAV_BTN_W * SCREENS.length;
 const HEADER_W = 400;
-const RANDOM_VIDEO = {};
-const RANDOM_USER = {
-  quote: "Seagulls are the eagles of the sea.",
-  name: { first: "Bryan", last: "Tejada" },
-};
 
 export const Profile = () => {
   // Hooks
@@ -113,7 +104,6 @@ export const Profile = () => {
       position: "absolute",
       top: PROFILE_H + statusBarHeight,
       left: width / 2 - PROFILE_NAME_W / 2,
-      // padding: 0,
       zIndex: 2,
       display: "flex",
       justifyContent: "space-between",
@@ -123,7 +113,6 @@ export const Profile = () => {
       position: "absolute",
       top: PROFILE_H + PROFILE_NAME_H + statusBarHeight,
       left: width / 2 - NAV_BTN_W / 2,
-      // padding: 0,
       zIndex: 2,
     },
   });
@@ -327,39 +316,27 @@ export const Profile = () => {
             onScroll={handleSubscreenXScroll}
             scrollEventThrottle={16}
           >
-            {SCREENS.map((content, index) => (
+            {SCREENS.map(([screenName, Screen], index) => (
               <Animated.ScrollView
-                key={content[1]}
+                key={screenName}
                 onScroll={handleSubscreenYScroll}
                 showsVerticalScrollIndicator={false}
                 scrollEventThrottle={16}
-                // ref={ref_array}
                 ref={refs[index]}
               >
-                <Box height={PROFILE_H} />
+                <Box height={PROFILE_DIMENSIONS.height + NAVBAR_H} />
                 <Column
                   flex={1}
                   space={10}
-                  backgroundColor={content[1]}
+                  // backgroundColor={content[1]}
                   width={width}
                   pt={10}
                   minHeight={
                     height - PROFILE_NAME_H - NAVBAR_H - statusBarHeight
                   }
                 >
-                  {content.map((item) => (
-                    <Pressable
-                      backgroundColor={"gray.100"}
-                      p={30}
-                      mx={10}
-                      borderRadius={3}
-                      key={item}
-                      onPress={() => Haptics.selectionAsync()}
-                    >
-                      <Center>{item}</Center>
-                    </Pressable>
-                  ))}
-                  <Box />
+                  <Screen />
+                  <Box height={MENU_H} />
                 </Column>
               </Animated.ScrollView>
             ))}

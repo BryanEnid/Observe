@@ -1,14 +1,18 @@
 import React from "react";
 import { Request } from "../controllers/Request";
+import reactotron from "reactotron-react-native";
 
 // TODO: Use React Query for this
 export const useDummyData = () => {
-  const getRandomUsers = React.useCallback((amount, cached = true) => {
-    Request.baseURL = "https://randomuser.me";
-    return Request.get(`/api/?results=${amount}`, {
-      cache: cached ? "force-cache" : "default",
-    });
-  }, []);
+  const getRandomUsers = React.useCallback(
+    ({ amount } = { amount: 1 }, cached = true) => {
+      Request.baseURL = "https://randomuser.me";
+      return Request.get(`/api/?results=${amount}`, {
+        cache: cached ? "force-cache" : "default",
+      });
+    },
+    []
+  );
 
   const getRandomPictures = React.useCallback((props, cached = true) => {
     const { orientation = "portrait", size = "medium", per_page = 80 } = props;
@@ -38,9 +42,7 @@ export const useDummyData = () => {
       Math.round(Math.random() * queryOptions.length - 1)
     );
     if (cached) randomQuery = 0;
-    console.log(
-      `/videos/search?query=${queryOptions[randomQuery]}&orientation=${orientation}&size=${size}&per_page=${per_page}`
-    );
+
     return Request.get(
       `/videos/search?query=${queryOptions[randomQuery]}&orientation=${orientation}&size=${size}&per_page=${per_page}`,
       { cache: cached ? "force-cache" : "default" }

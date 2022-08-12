@@ -8,13 +8,17 @@ import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
  * @param {UseQueryOptions} props
  * @returns {UseQueryResult}
  */
-export const useRandomUsers = (props) => {
+export const useRandomUsers = ({ key = [], ...rest } = { key: [] }) => {
   const { getRandomUsers } = useDummyData();
-  const query = useQuery("random_users", getRandomUsers, {
-    ...props,
-    ...{ staleTime: Infinity },
-    retry: false,
-  });
+  const query = useQuery(
+    ["random_users", ...key],
+    () => getRandomUsers(...key),
+    {
+      ...rest,
+      ...{ staleTime: Infinity },
+      retry: false,
+    }
+  );
 
   return query;
 };

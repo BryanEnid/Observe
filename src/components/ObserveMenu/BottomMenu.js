@@ -5,11 +5,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ObserveSphere } from "./ObserveSphere";
 import { Feather } from "@expo/vector-icons";
 
-export const BottomMenu = () => {
-  // Constants
-  const MENU_H = 60;
-  const MENU_ITEM_W = "50px";
+// Constants
+export const MENU_H = 60;
+export const MENU_ITEM_W = "50px";
 
+export const BottomMenu = () => {
   // Hooks
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
