@@ -26,12 +26,7 @@ export default function Routes() {
 
   return (
     <>
-      <NavigationContainer
-        linking={linking}
-        independent
-        // ref={navigationRef}
-        // theme={MyTheme}
-      >
+      <NavigationContainer linking={linking} independent>
         <Stack.Navigator
           initialRouteName="Profile"
           screenOptions={screenConfig}

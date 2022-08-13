@@ -1,8 +1,7 @@
 import { GlobalProvider } from "./components/GlobalProvider";
 import Routes from "./navigation/routes";
-import { Logger } from "./utils/Logger";
-
-Logger.initialize();
+import "./config/ReactotronConfig";
+import { View } from "react-native";
 
 export const App = () => {
   return (

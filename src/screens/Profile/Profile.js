@@ -28,13 +28,18 @@ import * as Haptics from "expo-haptics";
 import { useRandomVideos } from "../../hooks/query/useRandomVideos";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { scrollTo } from "../../utils/scrollTo";
-import { BucketScreen } from "./Buckets/Buckets";
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
+import { BucketScreen } from "./Buckets/Buckets";
+import { ResumeScreen } from "./Resume/Resume";
 
 const statusBarHeight = getStatusBarHeight();
 
 const PROFILE_DIMENSIONS = { width: 180, height: 180, padding: 20 };
-const SCREENS = [["Bucket", BucketScreen]];
+// ! Also declare refs using "useAnimatedRef"  per screen and add it to the refs array
+const SCREENS = [
+  ["Resume", ResumeScreen],
+  ["Bucket", BucketScreen],
+];
 
 const PROFILE_NAME_H = 50;
 const PROFILE_NAME_W = 250;
@@ -67,18 +72,11 @@ export const Profile = () => {
   const translateY = useSharedValue(0);
   const nav_translate_x = useSharedValue(0);
   const nav_translate_y = useSharedValue(0);
-  const portfolio_sv_y_ref = useAnimatedRef();
-  const audio_sv_y_ref = useAnimatedRef();
-  const video_sv_y_ref = useAnimatedRef();
-  const quest_sv_y_ref = useAnimatedRef();
-  const recommendation_sv_y_ref = useAnimatedRef();
-  const refs = [
-    portfolio_sv_y_ref,
-    audio_sv_y_ref,
-    video_sv_y_ref,
-    quest_sv_y_ref,
-    recommendation_sv_y_ref,
-  ];
+
+  const bucket_sv_y_ref = useAnimatedRef();
+  const resume_sv_y_ref = useAnimatedRef();
+  const refs = [bucket_sv_y_ref, resume_sv_y_ref];
+
   const current_screen = useDerivedValue(() => {
     const result = Math.floor(translateX.value / width);
     return result < 0 ? 0 : result;
@@ -258,7 +256,7 @@ export const Profile = () => {
 
   return (
     <>
-      <Box overflowX={"hidden"} flex={1}>
+      <Box overflowX={"hidden"} flex={1} backgroundColor="white">
         <StatusBar barStyle={"dark-content"} />
 
         {/* Profile */}
@@ -324,16 +322,13 @@ export const Profile = () => {
                 scrollEventThrottle={16}
                 ref={refs[index]}
               >
-                <Box height={PROFILE_DIMENSIONS.height + NAVBAR_H} />
+                <Box height={PROFILE_DIMENSIONS.height + 25} />
                 <Column
                   flex={1}
                   space={10}
-                  // backgroundColor={content[1]}
                   width={width}
                   pt={10}
-                  minHeight={
-                    height - PROFILE_NAME_H - NAVBAR_H - statusBarHeight
-                  }
+                  minHeight={height - PROFILE_NAME_H - NAVBAR_H}
                 >
                   <Screen />
                   <Box height={MENU_H} />
