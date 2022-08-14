@@ -3,6 +3,8 @@ import { useDummyData } from "../useDummyData";
 import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 import reactotron from "reactotron-react-native";
 
+const x = { lol: "string" };
+
 /**
  * React Query hook for getting random videos
  *

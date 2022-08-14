@@ -52,13 +52,14 @@ const HEADER_W = 400;
 export const Profile = () => {
   // Hooks
   const { width, height } = useWindowDimensions();
-  const { data: videoURI } = useRandomVideos({
-    select: ({ videos }) => {
-      const randomNumber = Math.round(Math.random() * 79);
-      return videos[randomNumber].video_files[0].link;
-    },
-    enabled: false,
-  });
+  // const { data: videoURI } = useRandomVideos({
+  //   select: ({ videos }) => {
+  //     const randomNumber = Math.round(Math.random() * 79);
+  //     return videos[randomNumber].video_files[0].link;
+  //   },
+  //   enabled: false,
+  // });
+
   const { data: profile } = useRandomUsers({
     select: ({ results }) => ({
       ...results[0],
@@ -116,11 +117,6 @@ export const Profile = () => {
   });
 
   // Handlers
-  const clamped_nav_scroll_x = useDerivedValue(() => {
-    const Limits = -NAV_BTN_W * (SCREENS.length - 1);
-    return Math.max(Math.min(nav_translate_x.value, 0), Limits);
-  });
-
   const handleNavSelect = (event, index) => {
     refs.map((ref, i) => {
       if (i === current_screen.value) return;
@@ -129,6 +125,12 @@ export const Profile = () => {
     });
     scrollTo(sv_x_ref, { x: index * width });
   };
+
+  // Config Animations
+  const clamped_nav_scroll_x = useDerivedValue(() => {
+    const Limits = -NAV_BTN_W * (SCREENS.length - 1);
+    return Math.max(Math.min(nav_translate_x.value, 0), Limits);
+  });
 
   // Worklets
   const handleSubscreenXScroll = useAnimatedScrollHandler({

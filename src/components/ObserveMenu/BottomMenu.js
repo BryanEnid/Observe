@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Row } from "native-base";
+import { Box, Icon, Row } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ObserveSphere } from "./ObserveSphere";
@@ -42,7 +42,7 @@ export const BottomMenu = () => {
       alignItems={"center"}
       borderRadius={10}
     >
-      <Feather name={props.iconName} size={32} color="#609ff7" />
+      <Icon as={Feather} name={props.iconName} size="lg" color="#609ff7" />
     </Box>
   );
 

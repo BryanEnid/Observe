@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Row, Text, Heading } from "native-base";
-
-import { Experience } from "./Experience";
+import { Experience, Education } from "./Experience";
 
 const HEADERS_SIZE = "lg";
 const HEADERS_EXTRA_BUTTON_SIZE = "sm";
@@ -44,10 +43,11 @@ export const ResumeScreen = () => {
         </Box>
 
         <Box p={4} background="white" borderRadius={30} variant="elevated">
-          <Text lineHeight={17} color={"gray.500"} fontSize="xs">
-            Hello, my name is Earl Livingston and I like seagulls. I genuinely
-            care about the environment. I am a graduate from Harvard & MIT.
-            {"\n \n"}
+          <Text lineHeight={17} color={"blueGray.400"} fontSize="sm">
+            Hello, my name is Earl Livingston and I like seagulls. {"\n"}I
+            genuinely care about the environment. I am a graduate from Harvard &
+            MIT.
+            {"\n\n"}
             www.earltheseagull.com
           </Text>
         </Box>
@@ -73,6 +73,7 @@ export const ResumeScreen = () => {
         </Box>
       </Box>
 
+      {/* Experience */}
       <Box pb={3}>
         <Box px={4} py={2}>
           <Row justifyContent={"space-between"}>
@@ -81,6 +82,17 @@ export const ResumeScreen = () => {
         </Box>
 
         <Experience />
+      </Box>
+
+      {/* Education */}
+      <Box pb={3}>
+        <Box px={4} py={2}>
+          <Row justifyContent={"space-between"}>
+            <Heading fontSize={HEADERS_SIZE}>Education</Heading>
+          </Row>
+        </Box>
+
+        <Education />
       </Box>
     </Box>
   );
