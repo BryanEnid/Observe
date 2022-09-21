@@ -9,6 +9,7 @@ import { BottomMenu } from "../components/ObserveMenu/BottomMenu";
 import { useUser } from "../hooks/useUser";
 import { Profile } from "../screens/Profile/Profile";
 import { SignIn } from "../screens/Authentication/SignIn";
+import { SignUp } from "../screens/Authentication/SignUp";
 
 const linking = {
   prefixes: ["https://mychat.com", "mychat://"],
@@ -33,6 +34,12 @@ export default function Routes() {
       <NavigationContainer linking={linking} independent>
         <Stack.Navigator initialRouteName="SignIn" screenOptions={screenConfig}>
           <Stack.Screen name="SignIn" component={SignIn} />
+
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{ gestureEnabled: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );

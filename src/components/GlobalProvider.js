@@ -1,10 +1,17 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { NativeBaseProvider, extendTheme, Text } from "native-base";
+import { LinearGradient } from "expo-linear-gradient";
 import { PortalProvider } from "./Portal";
 
 // React Query config: Create a client
 const queryClient = new QueryClient();
+
+const config = {
+  dependencies: {
+    "linear-gradient": LinearGradient,
+  },
+};
 
 export const GlobalProvider = ({ children }) => {
   const theme = extendTheme({
@@ -30,7 +37,9 @@ export const GlobalProvider = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <PortalProvider>
-        <NativeBaseProvider theme={theme}>{children}</NativeBaseProvider>
+        <NativeBaseProvider config={config} theme={theme}>
+          {children}
+        </NativeBaseProvider>
       </PortalProvider>
     </QueryClientProvider>
   );
