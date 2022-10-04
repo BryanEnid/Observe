@@ -1,6 +1,8 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 import { useKeepAwake } from "expo-keep-awake";
 import { useIsFetching } from "react-query";
 
@@ -21,7 +23,9 @@ const linking = {
   },
 };
 
+// React Navigation Config
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 const screenConfig = { headerShown: false };
 
 export default function Routes() {
@@ -48,15 +52,19 @@ export default function Routes() {
   return (
     <>
       <NavigationContainer linking={linking} independent>
-        <Stack.Navigator initialRouteName="Feed" screenOptions={screenConfig}>
+        <Tab.Navigator
+          initialRouteName="Feed"
+          screenOptions={screenConfig}
+          tabBar={(props) => <BottomMenu {...props} />}
+        >
           <Stack.Screen name="Feed" component={Feed} />
           <Stack.Screen name="Profile" component={Profile} />
-        </Stack.Navigator>
+        </Tab.Navigator>
       </NavigationContainer>
 
       {!!isFetching && <Loading />}
 
-      <BottomMenu />
+      {/* <BottomMenu /> */}
     </>
   );
 }

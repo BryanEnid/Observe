@@ -45,7 +45,6 @@ export const ObserveSphere = ({
       borderRadius: OBSERVE_SPHERE_W / 2,
       borderColor: "#609ff7",
       borderWidth: 4,
-      // transform: [{ scale }],
     },
     drawer: {
       width: OBSERVE_SPHERE_W,
@@ -122,7 +121,7 @@ export const ObserveSphere = ({
       onClick && onClick();
     }
     if (nativeEvent.state === State.FAILED) {
-      scale_menu.value = withSpring(1);
+      scale_menu.value = withSpring(scale);
     }
     if (nativeEvent.state === State.ACTIVE) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
