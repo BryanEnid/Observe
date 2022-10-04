@@ -9,11 +9,12 @@ import {
   VStack,
   Center,
 } from "native-base";
-
+import { ObserveSphere } from "../../components/ObserveMenu/ObserveSphere";
 import { AntDesign } from "@expo/vector-icons";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import logo from "../../../assets/observe_logo.png";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../hooks/useAuth";
 
 const TextInput = ({ placeholder, elevated, password }) => {
   return (
@@ -51,6 +52,7 @@ const FederatedLoginContainer = () => {
 
 export const SignIn = () => {
   const navigation = useNavigation();
+  const { anonymousSignIn } = useAuth();
 
   return (
     <>
@@ -69,7 +71,10 @@ export const SignIn = () => {
         >
           <Box w="90%">
             <Center>
-              <Image source={logo} alt="Logo" size="xl" mt={10} />
+              {/* <Image source={logo} alt="Logo" size="xl" mt={10} /> */}
+              <Box my={16}>
+                <ObserveSphere play scale={1.4} />
+              </Box>
             </Center>
 
             <Box mt={10} px={5} py={4} borderRadius={9} background="white">
@@ -101,6 +106,16 @@ export const SignIn = () => {
           </Box>
 
           <Box safeArea>
+            <Button variant={"unstyled"} mb={5}>
+              <Text
+                color={"white"}
+                fontSize="md"
+                onPress={anonymousSignIn}
+                underline
+              >
+                or skip
+              </Text>
+            </Button>
             <FederatedLoginContainer />
           </Box>
         </VStack>

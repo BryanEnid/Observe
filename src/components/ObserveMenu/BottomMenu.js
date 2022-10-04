@@ -54,7 +54,7 @@ export const BottomMenu = () => {
           <MenuItem iconName="life-buoy" />
           <MenuItem iconName="map" />
           <Box w={MENU_ITEM_W} zIndex={2}>
-            <ObserveSphere />
+            <ObserveSphere pressable scale={0.8} />
           </Box>
           <MenuItem iconName="message-square" />
           <MenuItem iconName="anchor" />

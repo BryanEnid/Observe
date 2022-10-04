@@ -8,6 +8,7 @@ import { Loading } from "../components/Loading";
 import { BottomMenu } from "../components/ObserveMenu/BottomMenu";
 import { useUser } from "../hooks/useUser";
 import { Profile } from "../screens/Profile/Profile";
+import { Feed } from "../screens/Feed/Feed";
 import { SignIn } from "../screens/Authentication/SignIn";
 import { SignUp } from "../screens/Authentication/SignUp";
 
@@ -27,14 +28,13 @@ export default function Routes() {
   // Hooks
   useKeepAwake();
   const isFetching = useIsFetching();
-  const user = useUser();
+  const { user } = useUser();
 
-  if (!user)
+  if (!user) {
     return (
       <NavigationContainer linking={linking} independent>
         <Stack.Navigator initialRouteName="SignIn" screenOptions={screenConfig}>
           <Stack.Screen name="SignIn" component={SignIn} />
-
           <Stack.Screen
             name="SignUp"
             component={SignUp}
@@ -43,14 +43,13 @@ export default function Routes() {
         </Stack.Navigator>
       </NavigationContainer>
     );
+  }
 
   return (
     <>
       <NavigationContainer linking={linking} independent>
-        <Stack.Navigator
-          initialRouteName="Profile"
-          screenOptions={screenConfig}
-        >
+        <Stack.Navigator initialRouteName="Feed" screenOptions={screenConfig}>
+          <Stack.Screen name="Feed" component={Feed} />
           <Stack.Screen name="Profile" component={Profile} />
         </Stack.Navigator>
       </NavigationContainer>
