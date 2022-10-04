@@ -1,10 +1,12 @@
 import React from "react";
-import { Box, Icon, Row } from "native-base";
+import { Box, Icon, Pressable, Row } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ObserveSphere } from "./ObserveSphere";
 import { Feather } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Avatar } from "native-base";
+import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 
 // Constants
 export const MENU_H = 60;
@@ -14,6 +16,9 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
   // Hooks
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { data: profile } = useRandomUsers({
+    select: ({ results }) => results[0],
+  });
 
   const styles = StyleSheet.create({
     menu: {
@@ -54,7 +59,7 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
       };
 
       return (
-        <TouchableOpacity onPress={handleOnPress}>
+        <Pressable onPress={handleOnPress}>
           <Box
             w={MENU_ITEM_W}
             h={MENU_ITEM_W}
@@ -63,14 +68,28 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
             alignItems={"center"}
             borderRadius={10}
           >
-            <Icon
-              as={Feather}
-              name={props.iconName}
-              size={isFocused ? "2xl" : "lg"}
-              color={isFocused ? "#609ff7" : "gray.400"}
-            />
+            {!props?.avatar ? (
+              <Icon
+                as={Feather}
+                name={props.iconName}
+                size={isFocused ? "2xl" : "lg"}
+                color={isFocused ? "#609ff7" : "gray.400"}
+              />
+            ) : (
+              <Box
+                background="#609ff7"
+                p={isFocused ? 1 : 0}
+                borderRadius="50%"
+              >
+                <Avatar
+                  bg="green.500"
+                  size="sm"
+                  source={{ uri: profile?.picture?.medium }}
+                />
+              </Box>
+            )}
           </Box>
-        </TouchableOpacity>
+        </Pressable>
       );
     },
     [state]
@@ -82,12 +101,12 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
       <Box style={styles.menu}>
         <Row justifyContent={"space-evenly"} zIndex={1}>
           <MenuItem iconName="life-buoy" index={0} route={state.routes[0]} />
-          <MenuItem iconName="map" index={1} route={state.routes[1]} />
+          <MenuItem iconName="map" />
           <Box w={MENU_ITEM_W} zIndex={2}>
             <ObserveSphere pressable scale={0.8} />
           </Box>
           <MenuItem iconName="message-square" index={2} />
-          <MenuItem iconName="anchor" index={3} />
+          <MenuItem avatar index={1} route={state.routes[1]} />
         </Row>
 
         {/* Safe area */}
