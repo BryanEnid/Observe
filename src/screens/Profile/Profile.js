@@ -13,7 +13,6 @@ import {
 import Animated, {
   cancelAnimation,
   interpolate,
-  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -22,22 +21,24 @@ import Animated, {
   useSharedValue,
   withDecay,
 } from "react-native-reanimated";
-import { useRandomVideos } from "../../hooks/query/useRandomVideos";
-import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import * as Haptics from "expo-haptics";
+
+import { useRandomVideos } from "../../hooks/query/useRandomVideos";
+import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { scrollTo } from "../../utils/scrollTo";
+import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
+import { BucketScreen } from "./Buckets/Buckets";
+import { ResumeScreen } from "./Resume/Resume";
 
 const statusBarHeight = getStatusBarHeight();
 
 const PROFILE_DIMENSIONS = { width: 180, height: 180, padding: 20 };
+// ! Also declare refs using "useAnimatedRef"  per screen and add it to the refs array
 const SCREENS = [
-  ["Portfolio", "red.500", "1", "2", "3", "4", "5"],
-  ["Audio", "green.500", "1", "2", "3", "4", "5", "6", "7", "8"],
-  ["Video", "blue.500", "1"],
-  ["Quests", "green.100", "1", "2", "3", "4", "5", "6", "7", "8"],
-  ["Reco", "blue.100", "1"],
+  ["Resume", ResumeScreen],
+  ["Bucket", BucketScreen],
 ];
 
 const PROFILE_NAME_H = 50;
@@ -47,22 +48,18 @@ const NAV_BTN_W = 82;
 const NAVBAR_H = 50;
 const NAVBAR_W = NAV_BTN_W * SCREENS.length;
 const HEADER_W = 400;
-const RANDOM_VIDEO = {};
-const RANDOM_USER = {
-  quote: "Seagulls are the eagles of the sea.",
-  name: { first: "Bryan", last: "Tejada" },
-};
 
 export const Profile = () => {
   // Hooks
   const { width, height } = useWindowDimensions();
-  const { data: videoURI } = useRandomVideos({
-    select: ({ videos }) => {
-      const randomNumber = Math.round(Math.random() * 79);
-      return videos[randomNumber].video_files[0].link;
-    },
-    enabled: false,
-  });
+  // const { data: videoURI } = useRandomVideos({
+  //   select: ({ videos }) => {
+  //     const randomNumber = Math.round(Math.random() * 79);
+  //     return videos[randomNumber].video_files[0].link;
+  //   },
+  //   enabled: false,
+  // });
+
   const { data: profile } = useRandomUsers({
     select: ({ results }) => ({
       ...results[0],
@@ -76,18 +73,11 @@ export const Profile = () => {
   const translateY = useSharedValue(0);
   const nav_translate_x = useSharedValue(0);
   const nav_translate_y = useSharedValue(0);
-  const portfolio_sv_y_ref = useAnimatedRef();
-  const audio_sv_y_ref = useAnimatedRef();
-  const video_sv_y_ref = useAnimatedRef();
-  const quest_sv_y_ref = useAnimatedRef();
-  const recommendation_sv_y_ref = useAnimatedRef();
-  const refs = [
-    portfolio_sv_y_ref,
-    audio_sv_y_ref,
-    video_sv_y_ref,
-    quest_sv_y_ref,
-    recommendation_sv_y_ref,
-  ];
+
+  const bucket_sv_y_ref = useAnimatedRef();
+  const resume_sv_y_ref = useAnimatedRef();
+  const refs = [bucket_sv_y_ref, resume_sv_y_ref];
+
   const current_screen = useDerivedValue(() => {
     const result = Math.floor(translateX.value / width);
     return result < 0 ? 0 : result;
@@ -113,7 +103,6 @@ export const Profile = () => {
       position: "absolute",
       top: PROFILE_H + statusBarHeight,
       left: width / 2 - PROFILE_NAME_W / 2,
-      // padding: 0,
       zIndex: 2,
       display: "flex",
       justifyContent: "space-between",
@@ -123,17 +112,11 @@ export const Profile = () => {
       position: "absolute",
       top: PROFILE_H + PROFILE_NAME_H + statusBarHeight,
       left: width / 2 - NAV_BTN_W / 2,
-      // padding: 0,
       zIndex: 2,
     },
   });
 
   // Handlers
-  const clamped_nav_scroll_x = useDerivedValue(() => {
-    const Limits = -NAV_BTN_W * (SCREENS.length - 1);
-    return Math.max(Math.min(nav_translate_x.value, 0), Limits);
-  });
-
   const handleNavSelect = (event, index) => {
     refs.map((ref, i) => {
       if (i === current_screen.value) return;
@@ -142,6 +125,12 @@ export const Profile = () => {
     });
     scrollTo(sv_x_ref, { x: index * width });
   };
+
+  // Config Animations
+  const clamped_nav_scroll_x = useDerivedValue(() => {
+    const Limits = -NAV_BTN_W * (SCREENS.length - 1);
+    return Math.max(Math.min(nav_translate_x.value, 0), Limits);
+  });
 
   // Worklets
   const handleSubscreenXScroll = useAnimatedScrollHandler({
@@ -269,7 +258,7 @@ export const Profile = () => {
 
   return (
     <>
-      <Box overflowX={"hidden"} flex={1}>
+      <Box overflowX={"hidden"} flex={1} backgroundColor="white">
         <StatusBar barStyle={"dark-content"} />
 
         {/* Profile */}
@@ -327,39 +316,24 @@ export const Profile = () => {
             onScroll={handleSubscreenXScroll}
             scrollEventThrottle={16}
           >
-            {SCREENS.map((content, index) => (
+            {SCREENS.map(([screenName, Screen], index) => (
               <Animated.ScrollView
-                key={content[1]}
+                key={screenName}
                 onScroll={handleSubscreenYScroll}
                 showsVerticalScrollIndicator={false}
                 scrollEventThrottle={16}
-                // ref={ref_array}
                 ref={refs[index]}
               >
-                <Box height={PROFILE_H} />
+                <Box height={PROFILE_DIMENSIONS.height + 25} />
                 <Column
                   flex={1}
                   space={10}
-                  backgroundColor={content[1]}
                   width={width}
                   pt={10}
-                  minHeight={
-                    height - PROFILE_NAME_H - NAVBAR_H - statusBarHeight
-                  }
+                  minHeight={height - PROFILE_NAME_H - NAVBAR_H}
                 >
-                  {content.map((item) => (
-                    <Pressable
-                      backgroundColor={"gray.100"}
-                      p={30}
-                      mx={10}
-                      borderRadius={3}
-                      key={item}
-                      onPress={() => Haptics.selectionAsync()}
-                    >
-                      <Center>{item}</Center>
-                    </Pressable>
-                  ))}
-                  <Box />
+                  <Screen />
+                  <Box height={MENU_H} />
                 </Column>
               </Animated.ScrollView>
             ))}

@@ -9,3 +9,5 @@ Reactotron
   .configure({ host }) // controls connection & communication settings
   .useReactNative() // add all built-in react native plugins
   .connect(); // let's connect!
+
+global.reactotron = Reactotron;

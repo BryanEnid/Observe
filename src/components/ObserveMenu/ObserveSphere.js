@@ -19,7 +19,13 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-export const ObserveSphere = ({ onClick, onLongPress }) => {
+export const ObserveSphere = ({
+  onClick,
+  onLongPress,
+  play,
+  pressable,
+  scale,
+}) => {
   // Constants
   const OBSERVE_SPHERE_W = 80;
 
@@ -69,18 +75,24 @@ export const ObserveSphere = ({ onClick, onLongPress }) => {
   // State
   const translateX_wave_1 = useSharedValue(0);
   const translateX_wave_2 = useSharedValue(0);
-  const scale_menu = useSharedValue(1);
+  const scale_menu = useSharedValue(scale);
   const drawer_open = useSharedValue(false);
 
+  React.useEffect(() => {
+    if (play) {
+      startWavesAnimation({ loop: true });
+    }
+  }, [play]);
+
   // Functions
-  const startWavesAnimation = () => {
+  const startWavesAnimation = ({ loop } = { loop: false }) => {
     // wave 2
     translateX_wave_1.value = withRepeat(
       withSequence(
         withTiming(-320, { duration: 5000 }),
         withTiming(0, { duration: 5000 })
       ),
-      1,
+      loop ? Infinity : 1,
       true
     );
 
@@ -90,13 +102,14 @@ export const ObserveSphere = ({ onClick, onLongPress }) => {
         withTiming(-320, { duration: 5000 }),
         withTiming(0, { duration: 5000 })
       ),
-      1,
+      loop ? Infinity : 1,
       true
     );
   };
 
   // Handlers
   const handleLongPressEvent = ({ nativeEvent }) => {
+    if (!pressable) return;
     if (nativeEvent.state === State.BEGAN) {
       // Animations
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -108,7 +121,7 @@ export const ObserveSphere = ({ onClick, onLongPress }) => {
       onClick && onClick();
     }
     if (nativeEvent.state === State.FAILED) {
-      scale_menu.value = withSpring(1);
+      scale_menu.value = withSpring(scale);
     }
     if (nativeEvent.state === State.ACTIVE) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
