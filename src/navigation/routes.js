@@ -32,7 +32,9 @@ export default function Routes() {
   // Hooks
   useKeepAwake();
   const isFetching = useIsFetching();
-  const { user } = useUser();
+  const { user, initialized } = useUser();
+
+  if (!initialized) return <Loading />;
 
   if (!user) {
     return (
@@ -63,8 +65,6 @@ export default function Routes() {
       </NavigationContainer>
 
       {!!isFetching && <Loading />}
-
-      {/* <BottomMenu /> */}
     </>
   );
 }

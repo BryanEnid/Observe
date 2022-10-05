@@ -1,10 +1,12 @@
 import { Center, Box, Text } from "native-base";
 import React from "react";
+import { TopMenu } from "./TopMenu";
 
 export const Feed = () => {
   return (
-    <Box flex={1} justifyContent="center" alignItems="center">
-      <Text>Feed</Text>
+    <Box flex={1}>
+      <TopMenu />
+      {/* <Text>Feed</Text> */}
     </Box>
   );
 };

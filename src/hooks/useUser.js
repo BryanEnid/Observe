@@ -3,7 +3,8 @@ import { useAuth } from "./useAuth";
 
 export const useUser = () => {
   const [user, setUser] = React.useState();
-  const { token } = useAuth();
+
+  const { token, initialized } = useAuth();
 
   React.useEffect(() => {
     if (!!token?.length) {
@@ -13,5 +14,5 @@ export const useUser = () => {
     }
   }, [token]);
 
-  return { user };
+  return { user, initialized };
 };

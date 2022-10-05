@@ -1,24 +1,49 @@
 import React from "react";
-import { Box, Icon, Pressable, Row } from "native-base";
+import { Box, Icon, Pressable, Row, Text } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ObserveSphere } from "./ObserveSphere";
 import { Feather } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Avatar } from "native-base";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
+import { Actionsheet } from "native-base";
 
 // Constants
 export const MENU_H = 60;
 export const MENU_ITEM_W = "50px";
 
+const ActionMenu = ({ isOpen, onClose }) => {
+  return (
+    <Actionsheet isOpen={isOpen} onClose={onClose}>
+      <Actionsheet.Content>
+        <Box w="100%" h={60} px={4} justifyContent="center">
+          <Text
+            fontSize="16"
+            color="gray.500"
+            _dark={{
+              color: "gray.300",
+            }}
+          >
+            Albums
+          </Text>
+        </Box>
+        <Actionsheet.Item>Delete</Actionsheet.Item>
+        <Actionsheet.Item isDisabled>Share</Actionsheet.Item>
+        <Actionsheet.Item>Play</Actionsheet.Item>
+        <Actionsheet.Item>Favourite</Actionsheet.Item>
+        <Actionsheet.Item>Cancel</Actionsheet.Item>
+      </Actionsheet.Content>
+    </Actionsheet>
+  );
+};
+
 export const BottomMenu = ({ state, descriptors, navigation }) => {
   // Hooks
-  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const { data: profile } = useRandomUsers({
     select: ({ results }) => results[0],
   });
+
+  const [isDrawerOpen, setDrawerOpen] = React.useState(false);
 
   const styles = StyleSheet.create({
     menu: {
@@ -92,8 +117,17 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
         </Pressable>
       );
     },
-    [state]
+    [state, profile]
   );
+
+  const handleClick = () => {
+    setDrawerOpen(true);
+  };
+
+  const handleClose = () => {
+    console.log("triggered");
+    setDrawerOpen(false);
+  };
 
   return (
     <>
@@ -103,7 +137,7 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
           <MenuItem iconName="life-buoy" index={0} route={state.routes[0]} />
           <MenuItem iconName="map" />
           <Box w={MENU_ITEM_W} zIndex={2}>
-            <ObserveSphere pressable scale={0.8} />
+            <ObserveSphere pressable scale={0.8} onClick={handleClick} />
           </Box>
           <MenuItem iconName="message-square" index={2} />
           <MenuItem avatar index={1} route={state.routes[1]} />
@@ -112,6 +146,8 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
         {/* Safe area */}
         <Box safeAreaBottom />
       </Box>
+
+      <ActionMenu isOpen={isDrawerOpen} onClose={handleClose} />
     </>
   );
 };
