@@ -5,9 +5,10 @@ import uuid from "react-native-uuid";
 export const AuthContext = React.createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = React.useState();
+  const [token, setToken] = React.useState("");
 
   React.useEffect(() => {
+    // AsyncStorage.removeItem("session-token");
     AsyncStorage.getItem("session-token").then(setToken);
   }, []);
 
