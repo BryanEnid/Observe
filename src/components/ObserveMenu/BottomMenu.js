@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Icon, Pressable, Row, Text } from "native-base";
+import { Box, Icon, Pressable, Row, Text, useDisclose } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { ObserveSphere } from "./ObserveSphere";
 import { Feather } from "@expo/vector-icons";
@@ -12,25 +12,28 @@ export const MENU_H = 60;
 export const MENU_ITEM_W = "50px";
 
 const ActionMenu = ({ isOpen, onClose }) => {
+  const Action = useDisclose();
+
+  React.useEffect(() => {
+    isOpen && Action.onOpen();
+  }, [isOpen]);
+
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose}>
-      <Actionsheet.Content>
-        <Box w="100%" h={60} px={4} justifyContent="center">
-          <Text
-            fontSize="16"
-            color="gray.500"
-            _dark={{
-              color: "gray.300",
-            }}
-          >
-            Albums
-          </Text>
+      <Actionsheet.Content pt={4}>
+        <Box w="100%" h={60} p={4} flexDir={"row"}>
+          <Icon as={Feather} name="target" size="lg" mr={3} />
+          <Text fontSize="16">Go Live</Text>
         </Box>
-        <Actionsheet.Item>Delete</Actionsheet.Item>
-        <Actionsheet.Item isDisabled>Share</Actionsheet.Item>
-        <Actionsheet.Item>Play</Actionsheet.Item>
-        <Actionsheet.Item>Favourite</Actionsheet.Item>
-        <Actionsheet.Item>Cancel</Actionsheet.Item>
+        <Box w="100%" h={60} p={4} flexDir={"row"}>
+          <Icon as={Feather} name="message-circle" size="lg" mr={3} />
+          <Text fontSize="16">Ask Question</Text>
+        </Box>
+        <Box w="100%" h={60} p={4} flexDir={"row"}>
+          <Icon as={Feather} name="camera" size="lg" mr={3} />
+          <Text fontSize="16">Create Post</Text>
+        </Box>
+        <Actionsheet.Item onPress={onClose}>Cancel</Actionsheet.Item>
       </Actionsheet.Content>
     </Actionsheet>
   );
@@ -125,7 +128,6 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
   };
 
   const handleClose = () => {
-    console.log("triggered");
     setDrawerOpen(false);
   };
 

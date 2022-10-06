@@ -1,12 +1,24 @@
-import { Center, Box, Text } from "native-base";
+import { ScrollView } from "native-base";
 import React from "react";
+import { Question } from "./Posts/Question";
 import { TopMenu } from "./TopMenu";
 
 export const Feed = () => {
   return (
-    <Box flex={1}>
-      <TopMenu />
-      {/* <Text>Feed</Text> */}
-    </Box>
+    <>
+      <ScrollView flex={1}>
+        <TopMenu />
+        <Question />
+        <Question />
+        <Question />
+        <Question />
+        <Question />
+        <Question />
+        <Question />
+        <Question />
+        <Question />
+        <Question />
+      </ScrollView>
+    </>
   );
 };

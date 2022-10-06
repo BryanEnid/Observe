@@ -18,12 +18,7 @@ export const TopMenu = () => {
     key: [{ amount: 30 }],
   });
 
-  const styles = StyleSheet.create({
-    TopBar: {
-      position: "absolute",
-      top: 0,
-    },
-  });
+  const styles = StyleSheet.create({});
 
   if (!profiles) return <></>;
 
