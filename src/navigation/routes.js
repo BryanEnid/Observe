@@ -1,6 +1,9 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { useKeepAwake } from "expo-keep-awake";
@@ -13,6 +16,7 @@ import { Profile } from "../screens/Profile/Profile";
 import { Feed } from "../screens/Feed/Feed";
 import { SignIn } from "../screens/Authentication/SignIn";
 import { SignUp } from "../screens/Authentication/SignUp";
+import { Settings } from "../screens/Settings/Settings";
 
 const linking = {
   prefixes: ["https://mychat.com", "mychat://"],
@@ -61,6 +65,7 @@ export default function Routes() {
         >
           <Stack.Screen name="Feed" component={Feed} />
           <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Settings" component={Settings} />
         </Tab.Navigator>
       </NavigationContainer>
 

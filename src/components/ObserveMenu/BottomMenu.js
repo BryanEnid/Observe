@@ -42,10 +42,14 @@ const ActionMenu = ({ isOpen, onClose }) => {
 export const BottomMenu = ({ state, descriptors, navigation }) => {
   // Hooks
   const { width } = useWindowDimensions();
+
+  // const route = useRoute();
   const { data: profile } = useRandomUsers({
     select: ({ results }) => results[0],
+    key: ["user"],
   });
 
+  // State
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
 
   const styles = StyleSheet.create({
@@ -82,7 +86,7 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
 
         if (!isFocused && !event.defaultPrevented) {
           // The `merge: true` option makes sure that the params inside the tab screen are preserved
-          navigation.navigate({ name: props.route.name, merge: true });
+          navigation.navigate({ name: props.route.name });
         }
       };
 
