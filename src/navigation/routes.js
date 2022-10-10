@@ -59,13 +59,15 @@ export default function Routes() {
     <>
       <NavigationContainer linking={linking} independent>
         <Tab.Navigator
+          backBehavior="history"
           initialRouteName="Feed"
           screenOptions={screenConfig}
           tabBar={(props) => <BottomMenu {...props} />}
         >
-          <Stack.Screen name="Feed" component={Feed} />
-          <Stack.Screen name="Profile" component={Profile} />
-          <Stack.Screen name="Settings" component={Settings} />
+          <Tab.Screen name="Feed" component={Feed} />
+          <Tab.Screen name="Profile" component={Profile} />
+
+          <Tab.Screen name="Settings" component={Settings} />
         </Tab.Navigator>
       </NavigationContainer>
 

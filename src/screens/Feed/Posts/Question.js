@@ -1,17 +1,45 @@
-import { Avatar, Box, Column, Icon, Row, Text } from "native-base";
+import {
+  Avatar,
+  Box,
+  Column,
+  Icon,
+  Image,
+  Pressable,
+  Row,
+  Text,
+} from "native-base";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-export const Question = () => {
+const randomInteger = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const formatNumber = (input) => {
+  return Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 3,
+  }).format(input);
+};
+
+export const Question = ({ data, user }) => {
+  console.log(data);
+
   const styles = StyleSheet.create({
     video: {
-      backgroundColor: "#999",
       width: "100%",
       height: 250,
+    },
+    playButton: {
+      position: "absolute",
+    },
+    backgroundImage: {
+      flex: 1,
+      alignSelf: "stretch",
+      width: null,
       borderRadius: 15,
     },
-    playButton: {},
   });
 
   return (
@@ -23,7 +51,19 @@ export const Question = () => {
         </Text>
       </Column>
 
-      <Row style={styles.video} justifyContent="center" alignItems={"center"}>
+      <Pressable
+        style={styles.video}
+        justifyContent="center"
+        alignItems={"center"}
+        onPress={() => {
+          // Go to video stack
+        }}
+      >
+        <Image
+          source={{ uri: data.image }}
+          alt={data.image}
+          style={styles.backgroundImage}
+        />
         <Icon
           style={styles.playButton}
           as={Feather}
@@ -32,27 +72,29 @@ export const Question = () => {
           size="xl"
           mr={1}
         />
-      </Row>
+      </Pressable>
 
       <Row alignItems="center" my={4}>
-        <Avatar size="xs" mr="2" />
-        <Text>Hiro Aoyama</Text>
+        <Avatar size="xs" mr="2" source={{ uri: user.picture.thumbnail }} />
+        <Text>
+          {user.name.first} {user.name.last}
+        </Text>
       </Row>
 
       <Row space={3}>
         <Row alignItems={"center"}>
           <Icon as={Feather} name="heart" size="md" mr={1} />
-          <Text>2 Likes</Text>
+          <Text>{formatNumber(randomInteger(50000, 1500000))} Likes</Text>
         </Row>
 
         <Row alignItems={"center"}>
           <Icon as={Feather} name="message-circle" size="md" mr={1} />
-          <Text>4 Comments</Text>
+          <Text>{formatNumber(randomInteger(10000, 50000))} Comments</Text>
         </Row>
 
         <Row alignItems={"center"}>
           <Icon as={Feather} name="share" size="md" mr={1} />
-          <Text>4 Shares</Text>
+          <Text>{formatNumber(randomInteger(0, 10000))} Shares</Text>
         </Row>
       </Row>
     </Box>

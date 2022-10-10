@@ -6,6 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import { Avatar } from "native-base";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { Actionsheet } from "native-base";
+import { useRouteName } from "../../hooks/useRouteName";
 
 // Constants
 export const MENU_H = 60;
@@ -43,14 +44,29 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
   // Hooks
   const { width } = useWindowDimensions();
 
-  // const route = useRoute();
+  const { routeName } = useRouteName();
   const { data: profile } = useRandomUsers({
     select: ({ results }) => results[0],
-    key: ["user"],
+    key: ["user", { amount: 1 }],
   });
 
   // State
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
+  const [isVisible, setVisible] = React.useState(true);
+
+  React.useEffect(() => {
+    // TODO: Create a hook for disable by screen and not internally
+    switch (routeName) {
+      case "Settings": {
+        setVisible(false);
+        break;
+      }
+
+      default: {
+        setVisible(true);
+      }
+    }
+  }, [routeName]);
 
   const styles = StyleSheet.create({
     menu: {
@@ -135,6 +151,8 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
     setDrawerOpen(false);
   };
 
+  if (!isVisible) return <></>;
+
   return (
     <>
       {/* Bottom Menu */}
@@ -145,7 +163,7 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
           <Box w={MENU_ITEM_W} zIndex={2}>
             <ObserveSphere pressable scale={0.8} onClick={handleClick} />
           </Box>
-          <MenuItem iconName="message-square" index={2} />
+          <MenuItem iconName="message-square" />
           <MenuItem avatar index={1} route={state.routes[1]} />
         </Row>
 

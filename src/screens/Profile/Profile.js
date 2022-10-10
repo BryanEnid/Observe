@@ -61,7 +61,7 @@ export const Profile = () => {
       ...results[0],
       quote: "Seagulls are the eagles of the sea.",
     }),
-    key: ["user"],
+    key: ["user", { amount: 1 }],
   });
 
   // State

@@ -30,7 +30,7 @@ export const TopMenu = () => {
   });
   const { data: user } = useRandomUsers({
     select: ({ results }) => results[0],
-    key: ["user"],
+    key: ["user", { amount: 1 }],
   });
 
   if (!profiles || !user) return <></>;

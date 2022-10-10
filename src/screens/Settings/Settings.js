@@ -1,10 +1,18 @@
-import { Text } from "native-base";
+import { useNavigation } from "@react-navigation/native";
+import { Box, Text } from "native-base";
 import React from "react";
+import { NavigationBar } from "../../components/NavigationBar";
 
 export const Settings = () => {
-  React.useEffect(() => {
-    toggleBottomMenu();
-  }, []);
+  const navigation = useNavigation();
 
-  return <Text>Settings</Text>;
+  return (
+    <>
+      <NavigationBar />
+
+      <Box justifyContent="center" alignItems="center" flex={1}>
+        <Text>Settings</Text>
+      </Box>
+    </>
+  );
 };
