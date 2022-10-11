@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useContext } from "react";
 import { Box, Icon, Pressable, Row, Text, useDisclose } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { ObserveSphere } from "./ObserveSphere";
@@ -11,6 +11,14 @@ import { useRouteName } from "../../hooks/useRouteName";
 // Constants
 export const MENU_H = 60;
 export const MENU_ITEM_W = "50px";
+
+let BottomMenuState = { visible: true };
+const BottomMenuActions = () => ({
+  toggleBottomMenu: () => {
+    BottomMenuState.visible = !BottomMenuState.visible;
+  },
+});
+export const BottomMenuProvider = createContext(BottomMenuState).Provider;
 
 const ActionMenu = ({ isOpen, onClose }) => {
   const Action = useDisclose();
@@ -44,7 +52,6 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
   // Hooks
   const { width } = useWindowDimensions();
 
-  const { routeName } = useRouteName();
   const { data: profile } = useRandomUsers({
     select: ({ results }) => results[0],
     key: ["user", { amount: 1 }],
@@ -53,20 +60,6 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
   // State
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [isVisible, setVisible] = React.useState(true);
-
-  React.useEffect(() => {
-    // TODO: Create a hook for disable by screen and not internally
-    switch (routeName) {
-      case "Settings": {
-        setVisible(false);
-        break;
-      }
-
-      default: {
-        setVisible(true);
-      }
-    }
-  }, [routeName]);
 
   const styles = StyleSheet.create({
     menu: {

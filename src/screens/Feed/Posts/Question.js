@@ -11,6 +11,7 @@ import {
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const randomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -24,7 +25,7 @@ const formatNumber = (input) => {
 };
 
 export const Question = ({ data, user }) => {
-  console.log(data);
+  const navigation = useNavigation();
 
   const styles = StyleSheet.create({
     video: {
@@ -56,7 +57,7 @@ export const Question = ({ data, user }) => {
         justifyContent="center"
         alignItems={"center"}
         onPress={() => {
-          // Go to video stack
+          navigation.navigate("Immersive", { data, user });
         }}
       >
         <Image

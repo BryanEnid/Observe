@@ -17,6 +17,7 @@ import { Feed } from "../screens/Feed/Feed";
 import { SignIn } from "../screens/Authentication/SignIn";
 import { SignUp } from "../screens/Authentication/SignUp";
 import { Settings } from "../screens/Settings/Settings";
+import { Immersive } from "../screens/Feed/Immersive";
 
 const linking = {
   prefixes: ["https://mychat.com", "mychat://"],
@@ -31,6 +32,18 @@ const linking = {
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const screenConfig = { headerShown: false };
+
+const FeedStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="EfficientView"
+      screenOptions={screenConfig}
+    >
+      <Stack.Screen name="Efficient" component={Feed} />
+      <Stack.Screen name="Immersive" component={Immersive} />
+    </Stack.Navigator>
+  );
+};
 
 export default function Routes() {
   // Hooks
@@ -64,7 +77,7 @@ export default function Routes() {
           screenOptions={screenConfig}
           tabBar={(props) => <BottomMenu {...props} />}
         >
-          <Tab.Screen name="Feed" component={Feed} />
+          <Tab.Screen name="Feed" component={FeedStack} />
           <Tab.Screen name="Profile" component={Profile} />
 
           <Tab.Screen name="Settings" component={Settings} />
