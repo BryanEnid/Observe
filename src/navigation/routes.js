@@ -33,15 +33,27 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const screenConfig = { headerShown: false };
 
-const FeedStack = () => {
+// const FeedStack = () => {
+//   return (
+//     <Stack.Navigator initialRouteName="Efficient" screenOptions={screenConfig}>
+//       <Stack.Screen name="Efficient" component={Feed} />
+//       <Stack.Screen name="Immersive" component={Immersive} />
+//     </Stack.Navigator>
+//   );
+// };
+
+const HomeTabs = () => {
   return (
-    <Stack.Navigator
-      initialRouteName="EfficientView"
+    <Tab.Navigator
+      backBehavior="history"
+      initialRouteName="Feed"
       screenOptions={screenConfig}
+      tabBar={(props) => <BottomMenu {...props} />}
     >
-      <Stack.Screen name="Efficient" component={Feed} />
-      <Stack.Screen name="Immersive" component={Immersive} />
-    </Stack.Navigator>
+      <Tab.Screen name="Feed" component={Feed} />
+      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen name="Settings" component={Settings} />
+    </Tab.Navigator>
   );
 };
 
@@ -71,17 +83,14 @@ export default function Routes() {
   return (
     <>
       <NavigationContainer linking={linking} independent>
-        <Tab.Navigator
-          backBehavior="history"
-          initialRouteName="Feed"
+        <Stack.Navigator
+          initialRouteName="Efficient"
           screenOptions={screenConfig}
-          tabBar={(props) => <BottomMenu {...props} />}
         >
-          <Tab.Screen name="Feed" component={FeedStack} />
-          <Tab.Screen name="Profile" component={Profile} />
-
-          <Tab.Screen name="Settings" component={Settings} />
-        </Tab.Navigator>
+          <Stack.Screen name="Feed" component={HomeTabs} />
+          {/* <Stack.Screen name="Efficient" component={} /> */}
+          <Stack.Screen name="Immersive" component={Immersive} />
+        </Stack.Navigator>
       </NavigationContainer>
 
       {!!isFetching && <Loading />}

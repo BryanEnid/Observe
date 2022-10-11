@@ -10,6 +10,7 @@ export const NavigationBar = () => {
       <IconButton
         icon={<Icon as={Feather} name="arrow-left" size="lg" />}
         onPress={() => navigation.goBack()}
+        _icon={{ color: "white" }}
       />
     </Box>
   );

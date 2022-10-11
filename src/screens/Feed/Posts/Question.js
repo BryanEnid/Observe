@@ -12,17 +12,8 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
-const randomInteger = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-const formatNumber = (input) => {
-  return Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: 3,
-  }).format(input);
-};
+import { randomInteger } from "../../../utils/randomInteger";
+import { formatNumber } from "../../../utils/formatNumber";
 
 export const Question = ({ data, user }) => {
   const navigation = useNavigation();
@@ -48,7 +39,7 @@ export const Question = ({ data, user }) => {
       <Column my={"3"}>
         <Text fontSize="13">UI/UX - 2hr ago</Text>
         <Text fontSize="16" bold>
-          How do you usually start to design a screen?
+          {data.question}
         </Text>
       </Column>
 

@@ -29,7 +29,11 @@ export const Feed = () => {
           return (
             <Question
               key={id}
-              data={{ image, video: video_files[0] }}
+              data={{
+                image,
+                video: video_files[0],
+                question: "How do you usually start to design a screen?",
+              }}
               user={users[index]}
             />
           );

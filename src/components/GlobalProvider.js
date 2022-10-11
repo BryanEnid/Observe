@@ -5,7 +5,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { PortalProvider } from "./Portal";
 import { AuthProvider } from "./Providers/AuthProvider";
 import { useUser } from "../hooks/useUser";
-import { BottomMenuProvider } from "./ObserveMenu/BottomMenu";
 
 // React Query config: Create a client
 const queryClient = new QueryClient();
@@ -42,7 +41,7 @@ export const GlobalProvider = ({ children }) => {
       <QueryClientProvider client={queryClient}>
         <PortalProvider>
           <NativeBaseProvider config={config} theme={theme}>
-            <BottomMenuProvider>{children}</BottomMenuProvider>
+            {children}
           </NativeBaseProvider>
         </PortalProvider>
       </QueryClientProvider>
