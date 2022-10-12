@@ -10,7 +10,7 @@ const count = 10;
 
 export const Feed = () => {
   const { data: videos } = useRandomVideos({
-    key: [{ per_page: count }],
+    key: [{ per_page: count, size: "small" }],
     select: (res) => res.videos,
   });
   const { data: users } = useRandomUsers({
@@ -26,6 +26,7 @@ export const Feed = () => {
         <TopMenu />
 
         {videos.map(({ image, video_files, id }, index) => {
+          console.log(">>>", video_files);
           return (
             <Question
               key={id}

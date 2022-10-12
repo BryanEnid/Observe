@@ -17,6 +17,10 @@ import { formatNumber } from "../../../utils/formatNumber";
 
 export const Question = ({ data, user }) => {
   const navigation = useNavigation();
+  const likes = React.useRef(formatNumber(randomInteger(10000, 50000)));
+  const comments = React.useRef(formatNumber(randomInteger(100, 1000)));
+  const shares = React.useRef(formatNumber(randomInteger(100, 1000)));
+  const views = React.useRef(formatNumber(randomInteger(10000, 50000)));
 
   const styles = StyleSheet.create({
     video: {
@@ -48,7 +52,16 @@ export const Question = ({ data, user }) => {
         justifyContent="center"
         alignItems={"center"}
         onPress={() => {
-          navigation.navigate("Immersive", { data, user });
+          navigation.navigate("Immersive", {
+            data: {
+              ...data,
+              likes: likes.current,
+              comments: comments.current,
+              shares: shares.current,
+              views: views.current,
+            },
+            user,
+          });
         }}
       >
         <Image
@@ -76,17 +89,17 @@ export const Question = ({ data, user }) => {
       <Row space={3}>
         <Row alignItems={"center"}>
           <Icon as={Feather} name="heart" size="md" mr={1} />
-          <Text>{formatNumber(randomInteger(50000, 1500000))} Likes</Text>
+          <Text>{likes.current} Likes</Text>
         </Row>
 
         <Row alignItems={"center"}>
           <Icon as={Feather} name="message-circle" size="md" mr={1} />
-          <Text>{formatNumber(randomInteger(10000, 50000))} Comments</Text>
+          <Text>{comments.current} Comments</Text>
         </Row>
 
         <Row alignItems={"center"}>
           <Icon as={Feather} name="share" size="md" mr={1} />
-          <Text>{formatNumber(randomInteger(0, 10000))} Shares</Text>
+          <Text>{shares.current} Shares</Text>
         </Row>
       </Row>
     </Box>

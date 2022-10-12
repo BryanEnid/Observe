@@ -7,6 +7,9 @@ import { StyleSheet, useWindowDimensions } from "react-native";
 import { Loading } from "../../components/Loading";
 import { NavigationBar } from "../../components/NavigationBar";
 import { Feather } from "@expo/vector-icons";
+import { formatNumber } from "../../utils/formatNumber";
+import { randomInteger } from "../../utils/randomInteger";
+import { BottomMenu } from "../../components/ObserveMenu/BottomMenu";
 
 export const Immersive = () => {
   const { params } = useRoute();
@@ -47,26 +50,25 @@ export const Immersive = () => {
       </Box>
 
       {/* UI */}
-      <Box style={styles.UI} justifyContent="flex-end" px={3} safeAreaBottom>
+      <Box style={styles.UI} justifyContent="flex-end" px={3}>
         <VStack alignItems="flex-end" space={9}>
           <Box>
             <Icon as={Feather} name="arrow-up-circle" size="lg" color="white" />
-            <Text color={"white"}>asd</Text>
+            <Text color={"white"}>{params.data.likes}</Text>
           </Box>
 
           <Box>
             <Icon as={Feather} name="message-circle" size="lg" color="white" />
-            <Text color={"white"}>asd</Text>
+            <Text color={"white"}>{params.data.comments}</Text>
           </Box>
 
           <Box>
             <Icon as={Feather} name="link" size="lg" color="white" />
-            <Text color={"white"}>asd</Text>
+            <Text color={"white"}>{params.data.shares}</Text>
           </Box>
 
           <Box>
             <Icon as={Feather} name="share-2" size="lg" color="white" />
-            <Text color={"white"}>asd</Text>
           </Box>
         </VStack>
 
@@ -89,8 +91,15 @@ export const Immersive = () => {
             {params.data.question}
           </Text>
 
-          <Icon as={Feather} name="eye" size="sm" color="white" />
+          <HStack alignItems="center">
+            <Icon as={Feather} name="eye" size="sm" color="white" mr={2} />
+            <Text color="white">{params.data.views}</Text>
+          </HStack>
         </VStack>
+
+        <Box mt={3}>
+          <BottomMenu transparent />
+        </Box>
       </Box>
     </Box>
   );

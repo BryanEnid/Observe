@@ -48,7 +48,7 @@ const ActionMenu = ({ isOpen, onClose }) => {
   );
 };
 
-export const BottomMenu = ({ state, descriptors, navigation }) => {
+export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
   // Hooks
   const { width } = useWindowDimensions();
 
@@ -64,10 +64,7 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
   const styles = StyleSheet.create({
     menu: {
       width,
-      // height: MENU_HEIGHT + insets.bottom,
-      // position: "absolute",
-      // bottom: 0,
-      backgroundColor: "white",
+      backgroundColor: transparent ? "transparent" : "white",
       shadowColor: "#333",
       shadowOffset: {
         width: 0,
@@ -82,7 +79,7 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
 
   const MenuItem = React.useCallback(
     (props) => {
-      const isFocused = state.index === props.index;
+      const isFocused = !transparent ? state?.index === props?.index : false;
 
       const handleOnPress = () => {
         if (!props.route) return null;
@@ -145,6 +142,29 @@ export const BottomMenu = ({ state, descriptors, navigation }) => {
   };
 
   if (!isVisible) return <></>;
+
+  if (!state)
+    return (
+      <>
+        {/* Bottom Menu */}
+        <Box style={styles.menu}>
+          <Row justifyContent={"space-evenly"} zIndex={1}>
+            <MenuItem iconName="life-buoy" index={0} />
+            <MenuItem iconName="map" />
+            <Box w={MENU_ITEM_W} zIndex={2}>
+              <ObserveSphere pressable scale={0.8} onClick={handleClick} />
+            </Box>
+            <MenuItem iconName="message-square" />
+            <MenuItem avatar index={1} />
+          </Row>
+
+          {/* Safe area */}
+          <Box safeAreaBottom />
+        </Box>
+
+        <ActionMenu isOpen={isDrawerOpen} onClose={handleClose} />
+      </>
+    );
 
   return (
     <>
