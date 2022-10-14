@@ -7,6 +7,7 @@ import { Avatar } from "native-base";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { Actionsheet } from "native-base";
 import { useRouteName } from "../../hooks/useRouteName";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 // Constants
 export const MENU_H = 60;
@@ -22,26 +23,42 @@ export const BottomMenuProvider = createContext(BottomMenuState).Provider;
 
 const ActionMenu = ({ isOpen, onClose }) => {
   const Action = useDisclose();
+  const navigation = useNavigation();
+  const route = useRoute();
 
   React.useEffect(() => {
     isOpen && Action.onOpen();
   }, [isOpen]);
 
+  const handleAskQuestion = () => {
+    navigation.navigate("AskQuestion");
+    onClose();
+  };
+
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose}>
       <Actionsheet.Content pt={4}>
-        <Box w="100%" h={60} p={4} flexDir={"row"}>
-          <Icon as={Feather} name="target" size="lg" mr={3} />
-          <Text fontSize="16">Go Live</Text>
-        </Box>
-        <Box w="100%" h={60} p={4} flexDir={"row"}>
-          <Icon as={Feather} name="message-circle" size="lg" mr={3} />
-          <Text fontSize="16">Ask Question</Text>
-        </Box>
-        <Box w="100%" h={60} p={4} flexDir={"row"}>
-          <Icon as={Feather} name="camera" size="lg" mr={3} />
-          <Text fontSize="16">Create Post</Text>
-        </Box>
+        <Actionsheet.Item>
+          <Box py={2} flexDir={"row"}>
+            <Icon as={Feather} name="target" size="lg" mr={3} />
+            <Text fontSize="16">Go Live</Text>
+          </Box>
+        </Actionsheet.Item>
+
+        <Actionsheet.Item onPress={handleAskQuestion}>
+          <Box py={2} flexDir={"row"}>
+            <Icon as={Feather} name="message-circle" size="lg" mr={3} />
+            <Text fontSize="16">Ask Question</Text>
+          </Box>
+        </Actionsheet.Item>
+
+        <Actionsheet.Item>
+          <Box py={2} flexDir={"row"}>
+            <Icon as={Feather} name="camera" size="lg" mr={3} />
+            <Text fontSize="16">Create Post</Text>
+          </Box>
+        </Actionsheet.Item>
+
         <Actionsheet.Item onPress={onClose}>Cancel</Actionsheet.Item>
       </Actionsheet.Content>
     </Actionsheet>

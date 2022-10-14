@@ -26,7 +26,6 @@ export const Feed = () => {
         <TopMenu />
 
         {videos.map(({ image, video_files, id }, index) => {
-          console.log(">>>", video_files);
           return (
             <Question
               key={id}

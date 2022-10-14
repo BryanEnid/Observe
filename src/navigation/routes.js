@@ -18,6 +18,7 @@ import { SignIn } from "../screens/Authentication/SignIn";
 import { SignUp } from "../screens/Authentication/SignUp";
 import { Settings } from "../screens/Settings/Settings";
 import { Immersive } from "../screens/Feed/Immersive";
+import { AskQuestionScreen } from "../screens/Question/AskQuestion";
 
 const linking = {
   prefixes: ["https://mychat.com", "mychat://"],
@@ -32,15 +33,6 @@ const linking = {
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const screenConfig = { headerShown: false };
-
-// const FeedStack = () => {
-//   return (
-//     <Stack.Navigator initialRouteName="Efficient" screenOptions={screenConfig}>
-//       <Stack.Screen name="Efficient" component={Feed} />
-//       <Stack.Screen name="Immersive" component={Immersive} />
-//     </Stack.Navigator>
-//   );
-// };
 
 const HomeTabs = () => {
   return (
@@ -65,31 +57,30 @@ export default function Routes() {
 
   if (!initialized) return <Loading />;
 
-  if (!user) {
-    return (
-      <NavigationContainer linking={linking} independent>
-        <Stack.Navigator initialRouteName="SignIn" screenOptions={screenConfig}>
-          <Stack.Screen name="SignIn" component={SignIn} />
-          <Stack.Screen
-            name="SignUp"
-            component={SignUp}
-            options={{ gestureEnabled: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-
   return (
     <>
       <NavigationContainer linking={linking} independent>
-        <Stack.Navigator
-          initialRouteName="Efficient"
-          screenOptions={screenConfig}
-        >
-          <Stack.Screen name="Feed" component={HomeTabs} />
-          {/* <Stack.Screen name="Efficient" component={} /> */}
-          <Stack.Screen name="Immersive" component={Immersive} />
+        <Stack.Navigator screenOptions={screenConfig}>
+          {!user ? (
+            <Stack.Group>
+              <Stack.Screen name="SignIn" component={SignIn} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+            </Stack.Group>
+          ) : (
+            <>
+              <Stack.Group>
+                <Stack.Screen name="Feed" component={HomeTabs} />
+                <Stack.Screen name="Immersive" component={Immersive} />
+              </Stack.Group>
+
+              <Stack.Group screenOptions={{ presentation: "modal" }}>
+                <Stack.Screen
+                  name="AskQuestion"
+                  component={AskQuestionScreen}
+                />
+              </Stack.Group>
+            </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
 
