@@ -8,7 +8,7 @@ export const Settings = () => {
 
   return (
     <>
-      <NavigationBar />
+      <NavigationBar safeAreaTop />
 
       <Box justifyContent="center" alignItems="center" flex={1}>
         <Text>Settings</Text>

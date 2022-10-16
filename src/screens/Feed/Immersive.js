@@ -46,7 +46,7 @@ export const Immersive = () => {
       />
 
       <Box style={{ position: "absolute", zIndex: 2 }}>
-        <NavigationBar />
+        <NavigationBar safeAreaTop />
       </Box>
 
       {/* UI */}
