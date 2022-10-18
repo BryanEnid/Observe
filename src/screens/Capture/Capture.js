@@ -660,19 +660,21 @@ export const CaptureScreen = () => {
           </Box>
 
           <Box>
-            <Center
-              mx={10}
-              mb={55}
-              px={5}
-              py={3}
-              borderRadius={50}
-              bg="gray.800"
-              maxW={500}
-              borderColor="gray.700"
-              borderWidth={1}
-            >
-              <Text color="white">{selectedQuestion}</Text>
-            </Center>
+            {selectedQuestion && (
+              <Center
+                mx={10}
+                mb={55}
+                px={5}
+                py={3}
+                borderRadius={50}
+                bg="gray.800"
+                maxW={500}
+                borderColor="gray.700"
+                borderWidth={1}
+              >
+                <Text color="white">{selectedQuestion}</Text>
+              </Center>
+            )}
 
             <Box mb={30}>
               <ObserveSphere scale={0.9} pressable />
