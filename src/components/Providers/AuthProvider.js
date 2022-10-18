@@ -5,10 +5,15 @@ import uuid from "react-native-uuid";
 export const AuthContext = React.createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = React.useState();
+  const [token, setToken] = React.useState("");
+  const [initialized, setInitialized] = React.useState(false);
 
   React.useEffect(() => {
-    AsyncStorage.getItem("session-token").then(setToken);
+    // AsyncStorage.removeItem("session-token");
+    AsyncStorage.getItem("session-token").then((data) => {
+      setToken(data);
+      setInitialized(true);
+    });
   }, []);
 
   const signUp = () => {};
@@ -34,6 +39,7 @@ export const AuthProvider = ({ children }) => {
         signIn,
         signOut,
         anonymousSignIn,
+        initialized,
       }}
     >
       {children}

@@ -9,6 +9,9 @@ import {
   Center,
   Image,
   Button,
+  IconButton,
+  Icon,
+  VStack,
 } from "native-base";
 import Animated, {
   cancelAnimation,
@@ -23,14 +26,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import * as Haptics from "expo-haptics";
+import { Feather } from "@expo/vector-icons";
 
-import { useRandomVideos } from "../../hooks/query/useRandomVideos";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { scrollTo } from "../../utils/scrollTo";
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
 import { BucketScreen } from "./Buckets/Buckets";
 import { ResumeScreen } from "./Resume/Resume";
+import { useNavigation } from "@react-navigation/native";
 
 const statusBarHeight = getStatusBarHeight();
 
@@ -52,19 +55,13 @@ const HEADER_W = 400;
 export const Profile = () => {
   // Hooks
   const { width, height } = useWindowDimensions();
-  // const { data: videoURI } = useRandomVideos({
-  //   select: ({ videos }) => {
-  //     const randomNumber = Math.round(Math.random() * 79);
-  //     return videos[randomNumber].video_files[0].link;
-  //   },
-  //   enabled: false,
-  // });
-
+  const navigation = useNavigation();
   const { data: profile } = useRandomUsers({
     select: ({ results }) => ({
       ...results[0],
       quote: "Seagulls are the eagles of the sea.",
     }),
+    key: ["user", { amount: 1 }],
   });
 
   // State
@@ -112,6 +109,11 @@ export const Profile = () => {
       position: "absolute",
       top: PROFILE_H + PROFILE_NAME_H + statusBarHeight,
       left: width / 2 - NAV_BTN_W / 2,
+      zIndex: 2,
+    },
+    menu_button: {
+      position: "absolute",
+      right: 10,
       zIndex: 2,
     },
   });
@@ -261,33 +263,6 @@ export const Profile = () => {
       <Box overflowX={"hidden"} flex={1} backgroundColor="white">
         <StatusBar barStyle={"dark-content"} />
 
-        {/* Profile */}
-        <Animated.View style={[r_header, styles.header]}>
-          <Box>
-            <Box height={PROFILE_H} justifyContent="space-evenly">
-              <Center>
-                <Pressable onPress={() => {}}>
-                  <Box>
-                    <Image
-                      source={{ uri: profile?.picture?.large }}
-                      fallbackSource={{
-                        uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
-                      }}
-                      style={styles.profile_picture}
-                      alt="profile picture"
-                    />
-                  </Box>
-                </Pressable>
-              </Center>
-
-              <Center>
-                <Text>Software Engineer at Facebook</Text>
-                <Text>"{profile.quote}"</Text>
-              </Center>
-            </Box>
-          </Box>
-        </Animated.View>
-
         {/* User */}
         <Animated.View style={[styles.username, r_profile_name_y_translate]}>
           <Center>
@@ -339,6 +314,52 @@ export const Profile = () => {
             ))}
           </Animated.ScrollView>
         </Box>
+
+        {/* Profile */}
+        {/* This is at the end so the "on" events triggers */}
+        <Animated.View style={[r_header, styles.header]}>
+          <Box>
+            <Box height={PROFILE_H} justifyContent="space-evenly">
+              <VStack style={styles.menu_button} space={3}>
+                <IconButton
+                  icon={<Icon as={Feather} name="settings" size="lg" />}
+                  onPress={() => {
+                    // Navigate to settings
+                    navigation.navigate("Settings");
+                  }}
+                />
+                <IconButton
+                  icon={<Icon as={Feather} name="more-horizontal" size="md" />}
+                  variant="outline"
+                  onPress={() => {
+                    // Show more options
+                    console.log("in");
+                  }}
+                />
+              </VStack>
+
+              <Center>
+                <Pressable onPress={() => {}}>
+                  <Box>
+                    <Image
+                      source={{ uri: profile?.picture?.large }}
+                      fallbackSource={{
+                        uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
+                      }}
+                      style={styles.profile_picture}
+                      alt="profile picture"
+                    />
+                  </Box>
+                </Pressable>
+              </Center>
+
+              <Center>
+                <Text>Software Engineer at Facebook</Text>
+                <Text>"{profile.quote}"</Text>
+              </Center>
+            </Box>
+          </Box>
+        </Animated.View>
       </Box>
     </>
   );

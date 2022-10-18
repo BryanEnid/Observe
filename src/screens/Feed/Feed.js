@@ -1,10 +1,44 @@
-import { Center, Box, Text } from "native-base";
+import { ScrollView } from "native-base";
 import React from "react";
+import { Question } from "./Posts/Question";
+import { TopMenu } from "./TopMenu";
+import { useRandomVideos } from "../../hooks/query/useRandomVideos";
+import { Loading } from "../../components/Loading";
+import { useRandomUsers } from "../../hooks/query/useRandomUsers";
+
+const count = 10;
 
 export const Feed = () => {
+  const { data: videos } = useRandomVideos({
+    key: [{ per_page: count, size: "small" }],
+    select: (res) => res.videos,
+  });
+  const { data: users } = useRandomUsers({
+    key: [{ amount: count }, "Feed"],
+    select: (res) => res.results,
+  });
+
+  if (!videos || !users) return <Loading />;
+
   return (
-    <Box flex={1} justifyContent="center" alignItems="center">
-      <Text>Feed</Text>
-    </Box>
+    <>
+      <ScrollView flex={1}>
+        <TopMenu />
+
+        {videos.map(({ image, video_files, id }, index) => {
+          return (
+            <Question
+              key={id}
+              data={{
+                image,
+                video: video_files[0],
+                question: "How do you usually start to design a screen?",
+              }}
+              user={users[index]}
+            />
+          );
+        })}
+      </ScrollView>
+    </>
   );
 };

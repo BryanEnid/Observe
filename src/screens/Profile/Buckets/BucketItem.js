@@ -2,7 +2,6 @@ import React from "react";
 import { Image, StyleSheet, Dimensions } from "react-native";
 import { Video } from "expo-av";
 import { Box, Text } from "native-base";
-import { useRandomUsers } from "../../../hooks/query/useRandomUsers";
 
 const { width } = Dimensions.get("screen");
 const gap = 20;

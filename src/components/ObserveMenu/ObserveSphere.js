@@ -114,7 +114,7 @@ export const ObserveSphere = ({
       // Animations
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       scale_menu.value = withDelay(1000, withSpring(1.2, { velocity: 5 }));
-      drawer_open.value = !drawer_open.value;
+      // drawer_open.value = !drawer_open.value;
 
       // Callbacks
       startWavesAnimation();
