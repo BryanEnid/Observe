@@ -19,7 +19,9 @@ import { SignUp } from "../screens/Authentication/SignUp";
 import { Settings } from "../screens/Settings/Settings";
 import { Immersive } from "../screens/Feed/Immersive";
 import { AskQuestionScreen } from "../screens/Question/AskQuestion";
+import { CaptureScreen } from "../screens/Capture/Capture";
 
+// TODO: REMOVE
 const linking = {
   prefixes: ["https://mychat.com", "mychat://"],
   config: {
@@ -56,6 +58,8 @@ export default function Routes() {
   const { user, initialized } = useUser();
 
   if (!initialized) return <Loading />;
+
+  return <CaptureScreen />;
 
   return (
     <>

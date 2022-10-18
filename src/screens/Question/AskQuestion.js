@@ -12,6 +12,8 @@ import {
   ScrollView,
   View,
   Avatar,
+  FlatList,
+  Divider,
 } from "native-base";
 import React from "react";
 import { Keyboard } from "react-native";
@@ -20,22 +22,76 @@ import { Feather } from "@expo/vector-icons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 
+const UserItem = ({ item, onSelected, selected, index }) => {
+  return (
+    <Pressable
+      p={3}
+      flexDirection="row"
+      alignItems="center"
+      onPress={() => onSelected(index)}
+      bg={selected ? "blue.600" : "white"}
+    >
+      <Avatar source={{ uri: item.picture.medium }} size="md" mr={5} />
+      <Text
+        fontSize="14"
+        fontWeight="medium"
+        color={selected ? "white" : "blue.600"}
+      >
+        @{item.login.username}
+      </Text>
+    </Pressable>
+  );
+};
+
 // TODO: Create a "Select" Component to reuse
 export const AskQuestionScreen = () => {
   const [questionType, setQuestionType] = React.useState("voice");
   const [destination, setDestination] = React.useState("broadly");
-  const { data: profiles } = useRandomUsers({
+  const [profiles, setProfiles] = React.useState([]);
+  const [selectedProfile, setSelectedProfile] = React.useState("");
+  const [searchInput, setSearchInput] = React.useState("");
+
+  const { data } = useRandomUsers({
     select: (data) => data.results,
     key: [{ amount: 30 }],
   });
 
-  const handleSelectQuestionType = (type) => {
+  React.useEffect(() => {
+    if (data) setProfiles(data);
+  }, [data]);
+
+  React.useEffect(() => {
+    if (data) {
+      setSelectedProfile(null);
+
+      if (searchInput === "") setProfiles(data);
+
+      if (!!searchInput.length) {
+        const filteredArr = profiles.filter((item) =>
+          item.login.username.includes(searchInput)
+        );
+        setProfiles(filteredArr);
+      }
+    }
+  }, [searchInput]);
+
+  React.useEffect(() => {}, [selectedProfile]);
+
+  const handleSelectedQuestionType = (type) => {
     if (type === questionType) return setQuestionType("");
     return setQuestionType(type);
   };
 
-  const handleSelectDestination = (type) => {
+  const handleSelectedDestination = (type) => {
     return setDestination(type);
+  };
+
+  const handleSelectedProfile = (username) => {
+    return setSelectedProfile(username);
+  };
+
+  const handleSearch = (text) => {
+    return setSearchInput(text);
   };
 
   return (
@@ -65,7 +121,7 @@ export const AskQuestionScreen = () => {
                     flex={1}
                     variant={questionType === "voice" ? "solid" : "outline"}
                     leftIcon={<Icon as={Feather} name="mic" size="sm" />}
-                    onPress={() => handleSelectQuestionType("voice")}
+                    onPress={() => handleSelectedQuestionType("voice")}
                   >
                     Voice
                   </Button>
@@ -73,7 +129,7 @@ export const AskQuestionScreen = () => {
                     flex={1}
                     variant={questionType === "text" ? "solid" : "outline"}
                     leftIcon={<Icon as={Feather} name="type" size="sm" />}
-                    onPress={() => handleSelectQuestionType("text")}
+                    onPress={() => handleSelectedQuestionType("text")}
                   >
                     Text
                   </Button>
@@ -81,7 +137,7 @@ export const AskQuestionScreen = () => {
                     flex={1}
                     variant={questionType === "video" ? "solid" : "outline"}
                     leftIcon={<Icon as={Feather} name="video" size="sm" />}
-                    onPress={() => handleSelectQuestionType("video")}
+                    onPress={() => handleSelectedQuestionType("video")}
                   >
                     Video
                   </Button>
@@ -96,7 +152,7 @@ export const AskQuestionScreen = () => {
                     flex={1}
                     variant={destination === "broadly" ? "solid" : "outline"}
                     leftIcon={<Icon as={Feather} name="globe" size="sm" />}
-                    onPress={() => handleSelectDestination("broadly")}
+                    onPress={() => handleSelectedDestination("broadly")}
                   >
                     Broadly
                   </Button>
@@ -104,7 +160,7 @@ export const AskQuestionScreen = () => {
                     flex={1}
                     variant={destination === "dm" ? "solid" : "outline"}
                     leftIcon={<Icon as={Feather} name="at-sign" size="sm" />}
-                    onPress={() => handleSelectDestination("dm")}
+                    onPress={() => handleSelectedDestination("dm")}
                   >
                     Direct Message
                   </Button>
@@ -114,43 +170,41 @@ export const AskQuestionScreen = () => {
           </Pressable>
 
           {destination === "dm" && (
-            <Box flex={1}>
+            <VStack flex={1} space={3}>
               <Box>
                 <Input
                   size={"md"}
                   variant={"filled"}
                   placeholder="Search user"
+                  autoCapitalize="none"
+                  value={searchInput}
+                  onChangeText={handleSearch}
                   InputLeftElement={
                     <Icon as={Feather} name="search" size="sm" ml={4} />
                   }
                 />
               </Box>
 
-              <ScrollView
+              <FlatList
                 bg="white"
-                borderBottomLeftRadius={5}
-                borderBottomRightRadius={5}
-                px={3}
-                py={2}
-              >
-                <Pressable flex={1} onPress={Keyboard.dismiss}>
-                  {profiles.map((item) => (
-                    <Box mt={3} flexDirection="row" alignItems="center">
-                      <Avatar
-                        source={{ uri: item.picture.medium }}
-                        size="sm"
-                        mr={5}
-                      />
-                      <Text fontSize="13">{item.name.first}</Text>
-                    </Box>
-                  ))}
-                </Pressable>
-              </ScrollView>
-            </Box>
+                flex={1}
+                data={profiles}
+                renderItem={(props) => (
+                  <UserItem
+                    {...props}
+                    onSelected={handleSelectedProfile}
+                    selected={props.index === selectedProfile}
+                  />
+                )}
+                keyExtractor={(item) => item.login.uuid}
+                borderRadius={5}
+                ItemSeparatorComponent={Divider}
+              />
+            </VStack>
           )}
         </Flex>
 
-        <VStack flexShrink={1} px={3} justifyContent="flex-end" safeAreaBottom>
+        <VStack px={3} justifyContent="flex-end" safeAreaBottom>
           <Button colorScheme="blue">Next</Button>
         </VStack>
       </Box>
