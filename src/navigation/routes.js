@@ -59,7 +59,7 @@ export default function Routes() {
 
   if (!initialized) return <Loading />;
 
-  return <CaptureScreen />;
+  // return <CaptureScreen />;
 
   return (
     <>

@@ -16,12 +16,15 @@
       "fallbackToCacheTimeout": 0
     },
     "plugins": [
-      "expo-build-properties",
-      {
-        "ios": {
-          "useFrameworks": "static"
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
         }
-      }
+      ]
     ],
     "assetBundlePatterns": ["**/*"],
     "android": {
@@ -29,7 +32,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.Observe.app"
     },
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist"

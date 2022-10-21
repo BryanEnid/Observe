@@ -1,6 +1,7 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
+import { auth } from "../../config/FirebaseConfig";
 
 export const AuthContext = React.createContext({});
 
@@ -8,12 +9,16 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = React.useState("");
   const [initialized, setInitialized] = React.useState(false);
 
+  // React.useEffect(() => {
+  //   // AsyncStorage.removeItem("session-token");
+  //   AsyncStorage.getItem("session-token").then((data) => {
+  //     setToken(data);
+  //     setInitialized(true);
+  //   });
+  // }, []);
+
   React.useEffect(() => {
-    // AsyncStorage.removeItem("session-token");
-    AsyncStorage.getItem("session-token").then((data) => {
-      setToken(data);
-      setInitialized(true);
-    });
+    console.log(auth);
   }, []);
 
   const signUp = () => {};
