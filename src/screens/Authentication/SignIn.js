@@ -116,6 +116,7 @@ export const SignIn = () => {
                 or skip
               </Text>
             </Button>
+
             <FederatedLoginContainer />
           </Box>
         </VStack>
