@@ -1,4 +1,4 @@
-package com.Observe.app;
+package com.observe.app;
 
 import android.os.Build;
 import android.os.Bundle;

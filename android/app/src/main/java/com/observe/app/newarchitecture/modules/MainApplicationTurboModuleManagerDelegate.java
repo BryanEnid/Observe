@@ -1,4 +1,4 @@
-package com.Observe.app.newarchitecture.modules;
+package com.observe.app.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;
