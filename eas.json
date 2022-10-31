@@ -2,6 +2,7 @@
   "cli": {
     "version": ">= 2.4.1"
   },
+
   "build": {
     "development": {
       "distribution": "internal",
@@ -10,19 +11,14 @@
       },
       "ios": {
         "buildConfiguration": "Debug",
-        "image": "latest"
+        "image": "default"
       }
     },
-    "preview": {
-      "distribution": "internal"
-    },
+
     "production": {
       "ios": {
         "image": "latest"
       }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }
