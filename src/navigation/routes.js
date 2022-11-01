@@ -54,12 +54,12 @@ const HomeTabs = () => {
 export default function Routes() {
   // Hooks
   useKeepAwake();
-  // const isFetching = useIsFetching();
-  // const { user, initialized } = useUser();
+  const isFetching = useIsFetching();
+  const { user, initialized } = useUser();
 
   // if (!initialized) return <Loading />;
 
-  return <CaptureScreen />;
+  // return <CaptureScreen />;
 
   return (
     <>
