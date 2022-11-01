@@ -1,17 +1,20 @@
 import { useNavigation } from "@react-navigation/native";
-import { Box, Text } from "native-base";
+import { Box, Button, Text } from "native-base";
 import React from "react";
 import { NavigationBar } from "../../components/NavigationBar";
+import { useAuth } from "../../hooks/useAuth";
 
 export const Settings = () => {
-  const navigation = useNavigation();
+  const { signOut } = useAuth();
 
   return (
     <>
       <NavigationBar safeAreaTop />
 
-      <Box justifyContent="center" alignItems="center" flex={1}>
-        <Text>Settings</Text>
+      <Box flex={1}>
+        <Button w="100%" variant="outline" onPress={signOut}>
+          <Text>Sign out</Text>
+        </Button>
       </Box>
     </>
   );

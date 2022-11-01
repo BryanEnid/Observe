@@ -11,7 +11,6 @@ import { useIsFetching } from "react-query";
 
 import { Loading } from "../components/Loading";
 import { BottomMenu } from "../components/ObserveMenu/BottomMenu";
-import { useUser } from "../hooks/useUser";
 import { Profile } from "../screens/Profile/Profile";
 import { Feed } from "../screens/Feed/Feed";
 import { SignIn } from "../screens/Authentication/SignIn";
@@ -20,6 +19,9 @@ import { Settings } from "../screens/Settings/Settings";
 import { Immersive } from "../screens/Feed/Immersive";
 import { AskQuestionScreen } from "../screens/Question/AskQuestion";
 import { CaptureScreen } from "../screens/Capture/Capture";
+import { useAuth } from "../hooks/useAuth";
+import { useRandomUsers } from "../hooks/query/useRandomUsers";
+import { useUser } from "../hooks/useUser";
 
 // TODO: REMOVE
 const linking = {
@@ -55,7 +57,8 @@ export default function Routes() {
   // Hooks
   useKeepAwake();
   const isFetching = useIsFetching();
-  const { user, initialized } = useUser();
+  // const { user, initialized } = useAuth();
+  const { user } = useUser();
 
   // if (!initialized) return <Loading />;
 
