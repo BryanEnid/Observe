@@ -1,3 +1,4 @@
+import React from "react";
 import { Box, HStack, Text, Icon, Button, VStack, Center } from "native-base";
 import { ObserveSphere } from "../../components/ObserveMenu/ObserveSphere";
 import { AntDesign } from "@expo/vector-icons";

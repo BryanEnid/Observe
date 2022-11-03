@@ -14,7 +14,8 @@ export const AuthProvider = ({ children }) => {
   const [initialized, setInitialized] = React.useState(false);
 
   const signUp = async (email, password) => {
-    return createUser(auth, email, password);
+    const { user } = await createUser(auth, email, password);
+    reactotron.log(user);
   };
 
   const signIn = async (email, password) => {
