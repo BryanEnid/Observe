@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
 
   const signUp = async (email, password) => {
     const { user } = await createUser(auth, email, password);
-    reactotron.log(user);
   };
 
   const signIn = async (email, password) => {

@@ -19,8 +19,9 @@ import React from "react";
 import { Keyboard } from "react-native";
 import { NavigationBar } from "../../components/NavigationBar";
 import { Feather } from "@expo/vector-icons";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
+import { useNavigation } from "@react-navigation/native";
+import { useQuestions } from "../../hooks/useQuestions";
 
 const UserItem = ({ item, onSelected, selected, index }) => {
   return (
@@ -45,6 +46,10 @@ const UserItem = ({ item, onSelected, selected, index }) => {
 
 // TODO: Create a "Select" Component to reuse
 export const AskQuestionScreen = () => {
+  const { postQuestion } = useQuestions();
+  const navigation = useNavigation();
+
+  const [question, setQuestion] = React.useState("");
   const [questionType, setQuestionType] = React.useState("voice");
   const [destination, setDestination] = React.useState("broadly");
   const [profiles, setProfiles] = React.useState([]);
@@ -94,6 +99,17 @@ export const AskQuestionScreen = () => {
     return setSearchInput(text);
   };
 
+  const handleSubmitQuestion = async () => {
+    await postQuestion({
+      question,
+      questionType,
+      destination,
+      selectedProfile,
+    });
+
+    navigation.navigate("Feed", { refresh: true });
+  };
+
   return (
     <>
       <NavigationBar color="black" my={2} backButtonText="Cancel" />
@@ -108,6 +124,8 @@ export const AskQuestionScreen = () => {
                   placeholder="Type your question..."
                   size="md"
                   variant="filled"
+                  value={question}
+                  onChangeText={setQuestion}
                 />
               </VStack>
 
@@ -205,7 +223,9 @@ export const AskQuestionScreen = () => {
         </Flex>
 
         <VStack px={3} justifyContent="flex-end" safeAreaBottom>
-          <Button colorScheme="blue">Next</Button>
+          <Button colorScheme="blue" onPress={handleSubmitQuestion}>
+            Next
+          </Button>
         </VStack>
       </Box>
     </>

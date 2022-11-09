@@ -58,9 +58,9 @@ export default function Routes() {
   useKeepAwake();
   const isFetching = useIsFetching();
   // const { user, initialized } = useAuth();
-  const { user } = useUser();
+  const { user, initialized } = useUser();
 
-  // if (!initialized) return <Loading />;
+  if (!initialized) return <Loading />;
 
   // return <CaptureScreen />;
 
@@ -76,7 +76,7 @@ export default function Routes() {
           ) : (
             <>
               <Stack.Group>
-                <Stack.Screen name="Feed" component={HomeTabs} />
+                <Stack.Screen name="ContentFeed" component={HomeTabs} />
                 <Stack.Screen name="Immersive" component={Immersive} />
               </Stack.Group>
 
