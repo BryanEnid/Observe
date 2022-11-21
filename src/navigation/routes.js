@@ -59,14 +59,13 @@ export default function Routes() {
 
   if (!initialized) return <Loading />;
 
-  return <CaptureScreen />;
-
   return (
     <>
       <NavigationContainer linking={linking} independent>
         <Stack.Navigator screenOptions={screenConfig}>
           {!user ? (
             <Stack.Group>
+              <Stack.Screen name="Profile" component={Profile} />
               <Stack.Screen name="SignIn" component={SignIn} />
               <Stack.Screen name="SignUp" component={SignUp} />
             </Stack.Group>

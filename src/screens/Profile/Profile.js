@@ -33,6 +33,7 @@ import { scrollTo } from "../../utils/scrollTo";
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
 import { BucketScreen } from "./Buckets/Buckets";
 import { ResumeScreen } from "./Resume/Resume";
+import { RecommendsScreen } from "./Recommends/Recommends";
 import { useNavigation } from "@react-navigation/native";
 
 const statusBarHeight = getStatusBarHeight();
@@ -42,12 +43,13 @@ const PROFILE_DIMENSIONS = { width: 180, height: 180, padding: 20 };
 const SCREENS = [
   ["Resume", ResumeScreen],
   ["Bucket", BucketScreen],
+  ["Recommends", RecommendsScreen],
 ];
 
 const PROFILE_NAME_H = 50;
 const PROFILE_NAME_W = 250;
 const PROFILE_H = 255;
-const NAV_BTN_W = 82;
+const NAV_BTN_W = 100;
 const NAVBAR_H = 50;
 const NAVBAR_W = NAV_BTN_W * SCREENS.length;
 const HEADER_W = 400;
