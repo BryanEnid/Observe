@@ -50,8 +50,6 @@ export const useDummyData = () => {
       Math.round(Math.random() * queryOptions.length - 1)
     );
 
-    reactotron.log(queryOptions[randomQuery]);
-
     return Request.get(
       `/videos/search?query=${queryOptions[randomQuery]}&orientation=${orientation}&size=${size}&per_page=${per_page}`
     );

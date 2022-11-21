@@ -333,7 +333,7 @@ export const Profile = () => {
                   variant="outline"
                   onPress={() => {
                     // Show more options
-                    console.log("in");
+                    // console.log("in");
                   }}
                 />
               </VStack>

@@ -4,7 +4,6 @@ import { NativeBaseProvider, extendTheme, Text } from "native-base";
 import { LinearGradient } from "expo-linear-gradient";
 import { PortalProvider } from "./Portal";
 import { AuthProvider } from "./Providers/AuthProvider";
-import { useUser } from "../hooks/useUser";
 
 // React Query config: Create a client
 const queryClient = new QueryClient();

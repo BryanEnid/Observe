@@ -1,18 +1,17 @@
 import React from "react";
-import { useAuth } from "./useAuth";
+import { auth } from "../config/FirebaseConfig";
 
 export const useUser = () => {
-  const [user, setUser] = React.useState();
-
-  const { token, initialized } = useAuth();
+  const [user, setUser] = React.useState(null);
+  const [initialized, setInitialized] = React.useState(false);
 
   React.useEffect(() => {
-    if (!!token?.length) {
-      setUser({ token, anonymous: token.includes("anonymous") });
-    } else {
-      setUser(null);
-    }
-  }, [token]);
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+    setInitialized(true);
+    return unsubscribe;
+  }, []);
 
   return { user, initialized };
 };

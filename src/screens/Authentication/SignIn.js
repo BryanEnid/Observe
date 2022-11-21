@@ -1,41 +1,11 @@
-import {
-  Box,
-  HStack,
-  Image,
-  Input,
-  Text,
-  Icon,
-  Button,
-  VStack,
-  Center,
-} from "native-base";
+import React from "react";
+import { Box, HStack, Text, Icon, Button, VStack, Center } from "native-base";
 import { ObserveSphere } from "../../components/ObserveMenu/ObserveSphere";
 import { AntDesign } from "@expo/vector-icons";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
-import logo from "../../../assets/observe_logo.png";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../hooks/useAuth";
-
-const TextInput = ({ placeholder, elevated, password }) => {
-  return (
-    <Box w="100%" variant={elevated && "elevated"}>
-      <Text color="gray.500" my={1}>
-        {placeholder}
-      </Text>
-      <Input
-        autoCorrect={false}
-        type={password && "password"}
-        placeholder={placeholder}
-        size="lg"
-        bg="white"
-        _hover={{ bg: "white" }}
-        _focus={{ bg: "white" }}
-        borderRadius="md"
-        mb={5}
-      />
-    </Box>
-  );
-};
+import { TextInput } from "../../components/TextInput";
 
 const FederatedLoginContainer = () => {
   return (
@@ -52,7 +22,14 @@ const FederatedLoginContainer = () => {
 
 export const SignIn = () => {
   const navigation = useNavigation();
-  const { anonymousSignIn } = useAuth();
+  const { anonymousSignIn, signIn } = useAuth();
+
+  const [email, setEmail] = React.useState();
+  const [password, setPassword] = React.useState();
+
+  const handleLogin = () => {
+    return signIn(email, password);
+  };
 
   return (
     <>
@@ -78,9 +55,12 @@ export const SignIn = () => {
             </Center>
 
             <Box mt={10} px={5} py={4} borderRadius={9} background="white">
-              <TextInput placeholder="Username / Email" />
-
-              <TextInput placeholder="Password" password />
+              <TextInput placeholder="Username / Email" onChange={setEmail} />
+              <TextInput
+                placeholder="Password"
+                password
+                onChange={setPassword}
+              />
             </Box>
 
             <Box my={10}>
@@ -89,6 +69,7 @@ export const SignIn = () => {
                 _pressed={{ bg: "#a2d4fc" }}
                 borderColor="white"
                 borderWidth={1}
+                onPress={handleLogin}
               >
                 Login
               </Button>
@@ -116,6 +97,7 @@ export const SignIn = () => {
                 or skip
               </Text>
             </Button>
+
             <FederatedLoginContainer />
           </Box>
         </VStack>

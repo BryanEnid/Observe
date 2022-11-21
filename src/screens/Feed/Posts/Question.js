@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Center,
   Column,
   Icon,
   Image,
@@ -38,70 +39,143 @@ export const Question = ({ data, user }) => {
     },
   });
 
-  return (
-    <Box my={5} px={4}>
-      <Column my={"3"}>
-        <Text fontSize="13">UI/UX - 2hr ago</Text>
-        <Text fontSize="16" bold>
-          {data.question}
-        </Text>
-      </Column>
+  if (data.questionType === "text") {
+    return (
+      <Box my={5} px={4}>
+        <Column my={"3"}>
+          <Text fontSize="13">UI/UX - 2hr ago</Text>
+          <Text fontSize="16" bold>
+            {data.question}
+          </Text>
+        </Column>
 
-      <Pressable
-        style={styles.video}
-        justifyContent="center"
-        alignItems={"center"}
-        onPress={() => {
-          navigation.navigate("Immersive", {
-            data: {
-              ...data,
-              likes: likes.current,
-              comments: comments.current,
-              shares: shares.current,
-              views: views.current,
-            },
-            user,
-          });
-        }}
-      >
-        <Image
-          source={{ uri: data.image }}
-          alt={data.image}
-          style={styles.backgroundImage}
-        />
-        <Icon
-          style={styles.playButton}
-          as={Feather}
-          name="play"
-          color={"white"}
-          size="xl"
-          mr={1}
-        />
-      </Pressable>
+        {/* <Pressable
+          style={styles.video}
+          justifyContent="center"
+          alignItems={"center"}
+          onPress={() => {
+            navigation.navigate("Immersive", {
+              data: {
+                ...data,
+                likes: likes.current,
+                comments: comments.current,
+                shares: shares.current,
+                views: views.current,
+              },
+              user,
+            });
+          }}
+        >
+          <Image
+            source={{ uri: data.image }}
+            alt={data.image}
+            style={styles.backgroundImage}
+          />
+          <Icon
+            style={styles.playButton}
+            as={Feather}
+            name="play"
+            color={"white"}
+            size="xl"
+            mr={1}
+          />
+        </Pressable> */}
 
-      <Row alignItems="center" my={4}>
-        <Avatar size="xs" mr="2" source={{ uri: user.picture.thumbnail }} />
-        <Text>
-          {user.name.first} {user.name.last}
-        </Text>
-      </Row>
-
-      <Row space={3}>
-        <Row alignItems={"center"}>
-          <Icon as={Feather} name="heart" size="md" mr={1} />
-          <Text>{likes.current} Likes</Text>
+        <Row alignItems="center" my={4}>
+          <Avatar size="xs" mr="2" source={{ uri: user?.picture?.thumbnail }} />
+          <Text>
+            {user?.name?.first} {user?.name?.last}
+          </Text>
         </Row>
 
-        <Row alignItems={"center"}>
-          <Icon as={Feather} name="message-circle" size="md" mr={1} />
-          <Text>{comments.current} Comments</Text>
+        <Row space={3}>
+          <Row alignItems={"center"}>
+            <Icon as={Feather} name="heart" size="md" mr={1} />
+            <Text>{likes.current} Likes</Text>
+          </Row>
+
+          <Row alignItems={"center"}>
+            <Icon as={Feather} name="message-circle" size="md" mr={1} />
+            <Text>{comments.current} Comments</Text>
+          </Row>
+
+          <Row alignItems={"center"}>
+            <Icon as={Feather} name="share" size="md" mr={1} />
+            <Text>{shares.current} Shares</Text>
+          </Row>
+        </Row>
+      </Box>
+    );
+  }
+
+  if (data.questionType === "video") {
+    return (
+      <Box my={5} px={4}>
+        <Column my={"3"}>
+          <Text fontSize="13">UI/UX - 2hr ago</Text>
+          <Text fontSize="16" bold>
+            {data.question}
+          </Text>
+        </Column>
+
+        <Pressable
+          style={styles.video}
+          justifyContent="center"
+          alignItems={"center"}
+          onPress={() => {
+            navigation.navigate("Immersive", {
+              data: {
+                ...data,
+                likes: likes.current,
+                comments: comments.current,
+                shares: shares.current,
+                views: views.current,
+              },
+              user,
+            });
+          }}
+        >
+          <Image
+            source={{ uri: data.image }}
+            alt={data.image}
+            style={styles.backgroundImage}
+          />
+          <Icon
+            style={styles.playButton}
+            as={Feather}
+            name="play"
+            color={"white"}
+            size="xl"
+            mr={1}
+          />
+        </Pressable>
+
+        <Row alignItems="center" my={4}>
+          <Avatar size="xs" mr="2" source={{ uri: user.picture.thumbnail }} />
+          <Text>
+            {user.name.first} {user.name.last}
+          </Text>
         </Row>
 
-        <Row alignItems={"center"}>
-          <Icon as={Feather} name="share" size="md" mr={1} />
-          <Text>{shares.current} Shares</Text>
+        <Row space={3}>
+          <Row alignItems={"center"}>
+            <Icon as={Feather} name="heart" size="md" mr={1} />
+            <Text>{likes.current} Likes</Text>
+          </Row>
+
+          <Row alignItems={"center"}>
+            <Icon as={Feather} name="message-circle" size="md" mr={1} />
+            <Text>{comments.current} Comments</Text>
+          </Row>
+
+          <Row alignItems={"center"}>
+            <Icon as={Feather} name="share" size="md" mr={1} />
+            <Text>{shares.current} Shares</Text>
+          </Row>
         </Row>
-      </Row>
-    </Box>
-  );
+      </Box>
+    );
+  }
+
+  return <Center>No question type</Center>;
 };
