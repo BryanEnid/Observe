@@ -45,9 +45,9 @@ const Category = ({ category, tools }) => {
       ) : null}
 
         
-      {tools.map((tool) => {
+      {tools.map((tool, index) => {
         return tool.category === category ? (
-          <ToolItem key={tool.index}>{tool.name}</ToolItem>
+          <ToolItem key={`${tool.index}-${index}`}>{tool.name}</ToolItem>
         ) : null;
 
       })}

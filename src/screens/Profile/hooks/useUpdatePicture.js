@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { v4 as uuidv4 } from "uuid";
+import uuid from "react-native-uuid";
 
 async function uploadImageAsync(uri) {
   // Why are we using XMLHttpRequest? See:
@@ -20,7 +20,7 @@ async function uploadImageAsync(uri) {
       xhr.send(null);
     });
 
-    const fileRef = ref(getStorage(), `users_pictures/${uuidv4()}.jpeg`);
+    const fileRef = ref(getStorage(), `users_pictures/${uuid.v4()}.jpeg`);
     await uploadBytes(fileRef, blob);
 
     // We're done with the blob, close and release it
