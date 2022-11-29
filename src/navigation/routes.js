@@ -11,7 +11,7 @@ import { useIsFetching } from "react-query";
 
 import { Loading } from "../components/Loading";
 import { BottomMenu } from "../components/ObserveMenu/BottomMenu";
-import { Profile } from "../screens/Profile/Profile";
+import { Profile } from "../screens/Profile";
 import { Feed } from "../screens/Feed/Feed";
 import { SignIn } from "../screens/Authentication/SignIn";
 import { SignUp } from "../screens/Authentication/SignUp";
@@ -70,12 +70,14 @@ export default function Routes() {
         <Stack.Navigator screenOptions={screenConfig}>
           {!user ? (
             <Stack.Group>
+              
               <Stack.Screen name="SignIn" component={SignIn} />
               <Stack.Screen name="SignUp" component={SignUp} />
             </Stack.Group>
           ) : (
             <>
               <Stack.Group>
+                <Stack.Screen name="Profile" component={Profile} />
                 <Stack.Screen name="ContentFeed" component={HomeTabs} />
                 <Stack.Screen name="Immersive" component={Immersive} />
               </Stack.Group>

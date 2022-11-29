@@ -2,8 +2,8 @@ import React from "react";
 import { Row } from "native-base";
 
 import { BucketItem } from "./BucketItem";
-import { useRandomVideos } from "../../../hooks/query/useRandomVideos";
-import { useRandomUsers } from "../../../hooks/query/useRandomUsers";
+import { useRandomUsers } from "../../../../../hooks/query/useRandomUsers";
+import { useRandomVideos } from "../../../../../hooks/query/useRandomVideos";
 
 export const BucketScreen = () => {
   const amount = 14;

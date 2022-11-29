@@ -1,6 +1,6 @@
 // I think we would need GraphQl to fetch necessary files Ex: video by size and quality
 
-import { useRandomVideos } from "../../../hooks/query/useRandomVideos";
+import { useRandomVideos } from "../../../../../hooks/query/useRandomVideos";
 
 export const useExperienceDummyData = () => {
   const { data: videoAssets } = useRandomVideos({
