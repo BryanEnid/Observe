@@ -21,6 +21,7 @@ export default function Header({
   r_header,
   setUpdatePicModalOpen,
   profile,
+  userPicture,
 }) {
   const navigation = useNavigation();
 
@@ -52,7 +53,7 @@ export default function Header({
             <Pressable onLongPress={() => setUpdatePicModalOpen(true)}>
               <Box>
                 <Image
-                  source={{ uri: profile?.picture?.large }}
+                  source={{ uri: userPicture }}
                   fallbackSource={{
                     uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
                   }}

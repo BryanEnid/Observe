@@ -1,8 +1,9 @@
 // import ConicalGradient from '../../components/ConicalGradient/ConicalGradient';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useWindowDimensions, StatusBar } from "react-native";
-import { Box } from "native-base";
+import { Box, Spinner } from "native-base";
 
+import { Loading } from "../../components/Loading";
 import dimensions from "./dimensions";
 import Navbar from "./Components/Navbar";
 import Header from "./Components/Header";
@@ -13,6 +14,7 @@ import SubScreenSection from "./Components/SubScreenSection";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import useProfileAnimations from "./hooks/useProfileAnimations";
 import useGetStyles from "./hooks/useGetStyles";
+import { useUser } from "../../hooks/useUser";
 
 export const Profile = () => {
   // Hooks
@@ -23,10 +25,13 @@ export const Profile = () => {
     }),
     key: ["user", { amount: 1 }],
   });
+
+  const { pictureUrl, setPictureUrl } = useUser();
+  const [isLoading, setIsloading] = useState(false);
+
   const { width, height } = useWindowDimensions();
   const styles = useGetStyles({ width });
-  console.log("ABIERTO")
-  const [updatePicModalOpen, setUpdatePicModalOpen] = useState(true);
+  const [updatePicModalOpen, setUpdatePicModalOpen] = useState(false);
   const animations = useProfileAnimations({ width });
 
   if (!profile?.name) return <></>;
@@ -38,6 +43,9 @@ export const Profile = () => {
         setUpdatePicModalOpen={setUpdatePicModalOpen}
         profile={profile}
         styles={styles}
+        userPicture={pictureUrl}
+        setPictureUrl={setPictureUrl}
+        setIsloading={setIsloading}
       />
       <Box overflowX={"hidden"} flex={1} backgroundColor="white">
         <StatusBar barStyle={"dark-content"} />
@@ -56,10 +64,12 @@ export const Profile = () => {
         <Header
           styles={styles}
           profile={profile}
+          userPicture={pictureUrl}
           {...animations}
           setUpdatePicModalOpen={setUpdatePicModalOpen}
         />
       </Box>
+      {isLoading && <Loading />}
     </>
   );
 };

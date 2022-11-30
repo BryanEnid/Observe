@@ -9,8 +9,12 @@ export default function MyModal({
   setUpdatePicModalOpen,
   profile,
   styles,
+  userPicture,
+  setPictureUrl,
+  setIsloading,
 }) {
-  const { handleLaunchCamera, handlePickFromLibrary } = useUpdatePicture();
+  const { handleLaunchCamera, handlePickFromLibrary, handleDeletePicture } =
+    useUpdatePicture();
   return (
     <Modal
       isOpen={updatePicModalOpen}
@@ -27,7 +31,7 @@ export default function MyModal({
           ¿How do you want to update your picture?
           <Center mt={5}>
             <Image
-              source={{ uri: profile?.picture?.large }}
+              source={{ uri: userPicture }}
               fallbackSource={{
                 uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
               }}
@@ -36,13 +40,19 @@ export default function MyModal({
             />
           </Center>
         </Modal.Body>
-        <HStack space={"4"} justifyContent="center" paddingBottom={30}>
+        <HStack space={"4"} justifyContent="center" paddingBottom={3}>
           <Button
             width={"40%"}
             leftIcon={
               <Icon as={Ionicons} name="cloud-upload-outline" size="sm" />
             }
-            onPress={() => handlePickFromLibrary()}
+            onPress={() =>
+              handlePickFromLibrary(
+                setPictureUrl,
+                setUpdatePicModalOpen,
+                setIsloading
+              )
+            }
           >
             Upload
           </Button>
@@ -50,9 +60,26 @@ export default function MyModal({
           <Button
             width={"40%"}
             leftIcon={<Icon as={Ionicons} name="camera-outline" size="sm" />}
-            onPress={() => handleLaunchCamera()}
+            onPress={() =>
+              handleLaunchCamera(
+                setPictureUrl,
+                setUpdatePicModalOpen,
+                setIsloading
+              )
+            }
           >
             Take
+          </Button>
+        </HStack>
+        <HStack space={"4"} justifyContent="center" paddingBottom={30}>
+          <Button
+            width={"60%"}
+            leftIcon={<Icon as={Ionicons} name="trash-outline" size="sm" />}
+            onPress={() => {
+              handleDeletePicture(setUpdatePicModalOpen, setIsloading);
+            }}
+          >
+            Delete Picture
           </Button>
         </HStack>
       </Modal.Content>

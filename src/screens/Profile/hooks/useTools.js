@@ -10,16 +10,20 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+import { useUser } from "../../../hooks/useUser";
 
 export default function useTools({ setShowModal }) {
   const [categories, setCategories] = useState([]);
   const [tools, setTools] = useState([]);
   const [newToolName, setNewToolName] = useState("");
   const [newToolCategory, setNewToolCategory] = useState("");
+  const { user } = useUser();
+
+  const uid = user?.uid ? user.uid : "";
 
   const handleAddtool = async () => {
     //TODO: ADD USER ID
-    const userId = "some-user-uid";
+    const userId = uid;
     try {
       if (newToolName === "") {
         Alert.alert("You should add a tool");
@@ -70,17 +74,17 @@ export default function useTools({ setShowModal }) {
   };
 
   useEffect(() => {
-    (async () => {
+    (async (uid) => {
       const q = query(
         collection(db, "users_tools"),
-        where("userUid", "==", "some-user-uid")
+        where("userUid", "==", uid)
       );
       const snapshot = await getDocs(q);
       const data = snapshot.docs.map((doc) => {
         return { id: doc.id, ...doc.data() };
       });
       setTools(data);
-    })();
+    })(uid);
   }, []);
 
   useEffect(() => {
