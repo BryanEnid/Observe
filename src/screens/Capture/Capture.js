@@ -1,4 +1,5 @@
 import React from "react";
+import { Camera, CameraType, VideoCodec } from "expo-camera";
 import {
   Box,
   Text,
@@ -6,20 +7,18 @@ import {
   Center,
   HStack,
   Icon,
-  Select,
   VStack,
   IconButton,
-  ScrollView,
   FlatList,
   Divider,
   Flex,
 } from "native-base";
-import { Camera, CameraType } from "expo-camera";
 import { Feather } from "@expo/vector-icons";
 import { Pressable, useWindowDimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { randomInteger } from "../../utils/randomInteger";
 import { ObserveSphere } from "../../components/ObserveMenu/ObserveSphere";
+import { useStorage } from "../../hooks/useStorage";
 
 const RANDOM_QUESTIONS = [
   {
@@ -556,13 +555,51 @@ const RenderQuestion = ({ item, onSelected }) => {
   );
 };
 
+const getFilename = (fullPath) => {
+  return fullPath?.replace(/^.*[\\\/]/, "");
+};
+
 export const CaptureScreen = () => {
-  const [type, setType] = React.useState(CameraType.front);
+  // Custom hooks & Hooks
+  const { saveVideo } = useStorage();
+  const { width } = useWindowDimensions();
   const [permission, requestPermission] = Camera.useCameraPermissions();
+
+  // State
+  const [type, setType] = React.useState(CameraType.front);
   const [showQuestionList, setShowQuestionList] = React.useState(false);
   const [selectedQuestion, setSelectedQuestion] = React.useState("");
+  const [isRecording, setIsRecording] = React.useState(false);
+  const [progress, setProgres] = React.useState(0);
   const [file, setFile] = React.useState(null);
-  const { width } = useWindowDimensions();
+
+  // Refs
+  const cameraRef = React.useRef();
+
+  React.useEffect(() => {
+    if (file) {
+      const handleEvents = {
+        onSuccess: () => {
+          console.log("success!!!");
+          setFile(null);
+        },
+        onNext: ({ bytesTransferred, totalBytes }) => {
+          console.log((bytesTransferred / totalBytes) * 100);
+          setProgres((bytesTransferred / totalBytes) * 100);
+        },
+      };
+      saveVideo(getFilename(file), file, handleEvents);
+    }
+  }, [file]);
+
+  React.useEffect(() => {
+    if (isRecording) {
+      const codec = VideoCodec.HEVC;
+      cameraRef.current?.recordAsync({ codec }).then(({ uri }) => setFile(uri));
+    } else {
+      cameraRef.current?.stopRecording();
+    }
+  }, [isRecording]);
 
   const handleToggleQuestionList = () => {
     setShowQuestionList(!showQuestionList);
@@ -591,6 +628,10 @@ export const CaptureScreen = () => {
     }
   };
 
+  const handleRecord = () => {
+    return setIsRecording(!isRecording);
+  };
+
   if (!permission) return <></>;
 
   if (!permission.granted) {
@@ -604,7 +645,7 @@ export const CaptureScreen = () => {
 
   return (
     <Box flex={1} bg={"black"}>
-      <Camera flex={1} type={type}>
+      <Camera flex={1} type={type} ref={cameraRef}>
         <VStack flex={1} px={5} pt={3} justifyContent="space-between">
           <Box>
             <HStack
@@ -677,7 +718,13 @@ export const CaptureScreen = () => {
             )}
 
             <Box mb={30}>
-              <ObserveSphere scale={0.9} pressable />
+              {isRecording && (
+                <Center mb={-55}>
+                  <Box borderRadius={50} bgColor={"red.500"} h={20} w={20} />
+                </Center>
+              )}
+
+              <ObserveSphere scale={0.9} pressable onClick={handleRecord} />
             </Box>
 
             <HStack safeAreaBottom px={5} justifyContent="space-between">

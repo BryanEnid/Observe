@@ -1,14 +1,9 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import {
-  NavigationContainer,
-  getFocusedRouteNameFromRoute,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import { useKeepAwake } from "expo-keep-awake";
 import { useIsFetching } from "react-query";
-
 import { Loading } from "../components/Loading";
 import { BottomMenu } from "../components/ObserveMenu/BottomMenu";
 import { Profile } from "../screens/Profile/Profile";
@@ -19,8 +14,6 @@ import { Settings } from "../screens/Settings/Settings";
 import { Immersive } from "../screens/Feed/Immersive";
 import { AskQuestionScreen } from "../screens/Question/AskQuestion";
 import { CaptureScreen } from "../screens/Capture/Capture";
-import { useAuth } from "../hooks/useAuth";
-import { useRandomUsers } from "../hooks/query/useRandomUsers";
 import { useUser } from "../hooks/useUser";
 
 // TODO: REMOVE
@@ -57,12 +50,11 @@ export default function Routes() {
   // Hooks
   useKeepAwake();
   const isFetching = useIsFetching();
-  // const { user, initialized } = useAuth();
   const { user, initialized } = useUser();
 
   if (!initialized) return <Loading />;
 
-  // return <CaptureScreen />;
+  return <CaptureScreen />;
 
   return (
     <>
