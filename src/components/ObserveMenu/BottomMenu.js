@@ -35,6 +35,11 @@ const ActionMenu = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleCreatePost = () => {
+    navigation.navigate("CaptureScreen");
+    onClose();
+  };
+
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose}>
       <Actionsheet.Content pt={4}>
@@ -52,7 +57,7 @@ const ActionMenu = ({ isOpen, onClose }) => {
           </Box>
         </Actionsheet.Item>
 
-        <Actionsheet.Item>
+        <Actionsheet.Item onPress={handleCreatePost}>
           <Box py={2} flexDir={"row"}>
             <Icon as={Feather} name="camera" size="lg" mr={3} />
             <Text fontSize="16">Create Post</Text>

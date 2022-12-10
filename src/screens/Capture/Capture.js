@@ -12,6 +12,7 @@ import {
   FlatList,
   Divider,
   Flex,
+  Progress,
 } from "native-base";
 import { Feather } from "@expo/vector-icons";
 import { Pressable, useWindowDimensions } from "react-native";
@@ -19,6 +20,8 @@ import * as ImagePicker from "expo-image-picker";
 import { randomInteger } from "../../utils/randomInteger";
 import { ObserveSphere } from "../../components/ObserveMenu/ObserveSphere";
 import { useStorage } from "../../hooks/useStorage";
+import { useNavigation } from "@react-navigation/native";
+import { VideoEditor } from "./VideoEditor";
 
 const RANDOM_QUESTIONS = [
   {
@@ -560,9 +563,8 @@ const getFilename = (fullPath) => {
 };
 
 export const CaptureScreen = () => {
-  // Custom hooks & Hooks
-  const { saveVideo } = useStorage();
-  const { width } = useWindowDimensions();
+  // Custom hooks & hooks
+  const navigation = useNavigation();
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   // State
@@ -570,32 +572,22 @@ export const CaptureScreen = () => {
   const [showQuestionList, setShowQuestionList] = React.useState(false);
   const [selectedQuestion, setSelectedQuestion] = React.useState("");
   const [isRecording, setIsRecording] = React.useState(false);
-  const [progress, setProgres] = React.useState(0);
   const [file, setFile] = React.useState(null);
+  const [canGoBack, setCanGoBack] = React.useState(false);
 
   // Refs
   const cameraRef = React.useRef();
 
   React.useEffect(() => {
-    if (file) {
-      const handleEvents = {
-        onSuccess: () => {
-          console.log("success!!!");
-          setFile(null);
-        },
-        onNext: ({ bytesTransferred, totalBytes }) => {
-          console.log((bytesTransferred / totalBytes) * 100);
-          setProgres((bytesTransferred / totalBytes) * 100);
-        },
-      };
-      saveVideo(getFilename(file), file, handleEvents);
-    }
-  }, [file]);
+    setCanGoBack(navigation.canGoBack());
+  }, []);
 
   React.useEffect(() => {
     if (isRecording) {
       const codec = VideoCodec.HEVC;
-      cameraRef.current?.recordAsync({ codec }).then(({ uri }) => setFile(uri));
+      cameraRef.current
+        ?.recordAsync({ codec, mirror: type === CameraType.front })
+        .then(({ uri }) => setFile(uri));
     } else {
       cameraRef.current?.stopRecording();
     }
@@ -643,6 +635,10 @@ export const CaptureScreen = () => {
     );
   }
 
+  if (file) {
+    return <VideoEditor file={file} onClose={() => setFile(null)} />;
+  }
+
   return (
     <Box flex={1} bg={"black"}>
       <Camera flex={1} type={type} ref={cameraRef}>
@@ -653,16 +649,26 @@ export const CaptureScreen = () => {
               justifyContent={"space-between"}
               alignItems="center"
             >
-              <IconButton
+              {canGoBack && (
+                <IconButton
+                  onPress={navigation.goBack}
+                  icon={<Icon as={Feather} name="x" size="xl" color="white" />}
+                  variant="solid"
+                  bg={"rgba(0,0,0,0.2)"}
+                  p={3}
+                  borderRadius={50}
+                />
+              )}
+              {/* <IconButton
                 onPress={handleToggleQuestionList}
                 icon={<Icon as={Feather} name="list" size="xl" color="white" />}
                 variant="solid"
                 bg={"rgba(0,0,0,0.2)"}
                 p={3}
                 borderRadius={50}
-              />
+              /> */}
 
-              <Pressable>
+              {/* <Pressable>
                 <Box width={width / 3} bg="white" borderRadius={50} px={3}>
                   <Center>Surgeon</Center>
                   <Icon
@@ -674,13 +680,13 @@ export const CaptureScreen = () => {
                     right={2}
                   />
                 </Box>
-              </Pressable>
+              </Pressable> */}
 
-              <Button _text variant="ghost">
+              {/* <Button _text variant="ghost">
                 <Text color="white" fontWeight="semibold">
                   Edit
                 </Text>
-              </Button>
+              </Button> */}
             </HStack>
 
             {showQuestionList && (

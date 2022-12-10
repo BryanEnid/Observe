@@ -54,8 +54,6 @@ export default function Routes() {
 
   if (!initialized) return <Loading />;
 
-  return <CaptureScreen />;
-
   return (
     <>
       <NavigationContainer linking={linking} independent>
@@ -67,15 +65,26 @@ export default function Routes() {
             </Stack.Group>
           ) : (
             <>
+              {/* Dashboard */}
               <Stack.Group>
                 <Stack.Screen name="ContentFeed" component={HomeTabs} />
                 <Stack.Screen name="Immersive" component={Immersive} />
               </Stack.Group>
 
+              {/* Modals */}
               <Stack.Group screenOptions={{ presentation: "modal" }}>
                 <Stack.Screen
                   name="AskQuestion"
                   component={AskQuestionScreen}
+                />
+              </Stack.Group>
+
+              {/* Capture Screen */}
+              <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
+                <Stack.Screen name="CaptureScreen" component={CaptureScreen} />
+                <Stack.Screen
+                  name="CaptureScreen-Uploading"
+                  component={CaptureScreen}
                 />
               </Stack.Group>
             </>
