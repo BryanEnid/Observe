@@ -21,7 +21,7 @@ import { NavigationBar } from "../../components/NavigationBar";
 import { Feather } from "@expo/vector-icons";
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { useNavigation } from "@react-navigation/native";
-import { useQuestions } from "../../hooks/useQuestions";
+import { usePosts } from "../../hooks/usePosts";
 
 const UserItem = ({ item, onSelected, selected, index }) => {
   return (
@@ -46,7 +46,7 @@ const UserItem = ({ item, onSelected, selected, index }) => {
 
 // TODO: Create a "Select" Component to reuse
 export const AskQuestionScreen = () => {
-  const { postQuestion } = useQuestions();
+  const { submitPost } = usePosts();
   const navigation = useNavigation();
 
   const [question, setQuestion] = React.useState("");
@@ -100,7 +100,7 @@ export const AskQuestionScreen = () => {
   };
 
   const handleSubmitQuestion = async () => {
-    await postQuestion({
+    await submitPost({
       question,
       questionType,
       destination,

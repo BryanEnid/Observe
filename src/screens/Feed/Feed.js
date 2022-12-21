@@ -1,29 +1,13 @@
-import { ScrollView } from "native-base";
+import { Box, ScrollView } from "native-base";
 import React from "react";
 import { Question } from "./Posts/Question";
 import { TopMenu } from "./TopMenu";
-import { useRandomVideos } from "../../hooks/query/useRandomVideos";
-import { Loading } from "../../components/Loading";
-import { useRandomUsers } from "../../hooks/query/useRandomUsers";
-import { useQuestions } from "../../hooks/useQuestions";
+import { usePosts } from "../../hooks/usePosts";
 import { RefreshControl } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-
-const count = 10;
+import { useRoute } from "@react-navigation/native";
 
 export const Feed = () => {
-  // const { data: videos } = useRandomVideos({
-  //   key: [{ per_page: count, size: "small" }],
-  //   select: (res) => res.videos,
-  // });
-  // const { data: users } = useRandomUsers({
-  //   key: [{ amount: count }, "Feed"],
-  //   select: (res) => res.results,
-  // });
-
-  // if (!videos || !users) return <Loading />;
-
-  const { getQuestions } = useQuestions();
+  const { getPosts } = usePosts();
   const { params } = useRoute();
 
   const [questions, setQuestions] = React.useState();
@@ -35,7 +19,7 @@ export const Feed = () => {
   }, []);
 
   const handleFetch = () => {
-    return getQuestions().then((data) => {
+    return getPosts().then((data) => {
       setQuestions(data);
       setRefreshing(false);
     });
@@ -60,22 +44,10 @@ export const Feed = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        bg={"gray.100"}
       >
         <TopMenu />
 
-        {/* {videos.map(({ image, video_files, id }, index) => {
-          return (
-            <Question
-              key={id}
-              data={{
-                image,
-                video: video_files[0],
-                question: "How do you usually start to design a screen?",
-              }}
-              user={users[index]}
-            />
-          );
-        })} */}
         {questions.map((data) => (
           <Question key={data.id} data={data} />
         ))}

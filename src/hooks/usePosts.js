@@ -12,20 +12,17 @@ import {
 import { db } from "../config/FirebaseConfig";
 import { useUser } from "./useUser";
 
-export const useQuestions = () => {
+export const usePosts = () => {
   const { user } = useUser();
 
-  const getQuestion = async (...path) => {
+  const getPost = async (...path) => {
     const docRef = doc(db, ...path);
     return getDoc(docRef);
   };
 
-  const getQuestions = async () => {
+  const getPosts = async () => {
     const output = [];
-    const docRef = query(
-      collection(db, "questions"),
-      orderBy("created", "desc")
-    );
+    const docRef = query(collection(db, "posts"), orderBy("created", "desc"));
     const snapshot = await getDocs(docRef);
     snapshot.forEach((docs) => {
       const document = { id: docs.id, ...docs.data() };
@@ -34,8 +31,8 @@ export const useQuestions = () => {
     return output;
   };
 
-  const postQuestion = async (body) => {
-    const collectionRef = collection(db, "questions");
+  const submitPost = async (body) => {
+    const collectionRef = collection(db, "posts");
     return addDoc(collectionRef, {
       uid: user.uid,
       created: Timestamp.now(),
@@ -43,5 +40,5 @@ export const useQuestions = () => {
     });
   };
 
-  return { postQuestion, getQuestions, getQuestion };
+  return { getPost, getPosts, submitPost };
 };
