@@ -36,7 +36,13 @@ export const TopMenu = () => {
   if (!profiles || !user) return <></>;
 
   return (
-    <Box w={width} safeAreaTop justifyContent="center" alignItems="center">
+    <Box
+      mb={2}
+      w={width}
+      safeAreaTop
+      justifyContent="center"
+      alignItems="center"
+    >
       <FlatList
         ListHeaderComponent={<MenuItem item={user} user />}
         contentContainerStyle={{ flexGrow: 1 }}
