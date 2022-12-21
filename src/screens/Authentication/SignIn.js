@@ -26,9 +26,49 @@ export const SignIn = () => {
 
   const [email, setEmail] = React.useState();
   const [password, setPassword] = React.useState();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [error, setError] = React.useState();
+  const [loadingRequest, setLoadingRequest] = React.useState(false);
 
-  const handleLogin = () => {
-    return signIn(email, password);
+  const handleLogin = async () => {
+    setError(null);
+    setLoadingRequest(true);
+
+    try {
+      await signIn(email, password);
+    } catch (e) {
+      switch (e.code) {
+        case "auth/too-many-requests": {
+          setError(
+            "Access to this account has been temporarily disabled due to many failed login attempts. \n\nTry again later or reset your password."
+          );
+          break;
+        }
+
+        case "auth/wrong-password": {
+          setError("Wrong password.");
+          break;
+        }
+
+        case "auth/missing-email": {
+          setError("You have missing fields.");
+          break;
+        }
+
+        case "auth/user-not-found": {
+          setError("Wrong email or password.");
+          break;
+        }
+
+        default: {
+          console.log(e.code);
+          setError("Something went wrong. Try again later.");
+          break;
+        }
+      }
+    } finally {
+      setLoadingRequest(false);
+    }
   };
 
   return (
@@ -55,10 +95,17 @@ export const SignIn = () => {
             </Center>
 
             <Box mt={10} px={5} py={4} borderRadius={9} background="white">
+              {error && (
+                <Text color={"red.500"} my={3}>
+                  {error}
+                </Text>
+              )}
               <TextInput placeholder="Username / Email" onChange={setEmail} />
               <TextInput
                 placeholder="Password"
                 password
+                showPassword={showPassword}
+                onShowPassword={setShowPassword}
                 onChange={setPassword}
               />
             </Box>
@@ -70,6 +117,7 @@ export const SignIn = () => {
                 borderColor="white"
                 borderWidth={1}
                 onPress={handleLogin}
+                isLoading={loadingRequest}
               >
                 Login
               </Button>
