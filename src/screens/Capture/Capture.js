@@ -1,4 +1,5 @@
 import React from "react";
+import { Camera, CameraType, VideoCodec } from "expo-camera";
 import {
   Box,
   Text,
@@ -6,20 +7,21 @@ import {
   Center,
   HStack,
   Icon,
-  Select,
   VStack,
   IconButton,
-  ScrollView,
   FlatList,
   Divider,
   Flex,
+  Progress,
 } from "native-base";
-import { Camera, CameraType } from "expo-camera";
 import { Feather } from "@expo/vector-icons";
 import { Pressable, useWindowDimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { randomInteger } from "../../utils/randomInteger";
 import { ObserveSphere } from "../../components/ObserveMenu/ObserveSphere";
+import { useStorage } from "../../hooks/useStorage";
+import { useNavigation } from "@react-navigation/native";
+import { VideoEditor } from "./VideoEditor";
 
 const RANDOM_QUESTIONS = [
   {
@@ -556,13 +558,40 @@ const RenderQuestion = ({ item, onSelected }) => {
   );
 };
 
+const getFilename = (fullPath) => {
+  return fullPath?.replace(/^.*[\\\/]/, "");
+};
+
 export const CaptureScreen = () => {
-  const [type, setType] = React.useState(CameraType.front);
+  // Custom hooks & hooks
+  const navigation = useNavigation();
   const [permission, requestPermission] = Camera.useCameraPermissions();
+
+  // State
+  const [type, setType] = React.useState(CameraType.front);
   const [showQuestionList, setShowQuestionList] = React.useState(false);
   const [selectedQuestion, setSelectedQuestion] = React.useState("");
+  const [isRecording, setIsRecording] = React.useState(false);
   const [file, setFile] = React.useState(null);
-  const { width } = useWindowDimensions();
+  const [canGoBack, setCanGoBack] = React.useState(false);
+
+  // Refs
+  const cameraRef = React.useRef();
+
+  React.useEffect(() => {
+    setCanGoBack(navigation.canGoBack());
+  }, []);
+
+  React.useEffect(() => {
+    if (isRecording) {
+      const codec = VideoCodec.HEVC;
+      cameraRef.current
+        ?.recordAsync({ codec, mirror: type === CameraType.front })
+        .then(({ uri }) => setFile(uri));
+    } else {
+      cameraRef.current?.stopRecording();
+    }
+  }, [isRecording]);
 
   const handleToggleQuestionList = () => {
     setShowQuestionList(!showQuestionList);
@@ -591,6 +620,10 @@ export const CaptureScreen = () => {
     }
   };
 
+  const handleRecord = () => {
+    return setIsRecording(!isRecording);
+  };
+
   if (!permission) return <></>;
 
   if (!permission.granted) {
@@ -602,9 +635,13 @@ export const CaptureScreen = () => {
     );
   }
 
+  if (file) {
+    return <VideoEditor file={file} onClose={() => setFile(null)} />;
+  }
+
   return (
     <Box flex={1} bg={"black"}>
-      <Camera flex={1} type={type}>
+      <Camera flex={1} type={type} ref={cameraRef}>
         <VStack flex={1} px={5} pt={3} justifyContent="space-between">
           <Box>
             <HStack
@@ -612,16 +649,26 @@ export const CaptureScreen = () => {
               justifyContent={"space-between"}
               alignItems="center"
             >
-              <IconButton
+              {canGoBack && (
+                <IconButton
+                  onPress={navigation.goBack}
+                  icon={<Icon as={Feather} name="x" size="xl" color="white" />}
+                  variant="solid"
+                  bg={"rgba(0,0,0,0.2)"}
+                  p={3}
+                  borderRadius={50}
+                />
+              )}
+              {/* <IconButton
                 onPress={handleToggleQuestionList}
                 icon={<Icon as={Feather} name="list" size="xl" color="white" />}
                 variant="solid"
                 bg={"rgba(0,0,0,0.2)"}
                 p={3}
                 borderRadius={50}
-              />
+              /> */}
 
-              <Pressable>
+              {/* <Pressable>
                 <Box width={width / 3} bg="white" borderRadius={50} px={3}>
                   <Center>Surgeon</Center>
                   <Icon
@@ -633,13 +680,13 @@ export const CaptureScreen = () => {
                     right={2}
                   />
                 </Box>
-              </Pressable>
+              </Pressable> */}
 
-              <Button _text variant="ghost">
+              {/* <Button _text variant="ghost">
                 <Text color="white" fontWeight="semibold">
                   Edit
                 </Text>
-              </Button>
+              </Button> */}
             </HStack>
 
             {showQuestionList && (
@@ -677,7 +724,13 @@ export const CaptureScreen = () => {
             )}
 
             <Box mb={30}>
-              <ObserveSphere scale={0.9} pressable />
+              {isRecording && (
+                <Center mb={-55}>
+                  <Box borderRadius={50} bgColor={"red.500"} h={20} w={20} />
+                </Center>
+              )}
+
+              <ObserveSphere scale={0.9} pressable onClick={handleRecord} />
             </Box>
 
             <HStack safeAreaBottom px={5} justifyContent="space-between">

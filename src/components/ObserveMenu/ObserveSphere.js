@@ -19,6 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
+// TODO: Fix sphere dimensions and scales
 export const ObserveSphere = ({
   onClick,
   onLongPress,
@@ -110,6 +111,7 @@ export const ObserveSphere = ({
   // Handlers
   const handleLongPressEvent = ({ nativeEvent }) => {
     if (!pressable) return;
+
     if (nativeEvent.state === State.BEGAN) {
       // Animations
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -120,18 +122,22 @@ export const ObserveSphere = ({
       startWavesAnimation();
       onClick && onClick();
     }
+
     if (nativeEvent.state === State.FAILED) {
       scale_menu.value = withSpring(scale);
     }
+
     if (nativeEvent.state === State.ACTIVE) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
       // Callback
       onLongPress && onLongPress();
     }
+
     if (nativeEvent.state === State.CANCELLED) {
       scale_menu.value = withSpring(1);
     }
+
     if (nativeEvent.state === State.END) {
       scale_menu.value = withSpring(1);
     }
