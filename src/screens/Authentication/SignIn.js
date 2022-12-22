@@ -46,7 +46,7 @@ export const SignIn = () => {
         }
 
         case "auth/wrong-password": {
-          setError("Wrong password.");
+          setError("Wrong email or password.");
           break;
         }
 

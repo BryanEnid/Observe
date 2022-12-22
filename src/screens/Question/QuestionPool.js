@@ -1,11 +1,11 @@
-import { Text, ScrollView } from "native-base";
+import { Box, ScrollView } from "native-base";
 import React from "react";
-import { TopMenu } from "./TopMenu";
+import { Question } from "../Feed/Posts/Question";
 import { usePosts } from "../../hooks/usePosts";
 import { RefreshControl } from "react-native";
 import { useRoute } from "@react-navigation/native";
 
-export const Feed = () => {
+export const QuestionPool = () => {
   const { getPosts } = usePosts();
   const { params } = useRoute();
 
@@ -45,13 +45,10 @@ export const Feed = () => {
         }
         bg={"gray.100"}
       >
-        <TopMenu />
-
-        <Text>Feed is under construction ...</Text>
-
-        {/* {questions.map((data) => (
+        <Box safeAreaTop />
+        {questions.map((data) => (
           <Question key={data.id} data={data} />
-        ))} */}
+        ))}
       </ScrollView>
     </>
   );

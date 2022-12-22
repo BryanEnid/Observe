@@ -40,7 +40,8 @@ export const VideoEditor = ({ file, onClose }) => {
         onNext: ({ bytesTransferred, totalBytes }) => {
           setProgress((bytesTransferred / totalBytes) * 100);
         },
-        onError: () => {
+        onError: (e) => {
+          console.log(e);
           setIsUploading(false);
         },
         onSuccess: () => {

@@ -15,6 +15,7 @@ import { Immersive } from "../screens/Feed/Immersive";
 import { AskQuestionScreen } from "../screens/Question/AskQuestion";
 import { CaptureScreen } from "../screens/Capture/Capture";
 import { useUser } from "../hooks/useUser";
+import { QuestionPool } from "../screens/Question/QuestionPool";
 
 // TODO: REMOVE
 const linking = {
@@ -39,8 +40,12 @@ const HomeTabs = () => {
       screenOptions={screenConfig}
       tabBar={(props) => <BottomMenu {...props} />}
     >
+      {/* By Index */}
       <Tab.Screen name="Feed" component={Feed} />
+      <Tab.Screen name="QuestionPool" component={QuestionPool} />
       <Tab.Screen name="Profile" component={Profile} />
+
+      {/* Extras */}
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );

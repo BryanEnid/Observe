@@ -198,8 +198,12 @@ export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
           <Box w={MENU_ITEM_W} zIndex={2}>
             <ObserveSphere pressable scale={0.8} onClick={handleClick} />
           </Box>
-          <MenuItem iconName="message-square" />
-          <MenuItem avatar index={1} route={state.routes[1]} />
+          <MenuItem
+            iconName="message-square"
+            index={1}
+            route={state.routes[1]}
+          />
+          <MenuItem avatar index={2} route={state.routes[2]} />
         </Row>
 
         {/* Safe area */}
