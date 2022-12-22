@@ -31,10 +31,11 @@ export const usePosts = () => {
     return output;
   };
 
-  const submitPost = async (body) => {
+  const submitPost = async (body, type = "question") => {
     const collectionRef = collection(db, "posts");
     return addDoc(collectionRef, {
       uid: user.uid,
+      type,
       created: Timestamp.now(),
       ...body,
     });

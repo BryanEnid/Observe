@@ -100,12 +100,15 @@ export const AskQuestionScreen = () => {
   };
 
   const handleSubmitQuestion = async () => {
-    await submitPost({
-      question,
-      questionType,
-      destination,
-      selectedProfile,
-    });
+    await submitPost(
+      {
+        question,
+        questionType,
+        destination,
+        selectedProfile,
+      },
+      "question"
+    );
 
     navigation.navigate("Feed", { refresh: true });
   };
