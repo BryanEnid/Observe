@@ -18,7 +18,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signIn = async (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+    let error = false;
+    let user = false;
+
+    // ! NOTE: try and catch doesn't work since Firebase SDK has its own built-in promise events
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((v) => (user = v))
+      .catch((e) => (error = e));
+
+    if (error) throw error;
+    return user;
   };
 
   const signOut = () => {

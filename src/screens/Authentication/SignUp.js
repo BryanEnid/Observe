@@ -92,22 +92,40 @@ export const SignUp = () => {
 
   const [hidePassword, setHidePassword] = React.useState(true);
 
-  const [email, setEmail] = React.useState("bryanenid97@gmail.com");
-  const [password, setPassword] = React.useState("123456c");
-  const [isPasswordValid, setPasswordIsValid] = React.useState(true);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [loadingRequest, setLoadingRequest] = React.useState(false);
+  const [error, setError] = React.useState();
 
-  const handleIsPasswordValid = (value) => {
-    if (!Boolean(password.length)) return setPasswordIsValid(false);
-    if (password?.length < 6) return setPasswordIsValid(false);
-    return setPasswordIsValid(password === value);
+  const validatePassword = () => {
+    if (!Boolean(password.length)) return false;
+    if (password?.length < 6) return false;
+    if (password !== confirmPassword) return false;
+    return true;
   };
 
   const handleSignUp = () => {
-    if (!isPasswordValid) return;
+    setLoadingRequest(true);
+    const isPasswordValid = validatePassword();
+    if (!isPasswordValid) return setLoadingRequest(false);
+
     signUp(email, password).catch((err) => {
       // TODO: Handle firebase errors
       reactotron.error(err);
+      console.error(err);
+      setError(err.message);
+      setLoadingRequest(false);
     });
+  };
+
+  const handleDisabledSignUpButton = () => {
+    const isEmailValid = Boolean(email.length);
+    const isPasswordValid =
+      Boolean(password.length) && Boolean(confirmPassword.length);
+    const result = [isEmailValid, isPasswordValid];
+    return !result.every(Boolean);
   };
 
   return (
@@ -130,21 +148,36 @@ export const SignUp = () => {
           safeAreaBottom
         >
           <Box>
-            <TextInput placeholder="email" onChange={setEmail} value={email} />
+            {error && (
+              <Text color={"red.500"} my={3}>
+                {error}
+              </Text>
+            )}
+            <TextInput placeholder="Email" onChange={setEmail} value={email} />
             <TextInput
-              placeholder="password"
+              placeholder="Password"
               password={hidePassword}
               onChange={setPassword}
               value={password}
-            />
-            <TextInput
-              placeholder="confirm password"
-              password={hidePassword}
-              onChange={handleIsPasswordValid}
-              value={password}
+              showPassword={showPassword}
+              onShowPassword={setShowPassword}
             />
 
-            <Button mt={5} onPress={handleSignUp}>
+            <TextInput
+              placeholder="Confirm password"
+              password={hidePassword}
+              onChange={setConfirmPassword}
+              value={confirmPassword}
+              showPassword={showPassword}
+              onShowPassword={setShowPassword}
+            />
+
+            <Button
+              mt={5}
+              onPress={handleSignUp}
+              isLoading={loadingRequest}
+              isDisabled={handleDisabledSignUpButton()}
+            >
               <Text color={"white"} fontSize="md">
                 Sign Up
               </Text>
