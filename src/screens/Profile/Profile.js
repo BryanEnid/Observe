@@ -13,23 +13,11 @@ import {
   Icon,
   VStack,
 } from "native-base";
-import Animated, {
-  cancelAnimation,
-  interpolate,
-  useAnimatedGestureHandler,
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-  withDecay,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
-import { getStatusBarHeight } from "react-native-status-bar-height";
 import { Feather } from "@expo/vector-icons";
 
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
-import { scrollTo } from "../../utils/scrollTo";
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
 import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "./Screens";

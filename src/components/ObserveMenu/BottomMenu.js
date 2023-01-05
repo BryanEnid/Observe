@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext } from "react";
 import { Box, Icon, Pressable, Row, Text, useDisclose } from "native-base";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { ObserveSphere } from "./ObserveSphere";
@@ -164,6 +164,8 @@ export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
   };
 
   if (!isVisible) return <></>;
+
+  // ! FIXME: Why is there two UIs (?)
 
   if (!state)
     return (
