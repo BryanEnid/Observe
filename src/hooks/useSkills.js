@@ -24,16 +24,14 @@ export const useSkills = () => {
     return output;
   };
 
-  const getSkillsByRef = (references) => {
+  const getSkillsByRef = async (references) => {
+    if (references.length === 0) return [];
     const output = [];
     const skillsRef = collection(db, "skills");
     const q = query(skillsRef, where(documentId(), "in", references));
-    // const snapshot = getDocs(docRef);
-    // snapshot.forEach((docs) => {
-    //   const document = { id: docs.id, ...docs.data() };
-    //   output.push(document);
-    // });
-    // return output;
+    const snapshot = await getDocs(q);
+    snapshot.forEach((doc) => output.push({ id: doc.id, ...doc.data() }));
+    return output;
   };
 
   return { getSkills, getSkillsByRef };

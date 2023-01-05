@@ -17,15 +17,20 @@ export const ResumeScreen = () => {
   const { isKeyboardVisible } = useKeyboardDisplay();
   const { profile, updateProfile } = useProfile();
   const [skills, setSkills] = React.useState(null);
+  const [currentSkillsRefs, setCurrentSkillRefs] = React.useState([]);
   const { getSkillsByRef } = useSkills();
 
   React.useEffect(() => {
-    if (profile) {
+    if (profile && !skills) {
       // Skills
-      const data = getSkillsByRef(profile.skills);
-      console.log("resume >>> data", data);
+      getSkillsByRef(profile.skills).then((data) => {
+        let refs = [];
+        data.forEach(({ id }) => refs.push(id));
+        setSkills(data);
+        setCurrentSkillRefs(refs);
+      });
     }
-  }, [profile]);
+  }, [profile, skills]);
 
   const handleAddSkills = () => {
     setIsOpen(true);
@@ -34,16 +39,21 @@ export const ResumeScreen = () => {
   const handleUpdateSkills = (data) => {
     // Closed by tapping out
     if (!data) return isKeyboardVisible ? Keyboard.dismiss() : setIsOpen(false);
-
     updateProfile({ skills: Object.keys(data) }, { isRef: true });
+    setSkills(Object.values(data));
+    setCurrentSkillRefs(Object.keys(data));
     return setIsOpen(false);
   };
 
-  if (!skills) return <></>;
+  if (!skills || !profile) return <></>;
 
   return (
     <>
-      <SkillsActionMenu isOpen={isOpen} onClose={handleUpdateSkills} />
+      <SkillsActionMenu
+        isOpen={isOpen}
+        onClose={handleUpdateSkills}
+        currentSkills={currentSkillsRefs}
+      />
 
       <Box mx={3}>
         <Box pb={3}>
@@ -81,9 +91,9 @@ export const ResumeScreen = () => {
 
           <Box>
             <Row flexWrap={"wrap"} space={2}>
-              {[].map((text) => (
-                <SkillItem key={text} logo="a">
-                  <Text fontSize={11}>{text}</Text>
+              {skills.map(({ name, logoUri, id }) => (
+                <SkillItem key={id} logo={logoUri}>
+                  <Text fontSize={11}>{name}</Text>
                 </SkillItem>
               ))}
 

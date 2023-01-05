@@ -3,12 +3,23 @@ import { Box, Icon, Image } from "native-base";
 import { Feather } from "@expo/vector-icons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
-export const SkillItem = ({ children, logo, onPress, selectable, id }) => {
+export const SkillItem = ({
+  children,
+  logo,
+  onPress,
+  selectable,
+  id,
+  isCurrent,
+}) => {
   const [isSelected, setSelected] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isCurrent) setSelected(true);
+  }, [isCurrent]);
 
   const handleSelected = () => {
     const action = !isSelected ? "add" : "remove";
-    const payload = { id, children, action };
+    const payload = { id, name: children, action, logoUri: logo };
     setSelected(!isSelected);
     onPress && onPress(payload);
   };

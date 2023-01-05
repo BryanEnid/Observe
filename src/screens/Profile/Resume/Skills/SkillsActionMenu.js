@@ -18,14 +18,15 @@ import { useKeyboardBottomInset } from "../../../../hooks/useKeyboardBottomInset
 import { SkillItem } from "./SkillItem";
 import { useSkills } from "../../../../hooks/useSkills";
 
-export const SkillsActionMenu = ({ isOpen, onClose }) => {
+export const SkillsActionMenu = ({ isOpen, onClose, currentSkills }) => {
+  console.log(currentSkills);
   const Action = useDisclose();
   const { bottomInset } = useKeyboardBottomInset();
   const { getSkills } = useSkills();
 
   // State
   const [searchInput, setSearchInput] = React.useState("");
-  const [currentSkills, setCurrentSkills] = React.useState(["CSS3"]);
+  // const [currentSkills, setCurrentSkills] = React.useState(["CSS3"]);
   const [skills, setSkills] = React.useState([]);
   const [isSearching, setSearching] = React.useState(false);
   const [selectedSkills, setSelectedSkills] = React.useState({});
@@ -45,7 +46,7 @@ export const SkillsActionMenu = ({ isOpen, onClose }) => {
   const handleSelectedSkills = (skill) => {
     switch (skill.action) {
       case "add": {
-        setSelectedSkills((prev) => ({ ...prev, [skill.id]: skill.id }));
+        setSelectedSkills((prev) => ({ ...prev, [skill.id]: skill }));
         break;
       }
 
@@ -143,6 +144,7 @@ export const SkillsActionMenu = ({ isOpen, onClose }) => {
                       logo={logoUri}
                       selectable
                       onPress={handleSelectedSkills}
+                      isCurrent={currentSkills.includes(id)}
                     >
                       <Text fontSize={11}>{name}</Text>
                     </SkillItem>
