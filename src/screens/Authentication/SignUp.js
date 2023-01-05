@@ -6,6 +6,9 @@ import React from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useAuth } from "../../hooks/useAuth";
 import { TextInput } from "../../components/TextInput";
+import { useProfile } from "../../hooks/useProfile";
+import reactotron from "reactotron-react-native";
+import { useUser } from "../../hooks/useUser";
 
 export const SetsOfScreensWithProgress = ({ onScreenChange, children }) => {
   const navigation = useNavigation();
@@ -25,7 +28,7 @@ export const SetsOfScreensWithProgress = ({ onScreenChange, children }) => {
     setProgress(currentProgress);
   }, [currentScreenIndex]);
 
-  // Alerting before going back
+  // TODO: Alerting before going back
   // React.useEffect(() => {
   //   navigation.addListener("beforeRemove", (e) => {
   //     // Prevent default behavior of leaving the screen
@@ -49,7 +52,7 @@ export const SetsOfScreensWithProgress = ({ onScreenChange, children }) => {
   //   });
   // }, [navigation]);
 
-  const handlePreventGoingBack = () => {};
+  // const handlePreventGoingBack = () => {};
 
   const handleForwards = ({ state }) => {
     if (children.length - 1 === currentScreenIndex) return;
@@ -89,11 +92,13 @@ const FederatedLoginContainer = () => {
 
 export const SignUp = () => {
   const { signUp } = useAuth();
+  const { initialized } = useUser();
+  const { createProfile } = useProfile();
 
-  const [hidePassword, setHidePassword] = React.useState(true);
-
+  const [firstName, setFirstName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [hidePassword, setHidePassword] = React.useState(true);
   const [showPassword, setShowPassword] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [loadingRequest, setLoadingRequest] = React.useState(false);
@@ -111,7 +116,12 @@ export const SignUp = () => {
     const isPasswordValid = validatePassword();
     if (!isPasswordValid) return setLoadingRequest(false);
 
-    signUp(email, password).catch((err) => {
+    const profilePayload = {
+      firstName,
+      email,
+    };
+
+    signUp(email, password, profilePayload).catch((err) => {
       // TODO: Handle firebase errors
       reactotron.error(err);
       console.error(err);
@@ -121,12 +131,17 @@ export const SignUp = () => {
   };
 
   const handleDisabledSignUpButton = () => {
+    const isFirstNameValid = Boolean(firstName.length >= 3);
     const isEmailValid = Boolean(email.length);
     const isPasswordValid =
       Boolean(password.length) && Boolean(confirmPassword.length);
-    const result = [isEmailValid, isPasswordValid];
+
+    const result = [isEmailValid, isPasswordValid, isFirstNameValid];
+
     return !result.every(Boolean);
   };
+
+  if (!initialized) return <></>;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -153,7 +168,14 @@ export const SignUp = () => {
                 {error}
               </Text>
             )}
+            <TextInput
+              placeholder="Name"
+              onChange={setFirstName}
+              value={firstName}
+            />
+
             <TextInput placeholder="Email" onChange={setEmail} value={email} />
+
             <TextInput
               placeholder="Password"
               password={hidePassword}

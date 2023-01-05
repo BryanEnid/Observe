@@ -13,44 +13,28 @@ import {
   Icon,
   VStack,
 } from "native-base";
-import Animated, {
-  cancelAnimation,
-  interpolate,
-  useAnimatedGestureHandler,
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-  withDecay,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
-import { getStatusBarHeight } from "react-native-status-bar-height";
 import { Feather } from "@expo/vector-icons";
 
 import { useRandomUsers } from "../../hooks/query/useRandomUsers";
-import { scrollTo } from "../../utils/scrollTo";
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
-import { BucketScreen } from "./Buckets/Buckets";
-import { ResumeScreen } from "./Resume/Resume";
 import { useNavigation } from "@react-navigation/native";
+import { SCREENS } from "./Screens";
+import { Dimensions } from "./const";
+import useProfileAnimations from "./useProfileAnimations";
 
-const statusBarHeight = getStatusBarHeight();
-
-const PROFILE_DIMENSIONS = { width: 180, height: 180, padding: 20 };
-// ! Also declare refs using "useAnimatedRef"  per screen and add it to the refs array
-const SCREENS = [
-  ["Resume", ResumeScreen],
-  ["Bucket", BucketScreen],
-];
-
-const PROFILE_NAME_H = 50;
-const PROFILE_NAME_W = 250;
-const PROFILE_H = 255;
-const NAV_BTN_W = 82;
-const NAVBAR_H = 50;
-const NAVBAR_W = NAV_BTN_W * SCREENS.length;
-const HEADER_W = 400;
+const {
+  PROFILE_NAME_H,
+  PROFILE_NAME_W,
+  PROFILE_H,
+  NAV_BTN_W,
+  NAVBAR_W,
+  HEADER_W,
+  PROFILE_DIMENSIONS,
+  statusBarHeight,
+  NAVBAR_H,
+} = Dimensions;
 
 export const Profile = () => {
   // Hooks
@@ -63,22 +47,19 @@ export const Profile = () => {
     }),
     key: ["user", { amount: 1 }],
   });
-
-  // State
-  const sv_x_ref = useAnimatedRef();
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const nav_translate_x = useSharedValue(0);
-  const nav_translate_y = useSharedValue(0);
-
-  const bucket_sv_y_ref = useAnimatedRef();
-  const resume_sv_y_ref = useAnimatedRef();
-  const refs = [bucket_sv_y_ref, resume_sv_y_ref];
-
-  const current_screen = useDerivedValue(() => {
-    const result = Math.floor(translateX.value / width);
-    return result < 0 ? 0 : result;
-  });
+  const {
+    handleNavSelect,
+    handleNavPanGesture,
+    handleSubscreenXScroll,
+    handleSubscreenYScroll,
+    r_header,
+    r_nav_x_translate,
+    r_nav_x_translate_gesture,
+    r_nav_y_translate,
+    r_profile_name_y_translate,
+    refs,
+    sv_x_ref,
+  } = useProfileAnimations();
 
   // Styles
   const styles = StyleSheet.create({
@@ -116,109 +97,6 @@ export const Profile = () => {
       right: 10,
       zIndex: 2,
     },
-  });
-
-  // Handlers
-  const handleNavSelect = (event, index) => {
-    refs.map((ref, i) => {
-      if (i === current_screen.value) return;
-      const y = translateY.value > 254 ? 255 : translateY.value;
-      scrollTo(ref, { y, animated: false });
-    });
-    scrollTo(sv_x_ref, { x: index * width });
-  };
-
-  // Config Animations
-  const clamped_nav_scroll_x = useDerivedValue(() => {
-    const Limits = -NAV_BTN_W * (SCREENS.length - 1);
-    return Math.max(Math.min(nav_translate_x.value, 0), Limits);
-  });
-
-  // Worklets
-  const handleSubscreenXScroll = useAnimatedScrollHandler({
-    // TODO: This doesn't work on web
-    onBeginDrag: (event, context) => {
-      refs.map((ref, index) => {
-        if (index === current_screen.value) return;
-        const y = translateY.value > 254 ? 255 : translateY.value;
-        scrollTo(ref, { y, animated: false }, true);
-      });
-    },
-    onScroll: (event, context) => {
-      // Subscreen
-      translateX.value = event.contentOffset.x;
-
-      // Navbar
-      nav_translate_x.value = interpolate(
-        event.contentOffset.x,
-        [0, width],
-        [0, -Number(NAV_BTN_W)]
-      );
-    },
-  });
-
-  const handleSubscreenYScroll = useAnimatedScrollHandler((event) => {
-    // Subscreen
-    translateY.value = event.contentOffset.y;
-
-    // Navbar
-    nav_translate_y.value = interpolate(
-      event.contentOffset.y,
-      [0, 1, PROFILE_H, PROFILE_H + 1],
-      [0, -1, -PROFILE_H, -PROFILE_H]
-    );
-  });
-
-  const handleNavPanGesture = useAnimatedGestureHandler({
-    onStart: (event, context) => {
-      context.translateX = clamped_nav_scroll_x.value;
-      cancelAnimation(nav_translate_x);
-    },
-    onActive: (event, context) => {
-      nav_translate_x.value = event.translationX + context.translateX;
-    },
-    onEnd: (event, context) => {
-      nav_translate_x.value = withDecay({ velocity: event.velocityX });
-    },
-  });
-
-  // Animations
-  const r_header = useAnimatedStyle(() => {
-    const r_translateY = interpolate(translateY.value, [0, 1], [0, -1]);
-    return {
-      transform: [{ translateY: r_translateY }, { translateX: -HEADER_W / 2 }],
-    };
-  });
-
-  const r_profile_name_y_translate = useAnimatedStyle(() => {
-    return { transform: [{ translateY: nav_translate_y.value }] };
-  });
-
-  const r_nav_y_translate = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: clamped_nav_scroll_x.value },
-        { translateY: nav_translate_y.value },
-      ],
-    };
-  });
-
-  const r_nav_x_translate_gesture = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: clamped_nav_scroll_x.value },
-        { translateY: nav_translate_y.value },
-      ],
-    };
-  });
-
-  const r_nav_x_translate = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: clamped_nav_scroll_x.value },
-        { translateY: nav_translate_y.value },
-      ],
-    };
   });
 
   if (!profile?.name) return <></>;
