@@ -23,6 +23,8 @@ import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "./Screens";
 import { Dimensions } from "./const";
 import useProfileAnimations from "./useProfileAnimations";
+import { useProfile } from "../../hooks/useProfile";
+import reactotron from "reactotron-react-native";
 
 const {
   PROFILE_NAME_H,
@@ -40,13 +42,15 @@ export const Profile = () => {
   // Hooks
   const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
-  const { data: profile } = useRandomUsers({
-    select: ({ results }) => ({
-      ...results[0],
-      quote: "Seagulls are the eagles of the sea.",
-    }),
-    key: ["user", { amount: 1 }],
-  });
+  const { profile } = useProfile();
+  // const { data: profile } = useRandomUsers({
+  //   select: ({ results }) => ({
+  //     ...results[0],
+  //     quote: "Seagulls are the eagles of the sea.",
+  //   }),
+  //   key: ["user", { amount: 1 }],
+  // });
+
   const {
     handleNavSelect,
     handleNavPanGesture,
@@ -67,6 +71,8 @@ export const Profile = () => {
       width: PROFILE_DIMENSIONS.width - PROFILE_DIMENSIONS.padding,
       aspectRatio: 1,
       borderRadius: PROFILE_DIMENSIONS.width - PROFILE_DIMENSIONS.padding / 2,
+      borderWidth: !profile?.picture && 3,
+      borderColor: !profile?.picture && "rgb(143, 147, 161)",
     },
     header: {
       height: PROFILE_H,
@@ -98,8 +104,6 @@ export const Profile = () => {
       zIndex: 2,
     },
   });
-
-  if (!profile?.name) return <></>;
 
   // Components
   const Navbar = ({ onChange }) => {
@@ -136,6 +140,8 @@ export const Profile = () => {
     );
   };
 
+  if (!profile) return <></>;
+
   return (
     <>
       <Box overflowX={"hidden"} flex={1} backgroundColor="white">
@@ -145,9 +151,9 @@ export const Profile = () => {
         <Animated.View style={[styles.username, r_profile_name_y_translate]}>
           <Center>
             <Text bold>
-              {profile.name.first} {profile.name.last}
+              {profile.firstName} {profile.lastName}
             </Text>
-            <Text>@{profile.login.username}</Text>
+            <Text>@ {profile.email}</Text>
           </Center>
 
           <Center>
@@ -220,7 +226,11 @@ export const Profile = () => {
                 <Pressable onPress={() => {}}>
                   <Box>
                     <Image
-                      source={{ uri: profile?.picture?.large }}
+                      source={{
+                        uri: profile?.picture
+                          ? profile?.picture
+                          : "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
+                      }}
                       fallbackSource={{
                         uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
                       }}
@@ -232,8 +242,9 @@ export const Profile = () => {
               </Center>
 
               <Center>
+                {/* TODO: Fix this hard coded text */}
                 <Text>Software Engineer at Facebook</Text>
-                <Text>"{profile.quote}"</Text>
+                {profile?.quote && <Text>"{profile.quote}"</Text>}
               </Center>
             </Box>
           </Box>

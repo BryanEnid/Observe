@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Row, Text, Heading, Icon } from "native-base";
-import { Experience, Education } from "./Experience";
+import { Experience, Education } from "./Experience/Experience";
 import { Feather } from "@expo/vector-icons";
 import { Keyboard } from "react-native";
 import { useKeyboardDisplay } from "../../../hooks/useKeyboardDisplay";
@@ -8,22 +8,29 @@ import { SkillItem } from "./Skills/SkillItem";
 import { SkillsActionMenu } from "./Skills/SkillsActionMenu";
 import { useProfile } from "../../../hooks/useProfile";
 import { useSkills } from "../../../hooks/useSkills";
+import reactotron from "reactotron-react-native";
 
 const HEADERS_SIZE = "lg";
 const HEADERS_EXTRA_BUTTON_SIZE = "sm";
 
+// TODO: Refactor this to reuse similar code
 export const ResumeScreen = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  // Hooks
   const { isKeyboardVisible } = useKeyboardDisplay();
   const { profile, updateProfile } = useProfile();
+  const { getSkillsByRef } = useSkills();
+
+  // States
   const [skills, setSkills] = React.useState(null);
   const [currentSkillsRefs, setCurrentSkillRefs] = React.useState([]);
-  const { getSkillsByRef } = useSkills();
+
+  // Modal Flags
+  const [isSkillsOpen, setSkillsIsOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (profile && !skills) {
       // Skills
-      getSkillsByRef(profile.skills).then((data) => {
+      getSkillsByRef(profile.skills ?? []).then((data) => {
         let refs = [];
         data.forEach(({ id }) => refs.push(id));
         setSkills(data);
@@ -33,30 +40,40 @@ export const ResumeScreen = () => {
   }, [profile, skills]);
 
   const handleAddSkills = () => {
-    setIsOpen(true);
+    setSkillsIsOpen(true);
   };
 
   const handleUpdateSkills = (data) => {
+    // If data includes target => it is an event, and it should be skipped.
+    if (data?.target) return;
+
     // Closed by tapping out
-    if (!data) return isKeyboardVisible ? Keyboard.dismiss() : setIsOpen(false);
+    if (!data) {
+      isKeyboardVisible ? Keyboard.dismiss() : setSkillsIsOpen(false);
+      return;
+    }
+
     updateProfile({ skills: Object.keys(data) }, { isRef: true });
     setSkills(Object.values(data));
     setCurrentSkillRefs(Object.keys(data));
-    return setIsOpen(false);
+    return setSkillsIsOpen(false);
   };
 
   if (!skills || !profile) return <></>;
 
   return (
     <>
+      {/* TODO: This can be a reusable component in which we can pass children UI */}
       <SkillsActionMenu
-        isOpen={isOpen}
+        isOpen={isSkillsOpen}
         onClose={handleUpdateSkills}
         currentSkills={currentSkillsRefs}
       />
 
       <Box mx={3}>
-        <Box pb={3}>
+        {/* TODO: Hard coded text */}
+        <Box m={2} />
+        {/* <Box pb={3}>
           <Box px={4} py={2}>
             <Row justifyContent={"space-between"}>
               <Heading fontSize={HEADERS_SIZE}>About</Heading>
@@ -76,7 +93,7 @@ export const ResumeScreen = () => {
               www.earltheseagull.com
             </Text>
           </Box>
-        </Box>
+        </Box> */}
 
         <Box pb={3}>
           <Box px={4} py={2}>

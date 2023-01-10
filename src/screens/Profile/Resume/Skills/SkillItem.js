@@ -14,13 +14,15 @@ export const SkillItem = ({
   const [isSelected, setSelected] = React.useState(false);
 
   React.useEffect(() => {
-    if (isCurrent) setSelected(true);
+    if (isCurrent) {
+      handleSelected(true);
+    }
   }, [isCurrent]);
 
-  const handleSelected = () => {
-    const action = !isSelected ? "add" : "remove";
+  const handleSelected = (wasSelected) => {
+    const action = wasSelected ?? !isSelected ? "add" : "remove";
     const payload = { id, name: children, action, logoUri: logo };
-    setSelected(!isSelected);
+    setSelected(wasSelected ?? !isSelected);
     onPress && onPress(payload);
   };
 

@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  setDoc,
-  doc,
-  getDoc,
-  Timestamp,
-  updateDoc,
-  collection,
-} from "firebase/firestore";
+import { setDoc, doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { db } from "../config/FirebaseConfig";
 import { useUser } from "./useUser";
 
@@ -52,18 +45,8 @@ export const useProfile = () => {
     });
   };
 
-  const getSkills = async () => {
-    const output = [];
-    const docRef = collection(db, "skills");
-    const snapshot = await getDocs(docRef);
-    snapshot.forEach((docs) => {
-      const document = { id: docs.id, ...docs.data() };
-      output.push(document);
-    });
-    return output;
-  };
-
-  const updateProfile = (field, { isRef }) => {
+  const defaultOptions = { isRef: false, arrayUnion: false };
+  const updateProfile = (field, { isRef, arrayUnion } = defaultOptions) => {
     let output = field;
     if (isRef) {
       output = null;

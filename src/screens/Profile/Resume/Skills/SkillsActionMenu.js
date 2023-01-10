@@ -19,14 +19,12 @@ import { SkillItem } from "./SkillItem";
 import { useSkills } from "../../../../hooks/useSkills";
 
 export const SkillsActionMenu = ({ isOpen, onClose, currentSkills }) => {
-  console.log(currentSkills);
   const Action = useDisclose();
   const { bottomInset } = useKeyboardBottomInset();
   const { getSkills } = useSkills();
 
   // State
   const [searchInput, setSearchInput] = React.useState("");
-  // const [currentSkills, setCurrentSkills] = React.useState(["CSS3"]);
   const [skills, setSkills] = React.useState([]);
   const [isSearching, setSearching] = React.useState(false);
   const [selectedSkills, setSelectedSkills] = React.useState({});
@@ -80,7 +78,7 @@ export const SkillsActionMenu = ({ isOpen, onClose, currentSkills }) => {
           alignItems="center"
           mb={1}
         >
-          <Button variant="link" w="80px" onPress={onClose}>
+          <Button variant="link" w="80px" onPress={() => onClose()}>
             <Text color="primary.500" fontWeight="bold">
               Cancel
             </Text>
