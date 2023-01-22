@@ -16,14 +16,16 @@ import {
 import Animated from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
-
-import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SCREENS } from "./Screens";
 import { Dimensions } from "./const";
 import useProfileAnimations from "./useProfileAnimations";
 import { useProfile } from "../../hooks/useProfile";
+import { ProfilePictureActionMenu } from "./Resume/ProfilePictureActionMenu";
+import { scrollTo } from "../../utils/scrollTo";
+import { useStorage } from "../../hooks/useStorage";
+import { uniqueId } from "lodash";
 import reactotron from "reactotron-react-native";
 
 const {
@@ -38,19 +40,16 @@ const {
   NAVBAR_H,
 } = Dimensions;
 
-export const Profile = () => {
+const defaultPicture =
+  "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg";
+
+export const Profile = (props) => {
   // Hooks
   const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
-  const { profile } = useProfile();
-  // const { data: profile } = useRandomUsers({
-  //   select: ({ results }) => ({
-  //     ...results[0],
-  //     quote: "Seagulls are the eagles of the sea.",
-  //   }),
-  //   key: ["user", { amount: 1 }],
-  // });
-
+  const { profile, updateProfile } = useProfile();
+  const { savePicture } = useStorage();
+  const route = useRoute();
   const {
     handleNavSelect,
     handleNavPanGesture,
@@ -64,6 +63,24 @@ export const Profile = () => {
     refs,
     sv_x_ref,
   } = useProfileAnimations();
+
+  // State
+  const [isActionMenuOpen, setActionMenuOpen] = React.useState(false);
+  const [profilePicture, setProfilePicture] = React.useState(defaultPicture);
+
+  // Go to resume subscreen after pressing edit mode
+  React.useEffect(() => {
+    if (route?.params?.editMode) {
+      scrollTo(sv_x_ref, { animated: false }, false);
+      refs.forEach((ref) => {
+        scrollTo(ref, { animated: false }, false);
+      });
+    }
+  }, [route?.params]);
+
+  React.useEffect(() => {
+    profile?.picture && setProfilePicture(profile.picture);
+  }, [profile]);
 
   // Styles
   const styles = StyleSheet.create({
@@ -105,6 +122,27 @@ export const Profile = () => {
     },
   });
 
+  const handleProfilePictureActions = () => {
+    setActionMenuOpen(true);
+  };
+
+  const handleSelectedFile = (file) => {
+    const fileName = uniqueId("profile_picture_");
+    savePicture(fileName, file, {
+      onSuccess: (downloadURL) => {
+        updateProfile({ picture: downloadURL });
+        setProfilePicture(file);
+      },
+      onError: (e) => {
+        if (e.code === "storage/quota-exceeded") {
+          setProfilePicture(file);
+        }
+        console.log(e);
+      },
+    });
+    setActionMenuOpen(false);
+  };
+
   // Components
   const Navbar = ({ onChange }) => {
     const Item = ({ children, index }) => (
@@ -144,6 +182,12 @@ export const Profile = () => {
 
   return (
     <>
+      <ProfilePictureActionMenu
+        isOpen={isActionMenuOpen}
+        onClose={() => setActionMenuOpen(false)}
+        onSelectedFile={handleSelectedFile}
+      />
+
       <Box overflowX={"hidden"} flex={1} backgroundColor="white">
         <StatusBar barStyle={"dark-content"} />
 
@@ -223,14 +267,10 @@ export const Profile = () => {
               </VStack>
 
               <Center>
-                <Pressable onPress={() => {}}>
+                <Pressable onPress={handleProfilePictureActions}>
                   <Box>
                     <Image
-                      source={{
-                        uri: profile?.picture
-                          ? profile?.picture
-                          : "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
-                      }}
+                      source={{ uri: profilePicture }}
                       fallbackSource={{
                         uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
                       }}

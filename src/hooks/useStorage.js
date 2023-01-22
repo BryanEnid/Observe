@@ -4,6 +4,7 @@ import {
   uploadString,
   uploadBytesResumable,
   uploadBytes,
+  getDownloadURL,
 } from "firebase/storage";
 import React from "react";
 import * as FileSystem from "expo-file-system";
@@ -38,7 +39,10 @@ export const useStorage = () => {
 
     const uploadTask = uploadBytesResumable(storageRef, fileBlob);
     uploadTask.on("state_changed", {
-      complete: handleEvents.onSuccess,
+      complete: async (e) => {
+        const imageURI = await getDownloadURL(storageRef);
+        handleEvents.onSuccess(imageURI, e);
+      },
       error: handleEvents.onError,
       next: handleEvents.onNext,
     });

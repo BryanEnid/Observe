@@ -1,6 +1,7 @@
 import React from "react";
-import { Box, Row, Text, Heading, Icon } from "native-base";
-import { Experience, Education } from "./Experience/Experience";
+import { Box, Row, Text, Heading, Icon, Button } from "native-base";
+import { Experience } from "./Experience/Experience";
+import { Education } from "./Education/Education";
 import { Feather } from "@expo/vector-icons";
 import { Keyboard } from "react-native";
 import { useKeyboardDisplay } from "../../../hooks/useKeyboardDisplay";
@@ -8,7 +9,7 @@ import { SkillItem } from "./Skills/SkillItem";
 import { SkillsActionMenu } from "./Skills/SkillsActionMenu";
 import { useProfile } from "../../../hooks/useProfile";
 import { useSkills } from "../../../hooks/useSkills";
-import reactotron from "reactotron-react-native";
+import { useRoute } from "@react-navigation/native";
 
 const HEADERS_SIZE = "lg";
 const HEADERS_EXTRA_BUTTON_SIZE = "sm";
@@ -19,6 +20,7 @@ export const ResumeScreen = () => {
   const { isKeyboardVisible } = useKeyboardDisplay();
   const { profile, updateProfile } = useProfile();
   const { getSkillsByRef } = useSkills();
+  const { params } = useRoute();
 
   // States
   const [skills, setSkills] = React.useState(null);
@@ -26,6 +28,11 @@ export const ResumeScreen = () => {
 
   // Modal Flags
   const [isSkillsOpen, setSkillsIsOpen] = React.useState(false);
+  const [isEditMode, setEditMode] = React.useState(false);
+
+  React.useEffect(() => {
+    setEditMode(params?.editMode ?? false);
+  }, [params]);
 
   React.useEffect(() => {
     if (profile && !skills) {
@@ -73,6 +80,16 @@ export const ResumeScreen = () => {
       <Box mx={3}>
         {/* TODO: Hard coded text */}
         <Box m={2} />
+
+        {isEditMode && (
+          <Box m={2}>
+            <Button bg="red.400" onPress={() => setEditMode(false)}>
+              <Text fontSize={"15px"} color="white">
+                Cancel editing
+              </Text>
+            </Button>
+          </Box>
+        )}
         {/* <Box pb={3}>
           <Box px={4} py={2}>
             <Row justifyContent={"space-between"}>
@@ -114,13 +131,20 @@ export const ResumeScreen = () => {
                 </SkillItem>
               ))}
 
-              <SkillItem
-                onPress={handleAddSkills}
-                key="plus"
-                logo={
-                  <Icon as={Feather} name="plus" size="4xl" color="blue.400" />
-                }
-              />
+              {isEditMode && (
+                <SkillItem
+                  onPress={handleAddSkills}
+                  key="plus"
+                  logo={
+                    <Icon
+                      as={Feather}
+                      name="plus"
+                      size="4xl"
+                      color="blue.400"
+                    />
+                  }
+                />
+              )}
             </Row>
           </Box>
         </Box>
@@ -133,7 +157,7 @@ export const ResumeScreen = () => {
             </Row>
           </Box>
 
-          <Experience />
+          <Experience isEditMode={isEditMode} />
         </Box>
 
         {/* Education */}
@@ -144,7 +168,7 @@ export const ResumeScreen = () => {
             </Row>
           </Box>
 
-          <Education />
+          <Education isEditMode={isEditMode} />
         </Box>
       </Box>
     </>

@@ -21,14 +21,14 @@ const getFilename = (fullPath) => {
   return fullPath?.replace(/^.*[\\\/]/, "");
 };
 
-export const ExperienceActionMenu = ({ isOpen, onClose }) => {
+export const EducationActionMenu = ({ isOpen, onClose }) => {
   // Hooks
   const Action = useDisclose();
   const { savePicture } = useStorage();
   const { updateProfile } = useProfile();
 
   // State
-  const [experience, setExperience] = React.useState({});
+  const [Education, setEducation] = React.useState({});
   const [isSearching, setSearching] = React.useState(false);
   const [isLoading, setLoading] = React.useState(false);
   const [image, setImage] = React.useState(null);
@@ -51,12 +51,14 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
     isOpen && Action.onOpen();
   }, [isOpen]);
 
+  React.useEffect(() => {});
+
   const handleSubmit = () => {
     setLoading(true);
     savePicture(getFilename(image), image, {
       onSuccess: (imageURI) => {
-        const payload = { ...experience, imageURI };
-        updateProfile({ experience: arrayUnion(payload) });
+        const payload = { ...Education, imageURI };
+        updateProfile({ education: arrayUnion(payload) });
         onClose(payload);
         setLoading(false);
       },
@@ -69,7 +71,7 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
   };
 
   const handleInputChange = (text, field) => {
-    setExperience((prev) => ({ ...prev, [field]: text }));
+    setEducation((prev) => ({ ...prev, [field]: text }));
   };
 
   const handleOnClose = (...params) => {
@@ -78,7 +80,7 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
   };
 
   const clear = () => {
-    setExperience({});
+    setEducation({});
     setImage(null);
   };
 
@@ -103,7 +105,7 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
             </Text>
           </Button>
           <Text fontSize="md" bold w="140px" textAlign="center">
-            Add Experience
+            Add Education
           </Text>
           <Box w="80px" />
         </HStack>
@@ -184,11 +186,11 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
 
           <Row>
             <ExperienceItem
-              title={experience.title}
-              subheading={experience.companyName}
+              title={Education.title}
+              subheading={Education.companyName}
               video={""}
-              from={experience.fromYear}
-              to={experience.toYear}
+              from={Education.fromYear}
+              to={Education.toYear}
               picture={image}
             />
           </Row>
