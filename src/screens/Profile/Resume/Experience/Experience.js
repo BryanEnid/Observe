@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Row } from "native-base";
+import { Box, Row, Heading, Text } from "native-base";
 import { ExperienceActionMenu } from "./ExperienceActionMenu";
 import { ExperienceItem } from "../../../../components/ExperienceItem";
 import { Keyboard } from "react-native";
@@ -7,6 +7,8 @@ import { useProfile } from "../../../../hooks/useProfile";
 import { useKeyboardDisplay } from "../../../../hooks/useKeyboardDisplay";
 import { AddButton } from "../../../../components/ExperienceAddButton";
 import reactotron from "reactotron-react-native";
+
+const FONT_HEADER_SIZE = "lg";
 
 export const Experience = ({ isEditMode }) => {
   // Hooks
@@ -19,7 +21,9 @@ export const Experience = ({ isEditMode }) => {
 
   React.useEffect(() => {
     if (profile) {
+      reactotron.log(profile.experience);
       setExperience(profile.experience ?? []);
+      // setExperience([]);
     }
   }, [profile]);
 
@@ -39,6 +43,12 @@ export const Experience = ({ isEditMode }) => {
 
   const handleAddExperience = () => setExperienceIsOpen(true);
 
+  const handleDeleteExperienceItem = (id) => {
+    const output = profile.experience.filter((item) => item.id !== id);
+    setExperience(output);
+    updateProfile({ experience: output });
+  };
+
   if (!experience) return <></>;
 
   return (
@@ -49,27 +59,49 @@ export const Experience = ({ isEditMode }) => {
       />
 
       <Box>
+        {(isEditMode || !!experience.length) && (
+          <Box px={4} py={2}>
+            <Row justifyContent={"space-between"}>
+              <Heading fontSize={FONT_HEADER_SIZE}>Experience</Heading>
+            </Row>
+          </Box>
+        )}
+
         <Row>
           <Box flex={1}>
-            <Box
-              flex={1}
-              borderRightWidth={1}
-              right={3}
-              borderColor={"blueGray.300"}
-            />
+            {experience.length > 1 && (
+              <Box
+                flex={1}
+                borderRightWidth={1}
+                right={3}
+                borderColor={"blueGray.300"}
+                my={"50px"} // ! Fix this, soon cards will collapse
+              />
+            )}
           </Box>
 
           <Box flex={15}>
             {experience.map(
-              ({ title, companyName, fromYear, toYear, present, imageURI }) => (
+              ({
+                title,
+                companyName,
+                fromYear,
+                toYear,
+                present,
+                imageURI,
+                id,
+              }) => (
                 <ExperienceItem
-                  // key={id}
+                  key={id}
+                  id={id}
                   title={title}
                   subheading={companyName}
-                  // video={video}
                   from={fromYear}
                   to={present ? "Present" : toYear}
                   picture={imageURI}
+                  isEditMode={isEditMode}
+                  onDelete={handleDeleteExperienceItem}
+                  // video={video}
                 />
               )
             )}

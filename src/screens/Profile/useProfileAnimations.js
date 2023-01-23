@@ -30,10 +30,13 @@ export default function useProfileAnimations() {
   // Refs
   const sv_x_ref = useAnimatedRef();
 
+  // ! DECLARE SCREEN REFS HERE!
+  // ! VERY IMPORTANT FOR MAKING NAV ANIMATIONS WORK!
   // ! Animation Refs -> check Screens.js file
   const bucket_sv_y_ref = useAnimatedRef();
   const resume_sv_y_ref = useAnimatedRef();
-  const refs = [resume_sv_y_ref, bucket_sv_y_ref];
+  const recommends = useAnimatedRef();
+  const refs = [resume_sv_y_ref, recommends, bucket_sv_y_ref];
 
   const current_screen = useDerivedValue(() => {
     const result = Math.floor(translateX.value / width);

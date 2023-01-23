@@ -17,6 +17,8 @@ export const ProfilePictureActionMenu = ({
   isOpen,
   onClose,
   onSelectedFile,
+  onPreview,
+  currentProfileURI,
 }) => {
   // Hooks
   const Action = useDisclose();
@@ -38,10 +40,14 @@ export const ProfilePictureActionMenu = ({
     }
   };
 
+  const handlePreviewImage = () => {
+    onPreview && onPreview(currentProfileURI);
+  };
+
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose}>
       <Actionsheet.Content pt={4}>
-        <Actionsheet.Item>
+        <Actionsheet.Item onPress={handlePreviewImage}>
           <Box py={2} flexDir={"row"}>
             <Icon as={Feather} name="user" size="lg" mr={3} />
             <Text fontSize="16">See profile picture</Text>

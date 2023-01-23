@@ -15,7 +15,7 @@ const HEADERS_SIZE = "lg";
 const HEADERS_EXTRA_BUTTON_SIZE = "sm";
 
 // TODO: Refactor this to reuse similar code
-export const ResumeScreen = () => {
+export const ResumeScreen = ({ isEditMode, onEditMode: setEditMode }) => {
   // Hooks
   const { isKeyboardVisible } = useKeyboardDisplay();
   const { profile, updateProfile } = useProfile();
@@ -28,11 +28,6 @@ export const ResumeScreen = () => {
 
   // Modal Flags
   const [isSkillsOpen, setSkillsIsOpen] = React.useState(false);
-  const [isEditMode, setEditMode] = React.useState(false);
-
-  React.useEffect(() => {
-    setEditMode(params?.editMode ?? false);
-  }, [params]);
 
   React.useEffect(() => {
     if (profile && !skills) {
@@ -83,9 +78,9 @@ export const ResumeScreen = () => {
 
         {isEditMode && (
           <Box m={2}>
-            <Button bg="red.400" onPress={() => setEditMode(false)}>
+            <Button bg="green.500" onPress={() => setEditMode(false)}>
               <Text fontSize={"15px"} color="white">
-                Cancel editing
+                Done editing
               </Text>
             </Button>
           </Box>
@@ -151,23 +146,11 @@ export const ResumeScreen = () => {
 
         {/* Experience */}
         <Box pb={3}>
-          <Box px={4} py={2}>
-            <Row justifyContent={"space-between"}>
-              <Heading fontSize={HEADERS_SIZE}>Experience</Heading>
-            </Row>
-          </Box>
-
           <Experience isEditMode={isEditMode} />
         </Box>
 
         {/* Education */}
         <Box pb={3}>
-          <Box px={4} py={2}>
-            <Row justifyContent={"space-between"}>
-              <Heading fontSize={HEADERS_SIZE}>Education</Heading>
-            </Row>
-          </Box>
-
           <Education isEditMode={isEditMode} />
         </Box>
       </Box>

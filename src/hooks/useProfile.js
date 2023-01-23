@@ -25,8 +25,17 @@ export const useProfile = () => {
   const [profile, setProfile] = React.useState();
 
   React.useEffect(() => {
-    if (user) getProfile();
+    if (user && !profile) {
+      console.log("initialized", !!initialized);
+      console.log("user", !!user);
+      console.log("profile", !!profile);
+      getProfile();
+    }
   }, [initialized]);
+
+  React.useEffect(() => {
+    console.log(">>> profile", !!profile);
+  }, [profile]);
 
   const createProfile = ({ uid, ...body }) => {
     const collectionRef = doc(db, "users", uid);
@@ -40,18 +49,23 @@ export const useProfile = () => {
 
   const getProfile = () => {
     const docRef = doc(db, "users", user.uid);
-    getDoc(docRef).then((doc) => {
-      setProfile(doc.data());
-    });
+    getDoc(docRef)
+      .then((doc) => {
+        const data = doc.data();
+        setProfile(data);
+        console.log("done");
+        console.log("======");
+      })
+      .catch(console.error);
   };
 
   const defaultOptions = { isRef: false, arrayUnion: false };
   const updateProfile = (field, { isRef, arrayUnion } = defaultOptions) => {
     let output = field;
+
     if (isRef) {
       output = null;
       let fields = Object.entries(field);
-
       fields.forEach(([field, values]) => {
         output = {
           ...output,

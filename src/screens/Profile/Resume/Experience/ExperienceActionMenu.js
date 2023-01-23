@@ -16,6 +16,7 @@ import { ExperienceItem } from "../../../../components/ExperienceItem";
 import { useStorage } from "../../../../hooks/useStorage";
 import { useProfile } from "../../../../hooks/useProfile";
 import { arrayUnion } from "firebase/firestore";
+import uuid from "react-native-uuid";
 
 const getFilename = (fullPath) => {
   return fullPath?.replace(/^.*[\\\/]/, "");
@@ -55,7 +56,8 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
     setLoading(true);
     savePicture(getFilename(image), image, {
       onSuccess: (imageURI) => {
-        const payload = { ...experience, imageURI };
+        const id = uuid.v4();
+        const payload = { ...experience, imageURI, id };
         updateProfile({ experience: arrayUnion(payload) });
         onClose(payload);
         setLoading(false);
@@ -65,6 +67,9 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
         onClose(payload);
         setLoading(false);
       },
+    }).catch((e) => {
+      console.error(e);
+      setLoading(false);
     });
   };
 

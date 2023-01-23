@@ -12,6 +12,8 @@ import {
   IconButton,
   Icon,
   VStack,
+  Spinner,
+  Modal,
 } from "native-base";
 import Animated from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
@@ -25,8 +27,8 @@ import { useProfile } from "../../hooks/useProfile";
 import { ProfilePictureActionMenu } from "./Resume/ProfilePictureActionMenu";
 import { scrollTo } from "../../utils/scrollTo";
 import { useStorage } from "../../hooks/useStorage";
-import { uniqueId } from "lodash";
-import reactotron from "reactotron-react-native";
+import uuid from "react-native-uuid";
+import { ImagePreview } from "../../components/ImagePreview";
 
 const {
   PROFILE_NAME_H,
@@ -67,6 +69,10 @@ export const Profile = (props) => {
   // State
   const [isActionMenuOpen, setActionMenuOpen] = React.useState(false);
   const [profilePicture, setProfilePicture] = React.useState(defaultPicture);
+  const [isPictureLoading, setPictureLoading] = React.useState(false);
+  const [isEditMode, setEditMode] = React.useState(false);
+  const [uriToPreview, setURItoPreview] = React.useState("");
+  const [isPreviewImageVisible, setPreviewImageVisible] = React.useState(false);
 
   // Go to resume subscreen after pressing edit mode
   React.useEffect(() => {
@@ -79,8 +85,16 @@ export const Profile = (props) => {
   }, [route?.params]);
 
   React.useEffect(() => {
-    profile?.picture && setProfilePicture(profile.picture);
+    if (profile?.picture) {
+      setProfilePicture(profile.picture);
+      setURItoPreview(profile.picture);
+      setPictureLoading(false);
+    }
   }, [profile]);
+
+  React.useEffect(() => {
+    setEditMode(route?.params?.editMode ?? false);
+  }, [route?.params]);
 
   // Styles
   const styles = StyleSheet.create({
@@ -126,21 +140,34 @@ export const Profile = (props) => {
     setActionMenuOpen(true);
   };
 
+  const handlePicturePreview = (uri) => {
+    setActionMenuOpen(false);
+    setPreviewImageVisible(true);
+    setURItoPreview(uri);
+  };
+
   const handleSelectedFile = (file) => {
-    const fileName = uniqueId("profile_picture_");
+    setPictureLoading(true);
+    const fileName = "profile_picture_" + uuid.v4();
     savePicture(fileName, file, {
       onSuccess: (downloadURL) => {
         updateProfile({ picture: downloadURL });
         setProfilePicture(file);
+        setURItoPreview(file);
+        setPictureLoading(false);
       },
       onError: (e) => {
         if (e.code === "storage/quota-exceeded") {
           setProfilePicture(file);
         }
         console.log(e);
+        setPictureLoading(false);
       },
-    });
-    setActionMenuOpen(false);
+    })
+      .catch(console.error)
+      .finally(() => {
+        setActionMenuOpen(false);
+      });
   };
 
   // Components
@@ -178,17 +205,48 @@ export const Profile = (props) => {
     );
   };
 
+  const handleEditMode = (props) => {
+    setEditMode(props);
+  };
+
   if (!profile) return <></>;
 
   return (
     <>
+      {isEditMode && (
+        <>
+          <Box w={2} h={height} bg="green.500" position="absolute" zIndex={1} />
+          <Box
+            w={2}
+            h={height}
+            bg="green.500"
+            position="absolute"
+            right={0}
+            zIndex={1}
+          />
+        </>
+      )}
+
+      <ImagePreview
+        visible={isPreviewImageVisible}
+        source={{ uri: uriToPreview }}
+        onClose={() => setPreviewImageVisible(false)}
+      />
+
       <ProfilePictureActionMenu
+        currentProfileURI={profilePicture}
         isOpen={isActionMenuOpen}
         onClose={() => setActionMenuOpen(false)}
         onSelectedFile={handleSelectedFile}
+        onPreview={handlePicturePreview}
       />
 
-      <Box overflowX={"hidden"} flex={1} backgroundColor="white">
+      <Box
+        overflowX={"hidden"}
+        flex={1}
+        backgroundColor="white"
+        borderColor={"green.500"}
+      >
         <StatusBar barStyle={"dark-content"} />
 
         {/* User */}
@@ -235,7 +293,7 @@ export const Profile = (props) => {
                   pt={10}
                   minHeight={height - PROFILE_NAME_H - NAVBAR_H}
                 >
-                  <Screen />
+                  <Screen isEditMode={isEditMode} onEditMode={handleEditMode} />
                   <Box height={MENU_H} />
                 </Column>
               </Animated.ScrollView>
@@ -269,14 +327,29 @@ export const Profile = (props) => {
               <Center>
                 <Pressable onPress={handleProfilePictureActions}>
                   <Box>
-                    <Image
-                      source={{ uri: profilePicture }}
-                      fallbackSource={{
-                        uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
-                      }}
-                      style={styles.profile_picture}
-                      alt="profile picture"
-                    />
+                    {!isPictureLoading ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        fallbackSource={{
+                          uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
+                        }}
+                        style={styles.profile_picture}
+                        alt="profile picture"
+                      />
+                    ) : (
+                      <Box
+                        borderWidth={2}
+                        borderRadius={100}
+                        borderColor="blue.200"
+                      >
+                        <Center>
+                          <Spinner
+                            style={styles.profile_picture}
+                            color="blue.200"
+                          />
+                        </Center>
+                      </Box>
+                    )}
                   </Box>
                 </Pressable>
               </Center>

@@ -8,6 +8,7 @@ import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { Actionsheet } from "native-base";
 import { useRouteName } from "../../hooks/useRouteName";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useProfile } from "../../hooks/useProfile";
 
 // Constants
 export const MENU_H = 60;
@@ -78,6 +79,7 @@ export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
     select: ({ results }) => results[0],
     key: ["user", { amount: 1 }],
   });
+  const { profile: lol } = useProfile();
 
   // State
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
