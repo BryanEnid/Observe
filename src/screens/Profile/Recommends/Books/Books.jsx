@@ -147,7 +147,9 @@ export const Books = ({ isEditMode, onEditMode: setEditMode }) => {
 
       <BooksActionMenu isOpen={isAMOpen} onClose={handleAddBook} />
 
-      {(isEditMode || !!books?.length) && <Header title="Books" />}
+      {(isEditMode || !!Object.values(books).length) && (
+        <Header title="Books" />
+      )}
 
       {isEditMode && (
         <Box mb={3} variant={"elevated"}>
