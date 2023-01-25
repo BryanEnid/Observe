@@ -1,4 +1,3 @@
-import React from "react";
 import {
   collection,
   getDocs,
@@ -6,8 +5,8 @@ import {
   query,
   documentId,
 } from "firebase/firestore";
-import { db } from "../config/FirebaseConfig";
-import { useUser } from "./useUser";
+import { db } from "../../../../config/FirebaseConfig";
+import { useUser } from "../../../../hooks/useUser";
 
 // TODO: Add React Query
 export const useSkills = () => {

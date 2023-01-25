@@ -13,7 +13,7 @@ import {
 } from "native-base";
 import { Feather } from "@expo/vector-icons";
 import { AddButton } from "../../../../components/ExperienceAddButton";
-import { useBooks } from "../../../../hooks/useBooks";
+import { useBooks } from "./useBooks";
 import { BooksActionMenu } from "./BooksActionMenu";
 
 const FONT_HEADER_SIZE = "lg";

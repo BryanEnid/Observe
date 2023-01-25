@@ -15,19 +15,18 @@ import { Actionsheet } from "native-base";
 import { Keyboard } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useStorage } from "../../../../hooks/useStorage";
-import { useBooks } from "./useBooks";
+import { useTools } from "./useTools";
 import * as ImageManipulator from "expo-image-manipulator";
 import uuid from "react-native-uuid";
 
-export const BooksActionMenu = ({ isOpen, onClose }) => {
+export const ToolsActionMenu = ({ isOpen, onClose }) => {
   // Hooks
   const Action = useDisclose();
   const { saveMultiplePictures } = useStorage();
-  const { submitBook } = useBooks();
+  const { submitBook } = useTools();
 
   // State
   const [book, setBook] = React.useState({});
-  const [isSearching, setSearching] = React.useState(false);
   const [isLoading, setLoading] = React.useState(false);
   const [images, setImages] = React.useState([]);
   const [isSubmitEnabled, setSubmitEnabled] = React.useState(false);

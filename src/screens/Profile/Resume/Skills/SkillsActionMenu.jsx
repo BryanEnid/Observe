@@ -16,7 +16,7 @@ import { Actionsheet } from "native-base";
 import { Keyboard } from "react-native";
 import { useKeyboardBottomInset } from "../../../../hooks/useKeyboardBottomInset";
 import { SkillItem } from "./SkillItem";
-import { useSkills } from "../../../../hooks/useSkills";
+import { useSkills } from "./useSkills";
 
 export const SkillsActionMenu = ({ isOpen, onClose, currentSkills }) => {
   const Action = useDisclose();

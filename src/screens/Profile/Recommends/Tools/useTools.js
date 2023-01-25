@@ -9,11 +9,11 @@ import {
   setDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../config/FirebaseConfig";
-import { useUser } from "./useUser";
+import { db } from "../../../../config/FirebaseConfig";
+import { useUser } from "../../../../hooks/useUser";
 
 // TODO: Add React Query
-export const useBooks = () => {
+export const useTools = () => {
   const { user } = useUser();
 
   const getBooksByProfileId = async (uid) => {

@@ -8,7 +8,7 @@ import { useKeyboardDisplay } from "../../../hooks/useKeyboardDisplay";
 import { SkillItem } from "./Skills/SkillItem";
 import { SkillsActionMenu } from "./Skills/SkillsActionMenu";
 import { useProfile } from "../../../hooks/useProfile";
-import { useSkills } from "../../../hooks/useSkills";
+import { useSkills } from "./Skills/useSkills";
 import { useRoute } from "@react-navigation/native";
 
 const HEADERS_SIZE = "lg";
