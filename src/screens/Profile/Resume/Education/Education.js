@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Center, Heading, Icon, Image, Row, Text } from "native-base";
 import { ExperienceItem } from "../../../../components/ExperienceItem";
-import { Feather } from "@expo/vector-icons";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useProfile } from "../../../../hooks/useProfile";
 import { useKeyboardDisplay } from "../../../../hooks/useKeyboardDisplay";
@@ -43,9 +42,9 @@ export const Education = ({ isEditMode }) => {
   const handleAddEducation = () => setEducationIsOpen(true);
 
   const handleDeleteEducationItem = (id) => {
-    const output = profile.experience.filter((item) => item.id !== id);
-    setExperience(output);
-    updateProfile({ experience: output });
+    const output = profile.education.filter((item) => item.id !== id);
+    setEducation(output);
+    updateProfile({ education: output });
   };
 
   if (!education) return <AddButton text="Add Education" />;
@@ -82,14 +81,14 @@ export const Education = ({ isEditMode }) => {
           <Box flex={15}>
             {education.map(
               (
-                { title, companyName, fromYear, present, toYear, imageURI, id },
+                { title, institution, fromYear, present, toYear, imageURI, id },
                 index
               ) => (
                 <ExperienceItem
                   key={id}
                   id={id}
                   title={title}
-                  subheading={companyName}
+                  subheading={institution}
                   from={fromYear}
                   to={present ? "Present" : toYear}
                   picture={imageURI}

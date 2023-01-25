@@ -40,12 +40,10 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
       aspect: [4, 4],
-      quality: 1,
+      quality: 0.1,
     });
 
-    if (!result.canceled) {
-      setImage(result.uri);
-    }
+    if (!result.canceled) setImage(result.assets[0].uri);
   };
 
   React.useEffect(() => {

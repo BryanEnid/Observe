@@ -8,44 +8,73 @@ import {
   VStack,
   Input,
   Row,
+  FlatList,
+  Image,
 } from "native-base";
 import { Actionsheet } from "native-base";
 import { Keyboard } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { ExperienceItem } from "../../../../components/ExperienceItem";
 import { useStorage } from "../../../../hooks/useStorage";
-import { useProfile } from "../../../../hooks/useProfile";
-import { arrayUnion } from "firebase/firestore";
+import { useBooks } from "../../../../hooks/useBooks";
+import * as ImageManipulator from "expo-image-manipulator";
+import uuid from "react-native-uuid";
 
 const getFilename = (fullPath) => {
   return fullPath?.replace(/^.*[\\\/]/, "");
 };
 
-export const ExperienceActionMenu = ({ isOpen, onClose }) => {
+export const BooksActionMenu = ({ isOpen, onClose }) => {
   // Hooks
   const Action = useDisclose();
-  const { savePicture } = useStorage();
-  const { updateProfile } = useProfile();
+  const { saveMultiplePictures } = useStorage();
+  const { submitBook } = useBooks();
 
   // State
-  const [experience, setExperience] = React.useState({});
+  const [book, setBook] = React.useState({});
   const [isSearching, setSearching] = React.useState(false);
   const [isLoading, setLoading] = React.useState(false);
-  const [image, setImage] = React.useState(null);
+  const [images, setImages] = React.useState([]);
+  const [isSubmitEnabled, setSubmitEnabled] = React.useState(false);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
+
+    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: false,
-      aspect: [4, 4],
-      quality: 1,
-    });
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [18, 9],
+      allowsMultipleSelection: true,
+      orderedSelection: true,
+      selectionLimit: 10,
+    }).catch(console.error);
 
     if (!result.canceled) {
-      setImage(result.uri);
+      Promise.allSettled(
+        result.assets.map((image) => {
+          return ImageManipulator.manipulateAsync(
+            image.uri,
+            [{ resize: { width: 320, height: 640 } }],
+            { compress: 0, format: "jpeg" }
+          );
+        })
+      ).then((results) => {
+        const id = uuid.v4();
+        setImages(results.map(({ value }) => ({ id, ...value })));
+      });
     }
   };
+
+  // Observer for disabling done button
+  React.useEffect(() => {
+    const req = [
+      !isLoading,
+      !!book?.title?.length,
+      !!book?.author?.length,
+      !!images?.length,
+    ];
+
+    setSubmitEnabled(!req.every(Boolean));
+  }, [book, isLoading, images]);
 
   React.useEffect(() => {
     isOpen && Action.onOpen();
@@ -53,33 +82,37 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
 
   const handleSubmit = () => {
     setLoading(true);
-    savePicture(getFilename(image), image, {
-      onSuccess: (imageURI) => {
-        const payload = { ...experience, imageURI };
-        updateProfile({ experience: arrayUnion(payload) });
+    saveMultiplePictures(images, {
+      onSuccess: (imagesURI) => {
+        const id = uuid.v4();
+        const payload = { [id]: { ...book, images: [...imagesURI] } };
+        submitBook(payload);
+
+        clear();
         onClose(payload);
-        setLoading(false);
       },
       onError: (e) => {
-        console.log(e);
-        onClose(payload);
+        console.error(e);
+        onClose();
         setLoading(false);
       },
-    });
+    }).catch(console.error);
+    // .finally(() => setLoading(false));
   };
 
   const handleInputChange = (text, field) => {
-    setExperience((prev) => ({ ...prev, [field]: text }));
+    setBook((prev) => ({ ...prev, [field]: text }));
   };
 
   const handleOnClose = (...params) => {
     clear();
-    onClose(...params);
+    onClose && onClose(...params);
   };
 
   const clear = () => {
-    setExperience({});
-    setImage(null);
+    setBook({});
+    setImages([]);
+    setLoading(false);
   };
 
   return (
@@ -103,7 +136,7 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
             </Text>
           </Button>
           <Text fontSize="md" bold w="140px" textAlign="center">
-            Add Experience
+            Add Book
           </Text>
           <Box w="80px" />
         </HStack>
@@ -112,6 +145,7 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
         <VStack w="100%" space={3}>
           <Row>
             <Input
+              value={book.title}
               placeholder="Title"
               type="text"
               flex={1}
@@ -121,54 +155,17 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
 
           <Row>
             <Input
-              placeholder="Company name"
+              value={book.author}
+              placeholder="Author"
               type="text"
               flex={1}
-              onChangeText={(e) => handleInputChange(e, "companyName")}
-            />
-          </Row>
-
-          {/* <Row space={3}>
-            <Input
-              placeholder="Start month"
-              type="text"
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "fromMonth")}
-            />
-            <Input
-              placeholder="End month"
-              type="text"
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "toMonth")}
-            />
-          </Row> */}
-
-          <Row space={3}>
-            <Input
-              placeholder="Start year"
-              type="text"
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "fromYear")}
-            />
-            <Input
-              placeholder="End year"
-              type="text"
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "toYear")}
+              onChangeText={(e) => handleInputChange(e, "author")}
             />
           </Row>
 
           <Row>
             <Input
-              placeholder="Industry"
-              type="text"
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "industry")}
-            />
-          </Row>
-
-          <Row>
-            <Input
+              value={book.description}
               placeholder="Description"
               type="text"
               multiline
@@ -178,20 +175,35 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
             />
           </Row>
 
-          <Row>
-            <Button onPress={pickImage}>Upload Logo</Button>
-          </Row>
+          {!images?.length ? (
+            <Row>
+              <Button onPress={pickImage}>Upload pictures</Button>
+            </Row>
+          ) : (
+            <Row>
+              <Button bg="red.400" onPress={pickImage}>
+                Cancel selections
+              </Button>
+            </Row>
+          )}
 
-          <Row>
-            <ExperienceItem
-              title={experience.title}
-              subheading={experience.companyName}
-              video={""}
-              from={experience.fromYear}
-              to={experience.toYear}
-              picture={image}
-            />
-          </Row>
+          <FlatList
+            horizontal
+            data={images}
+            keyExtractor={(item) => item.assetId}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <Image
+                w={100}
+                h={100}
+                mx={1}
+                alt="previews"
+                borderRadius={3}
+                resizeMode="cover"
+                source={{ uri: item.uri }}
+              />
+            )}
+          />
 
           <Actionsheet.Item
             bg="primary.500"
@@ -199,7 +211,7 @@ export const ExperienceActionMenu = ({ isOpen, onClose }) => {
             alignItems="center"
             onPress={handleSubmit}
             _pressed={{ bg: "primary.700" }}
-            disabled={isLoading}
+            disabled={isSubmitEnabled}
           >
             {!isLoading ? (
               <Text fontSize={"md"} fontWeight="bold" color="white">

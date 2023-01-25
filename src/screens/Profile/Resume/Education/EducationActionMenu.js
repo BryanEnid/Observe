@@ -40,19 +40,15 @@ export const EducationActionMenu = ({ isOpen, onClose }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
       aspect: [4, 4],
-      quality: 1,
+      quality: 0.1,
     });
 
-    if (!result.canceled) {
-      setImage(result.uri);
-    }
+    if (!result.canceled) setImage(result.assets[0].uri);
   };
 
   React.useEffect(() => {
     isOpen && Action.onOpen();
   }, [isOpen]);
-
-  React.useEffect(() => {});
 
   const handleSubmit = () => {
     setLoading(true);
@@ -118,7 +114,7 @@ export const EducationActionMenu = ({ isOpen, onClose }) => {
         <VStack w="100%" space={3}>
           <Row>
             <Input
-              placeholder="Title"
+              placeholder="Degree"
               type="text"
               flex={1}
               onChangeText={(e) => handleInputChange(e, "title")}
@@ -127,10 +123,10 @@ export const EducationActionMenu = ({ isOpen, onClose }) => {
 
           <Row>
             <Input
-              placeholder="Company name"
+              placeholder="Institution"
               type="text"
               flex={1}
-              onChangeText={(e) => handleInputChange(e, "companyName")}
+              onChangeText={(e) => handleInputChange(e, "institution")}
             />
           </Row>
 
@@ -166,15 +162,6 @@ export const EducationActionMenu = ({ isOpen, onClose }) => {
 
           <Row>
             <Input
-              placeholder="Industry"
-              type="text"
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "industry")}
-            />
-          </Row>
-
-          <Row>
-            <Input
               placeholder="Description"
               type="text"
               multiline
@@ -191,7 +178,7 @@ export const EducationActionMenu = ({ isOpen, onClose }) => {
           <Row>
             <ExperienceItem
               title={Education.title}
-              subheading={Education.companyName}
+              subheading={Education.institution}
               video={""}
               from={Education.fromYear}
               to={Education.toYear}

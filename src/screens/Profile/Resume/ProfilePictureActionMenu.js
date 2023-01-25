@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { Actionsheet } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 
 // Constants
 export const MENU_H = 60;
@@ -33,10 +34,19 @@ export const ProfilePictureActionMenu = ({
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0,
     });
 
-    if (!result.cancelled) {
-      onSelectedFile && onSelectedFile(result.uri);
+    if (!result.canceled) {
+      const imageURI = result.assets[0].uri;
+      const image = await ImageManipulator.manipulateAsync(
+        imageURI,
+        [{ resize: { width: 240, height: 240 } }],
+        { compress: 0, format: "jpeg" }
+      );
+
+      onSelectedFile && onSelectedFile(image.uri);
     }
   };
 

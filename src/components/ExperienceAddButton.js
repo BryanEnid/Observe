@@ -3,7 +3,7 @@ import { Box, Center, Icon, Text } from "native-base";
 import { Feather } from "@expo/vector-icons";
 import { TouchableWithoutFeedback } from "react-native";
 
-export const AddButton = ({ text, onPress }) => (
+export const AddButton = ({ text, onPress, timeline }) => (
   <>
     <TouchableWithoutFeedback onPress={onPress}>
       <Box
@@ -21,17 +21,19 @@ export const AddButton = ({ text, onPress }) => (
           </Text>
         </Center>
 
-        <Box
-          w={3}
-          h={3}
-          backgroundColor={"blue.400"}
-          borderRadius={6}
-          borderWidth={3}
-          borderColor={"blue.200"}
-          position="absolute"
-          top={"50%"}
-          style={{ transform: [{ translateX: -19 }, { translateY: 2 }] }}
-        />
+        {timeline && (
+          <Box
+            w={3}
+            h={3}
+            backgroundColor={"blue.400"}
+            borderRadius={6}
+            borderWidth={3}
+            borderColor={"blue.200"}
+            position="absolute"
+            top={"50%"}
+            style={{ transform: [{ translateX: -19 }, { translateY: 2 }] }}
+          />
+        )}
       </Box>
     </TouchableWithoutFeedback>
   </>

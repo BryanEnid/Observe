@@ -76,12 +76,12 @@ export const Profile = (props) => {
 
   // Go to resume subscreen after pressing edit mode
   React.useEffect(() => {
-    if (route?.params?.editMode) {
-      scrollTo(sv_x_ref, { animated: false }, false);
-      refs.forEach((ref) => {
-        scrollTo(ref, { animated: false }, false);
-      });
-    }
+    // if (route?.params?.editMode) {
+    //   scrollTo(sv_x_ref, { animated: false }, false);
+    //   refs.forEach((ref) => {
+    //     scrollTo(ref, { animated: false }, false);
+    //   });
+    // }
   }, [route?.params]);
 
   React.useEffect(() => {
@@ -160,7 +160,7 @@ export const Profile = (props) => {
         if (e.code === "storage/quota-exceeded") {
           setProfilePicture(file);
         }
-        console.log(e);
+        console.error(e);
         setPictureLoading(false);
       },
     })

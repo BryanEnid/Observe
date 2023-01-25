@@ -615,9 +615,7 @@ export const CaptureScreen = () => {
       allowsEditing: true,
     });
 
-    if (!result.cancelled) {
-      setFile(result.uri);
-    }
+    if (!result.canceled) setFile(result.assets[0].uri);
   };
 
   const handleRecord = () => {

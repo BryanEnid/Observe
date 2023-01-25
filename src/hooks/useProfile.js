@@ -25,17 +25,8 @@ export const useProfile = () => {
   const [profile, setProfile] = React.useState();
 
   React.useEffect(() => {
-    if (user && !profile) {
-      console.log("initialized", !!initialized);
-      console.log("user", !!user);
-      console.log("profile", !!profile);
-      getProfile();
-    }
+    if (user && !profile) getProfile().then(setProfile);
   }, [initialized]);
-
-  React.useEffect(() => {
-    console.log(">>> profile", !!profile);
-  }, [profile]);
 
   const createProfile = ({ uid, ...body }) => {
     const collectionRef = doc(db, "users", uid);
@@ -47,16 +38,14 @@ export const useProfile = () => {
     });
   };
 
-  const getProfile = () => {
+  const getProfile = async () => {
     const docRef = doc(db, "users", user.uid);
-    getDoc(docRef)
-      .then((doc) => {
-        const data = doc.data();
-        setProfile(data);
-        console.log("done");
-        console.log("======");
-      })
-      .catch(console.error);
+
+    return new Promise((resolve, reject) =>
+      getDoc(docRef)
+        .then((doc) => resolve(doc.data()))
+        .catch(reject)
+    );
   };
 
   const defaultOptions = { isRef: false, arrayUnion: false };
