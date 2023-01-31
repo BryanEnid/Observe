@@ -16,13 +16,13 @@ import { useUser } from "../../../../hooks/useUser";
 export const useTools = () => {
   const { user } = useUser();
 
-  const getBooksByProfileId = async (uid) => {
-    const docRef = doc(db, "books", user.uid);
+  const getToolsByProfileId = async (uid) => {
+    const docRef = doc(db, "tools", user.uid);
     const snapshot = await getDoc(docRef);
     return snapshot.data();
   };
 
-  const getBooksByRef = async (references) => {
+  const getToolsByRef = async (references) => {
     // if (references.length === 0) return [];
     // const output = [];
     // const skillsRef = collection(db, "skills");
@@ -32,15 +32,15 @@ export const useTools = () => {
     // return output;
   };
 
-  const updateBooks = (state) => {
-    const docRef = doc(db, "books", user.uid);
-    return setDoc(docRef, { books: state }, { merge: true });
+  const updateTools = (state) => {
+    const docRef = doc(db, "tools", user.uid);
+    return setDoc(docRef, { tools: state }, { merge: false });
   };
 
-  const submitBook = async (body) => {
-    const docRef = doc(db, "books", user.uid);
-    return setDoc(docRef, { books: body }, { merge: true });
+  const submitTool = async (body) => {
+    const docRef = doc(db, "tools", user.uid);
+    return setDoc(docRef, { tools: body }, { merge: true });
   };
 
-  return { getBooksByProfileId, getBooksByRef, submitBook, updateBooks };
+  return { getToolsByProfileId, getToolsByRef, submitTool, updateTools };
 };

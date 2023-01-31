@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import { AddButton } from "../../../../components/ExperienceAddButton";
 import { useBooks } from "./useBooks";
 import { BooksActionMenu } from "./BooksActionMenu";
+import { Pressable } from "react-native";
 
 const FONT_HEADER_SIZE = "lg";
 const HEADERS_EXTRA_BUTTON_SIZE = "sm";
@@ -39,71 +40,78 @@ const BooksItem = ({
   images,
   isEditMode,
   onDelete,
+  onEdit,
   id,
 }) => {
   const handleDelete = () => {
     onDelete && onDelete(id);
   };
 
-  return (
-    <Column space={2} padding={1}>
-      <Box alignItems="center" variant="elevated">
-        {isEditMode && (
-          <IconButton
-            position="absolute"
-            zIndex={3}
-            onPress={handleDelete}
-            borderRadius={30}
-            bg="white"
-            left={0}
-            icon={
-              <Icon as={Feather} name="x-circle" color="red.400" size="lg" />
-            }
-          />
-        )}
-        <Image
-          alt="demo"
-          borderRadius={30}
-          w={"100%"}
-          height={200}
-          resizeMode="cover"
-          source={{ uri: images[0].uri }}
-        />
-      </Box>
+  const handleEdit = () => {
+    onEdit && onEdit(id);
+  };
 
-      {images.length > 1 && (
-        <FlatList
-          horizontal
-          data={images}
-          // keyExtractor={(item) => item.assetId}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <Image
-              w={10}
-              h={10}
-              mx={1}
-              alt="previews"
-              borderRadius={3}
-              resizeMode="cover"
-              source={{ uri: item.uri }}
+  return (
+    <Pressable onPress={() => console.log("yay")}>
+      <Column space={2} padding={1}>
+        <Box alignItems="center" variant="elevated">
+          {isEditMode && (
+            <IconButton
+              position="absolute"
+              zIndex={3}
+              onPress={handleDelete}
+              borderRadius={30}
+              bg="white"
+              left={0}
+              icon={
+                <Icon as={Feather} name="x-circle" color="red.400" size="lg" />
+              }
             />
           )}
-        />
-      )}
+          <Image
+            alt="demo"
+            borderRadius={30}
+            w={"100%"}
+            height={200}
+            resizeMode="cover"
+            source={{ uri: images[0].uri }}
+          />
+        </Box>
 
-      <Box>
-        <Text bold fontSize="12px">
-          {title}
-        </Text>
-        <Text variant="caption" fontSize="12px">
-          {author}
-        </Text>
-      </Box>
+        {images.length > 1 && (
+          <FlatList
+            horizontal
+            data={images}
+            // keyExtractor={(item) => item.assetId}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <Image
+                w={10}
+                h={10}
+                mx={1}
+                alt="previews"
+                borderRadius={3}
+                resizeMode="cover"
+                source={{ uri: item.uri }}
+              />
+            )}
+          />
+        )}
 
-      <Box>
-        <Text fontSize="12px">{description}</Text>
-      </Box>
-    </Column>
+        <Box>
+          <Text bold fontSize="12px">
+            {title}
+          </Text>
+          <Text variant="caption" fontSize="12px">
+            {author}
+          </Text>
+        </Box>
+
+        <Box>
+          <Text fontSize="12px">{description}</Text>
+        </Box>
+      </Column>
+    </Pressable>
   );
 };
 

@@ -22,54 +22,49 @@ import uuid from "react-native-uuid";
 export const ToolsActionMenu = ({ isOpen, onClose }) => {
   // Hooks
   const Action = useDisclose();
-  const { saveMultiplePictures } = useStorage();
-  const { submitBook } = useTools();
+  const { savePicture } = useStorage();
+  const { submitTool } = useTools();
 
   // State
-  const [book, setBook] = React.useState({});
+  const [tool, setTool] = React.useState({});
   const [isLoading, setLoading] = React.useState(false);
-  const [images, setImages] = React.useState([]);
+  const [image, setImage] = React.useState();
   const [isSubmitEnabled, setSubmitEnabled] = React.useState(false);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      aspect: [18, 9],
-      allowsMultipleSelection: true,
-      orderedSelection: true,
-      selectionLimit: 10,
+      allowsEditing: true,
     }).catch(console.error);
 
     if (!result.canceled) {
-      Promise.allSettled(
-        result.assets.map((image) => {
-          return ImageManipulator.manipulateAsync(
-            image.uri,
-            [{ resize: { width: 320, height: 640 } }],
-            { compress: 0, format: "jpeg" }
-          );
-        })
-      ).then((results) => {
+      const asset = result.assets[0];
+      const scale = 0.3;
+      ImageManipulator.manipulateAsync(
+        asset.uri,
+        [
+          {
+            resize: {
+              width: asset.width * scale,
+              height: asset.height * scale,
+            },
+          },
+        ],
+        { compress: 0, format: "jpeg" }
+      ).then((result) => {
+        console.log(result);
         const id = uuid.v4();
-        setImages(results.map(({ value }) => ({ id, ...value })));
+        setImage({ id, ...result });
       });
     }
   };
 
   // Observer for disabling done button
   React.useEffect(() => {
-    const req = [
-      !isLoading,
-      !!book?.title?.length,
-      !!book?.author?.length,
-      !!images?.length,
-    ];
-
+    const req = [!isLoading, !!tool?.title?.length, !!image];
     setSubmitEnabled(!req.every(Boolean));
-  }, [book, isLoading, images]);
+  }, [tool, isLoading, image]);
 
   React.useEffect(() => {
     isOpen && Action.onOpen();
@@ -77,12 +72,11 @@ export const ToolsActionMenu = ({ isOpen, onClose }) => {
 
   const handleSubmit = () => {
     setLoading(true);
-    saveMultiplePictures(images, {
-      onSuccess: (imagesURI) => {
+    savePicture(image.id, image.uri, {
+      onSuccess: (imageURI) => {
         const id = uuid.v4();
-        const payload = { [id]: { ...book, images: [...imagesURI] } };
-        submitBook(payload);
-
+        const payload = { [id]: { ...tool, imageURI: imageURI } };
+        submitTool(payload);
         clear();
         onClose(payload);
       },
@@ -91,12 +85,14 @@ export const ToolsActionMenu = ({ isOpen, onClose }) => {
         onClose();
         setLoading(false);
       },
-    }).catch(console.error);
-    // .finally(() => setLoading(false));
+    }).catch((e) => {
+      console.error(e);
+      setLoading(false);
+    });
   };
 
   const handleInputChange = (text, field) => {
-    setBook((prev) => ({ ...prev, [field]: text }));
+    setTool((prev) => ({ ...prev, [field]: text }));
   };
 
   const handleOnClose = (...params) => {
@@ -105,8 +101,8 @@ export const ToolsActionMenu = ({ isOpen, onClose }) => {
   };
 
   const clear = () => {
-    setBook({});
-    setImages([]);
+    setTool({});
+    setImage("");
     setLoading(false);
   };
 
@@ -125,80 +121,52 @@ export const ToolsActionMenu = ({ isOpen, onClose }) => {
           alignItems="center"
           mb={1}
         >
-          <Button variant="link" w="80px" onPress={() => handleOnClose()}>
+          <Button variant="link" w="75px" onPress={() => handleOnClose()}>
             <Text color="primary.500" fontWeight="bold">
               Cancel
             </Text>
           </Button>
-          <Text fontSize="md" bold w="140px" textAlign="center">
-            Add Book
+          <Text fontSize="md" bold w="150px" textAlign="center">
+            Recommend a tool
           </Text>
-          <Box w="80px" />
+          <Box w="75px" />
         </HStack>
 
         {/* Body */}
         <VStack w="100%" space={3}>
           <Row>
             <Input
-              value={book.title}
-              placeholder="Title"
+              value={tool.title}
+              placeholder="Tool"
               type="text"
               flex={1}
               onChangeText={(e) => handleInputChange(e, "title")}
             />
           </Row>
 
-          <Row>
-            <Input
-              value={book.author}
-              placeholder="Author"
-              type="text"
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "author")}
-            />
-          </Row>
-
-          <Row>
-            <Input
-              value={book.description}
-              placeholder="Description"
-              type="text"
-              multiline
-              h={"100px"}
-              flex={1}
-              onChangeText={(e) => handleInputChange(e, "description")}
-            />
-          </Row>
-
-          {!images?.length ? (
+          {!image?.length ? (
             <Row>
-              <Button onPress={pickImage}>Upload pictures</Button>
+              <Button onPress={pickImage}>Upload a Picture</Button>
             </Row>
           ) : (
             <Row>
               <Button bg="red.400" onPress={pickImage}>
-                Cancel selections
+                Cancel selection
               </Button>
             </Row>
           )}
 
-          <FlatList
-            horizontal
-            data={images}
-            keyExtractor={(item) => item.assetId}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <Image
-                w={100}
-                h={100}
-                mx={1}
-                alt="previews"
-                borderRadius={3}
-                resizeMode="cover"
-                source={{ uri: item.uri }}
-              />
-            )}
-          />
+          {image && (
+            <Image
+              w={100}
+              h={100}
+              mx={1}
+              alt="previews"
+              borderRadius={3}
+              resizeMode="contain"
+              source={{ uri: image?.uri }}
+            />
+          )}
 
           <Actionsheet.Item
             bg="primary.500"

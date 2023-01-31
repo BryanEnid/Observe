@@ -20,7 +20,7 @@ const ToolItem = ({
   title,
   author,
   description,
-  images,
+  image,
   isEditMode,
   onDelete,
   id,
@@ -31,33 +31,51 @@ const ToolItem = ({
 
   return (
     <Box variant="elevated" bg="white" padding={3} borderRadius={20}>
-      {title}
+      <Row alignItems="center" justifyContent={"space-between"}>
+        <Row alignItems="center" space={2}>
+          <Image source={{ uri: image }} w={10} h={10} resizeMode="contain" />
+          <Text>{title}</Text>
+        </Row>
+
+        {isEditMode && (
+          <IconButton
+            onPress={handleDelete}
+            icon={
+              <Icon as={Feather} name="x-circle" size="lg" color="red.400" />
+            }
+          />
+        )}
+      </Row>
     </Box>
   );
 };
 
 export const Tools = ({ isEditMode, onEditMode: setEditMode }) => {
   // Hooks
-  const { getBooksByProfileId, updateBooks } = useTools();
+  const { getToolsByProfileId, updateTools } = useTools();
 
   // State
   const [tools, setTools] = React.useState([]);
   const [isAMOpen, setAMOpen] = React.useState(false);
 
   React.useEffect(() => {
-    getBooksByProfileId().then(({ books }) => setTools(Object.entries(books)));
+    getToolsByProfileId().then(({ tools }) => {
+      return setTools(Object.entries(tools));
+    });
   }, []);
 
   const handleAddBook = (payload) => {
-    setTools((prev) => ({ ...prev, ...payload }));
+    if (!payload) return setAMOpen(false);
+    const newTool = Object.entries(payload);
+    setTools((prev) => [...prev, ...newTool]);
     setAMOpen(false);
   };
 
   const handleDeleteBook = (id) => {
-    const payload = { ...tools };
+    const payload = Object.fromEntries(tools);
     delete payload[id];
-    setTools(payload);
-    updateBooks(payload);
+    updateTools(payload);
+    setTools(Object.entries(payload));
   };
 
   return (
@@ -72,7 +90,7 @@ export const Tools = ({ isEditMode, onEditMode: setEditMode }) => {
 
       {isEditMode && (
         <Box mb={3} variant={"elevated"}>
-          <AddButton text="Add book" onPress={() => setAMOpen(true)} />
+          <AddButton text="Add tools" onPress={() => setAMOpen(true)} />
         </Box>
       )}
 
@@ -83,7 +101,7 @@ export const Tools = ({ isEditMode, onEditMode: setEditMode }) => {
             title={tool.title}
             author={tool.author}
             description={tool.description}
-            images={tool.images}
+            image={tool.imageURI}
             isEditMode={isEditMode}
             onDelete={handleDeleteBook}
             id={key}
