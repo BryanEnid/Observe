@@ -44,6 +44,7 @@
     "firebase": "9.3.0",
     "lodash": "^4.17.21",
     "native-base": "^3.4.7",
+    "open-graph-scraper-lite": "^1.1.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-native": "0.70.5",
