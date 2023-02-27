@@ -1,13 +1,13 @@
 import React from "react";
 import cheerio from "cheerio-without-node-native/lib/cheerio";
+import { YOUTUBE_API_KEY } from "../../env";
+import { getVideoId } from "../utils/getVideoID";
 
 export const useMetaTags = () => {
   const getMetaTagsFromURL = async (url) => {
     try {
       // Get HTML
-      const res = await fetch(
-        "https://mobalytics.gg/blog/tier-lists/smash-bros-ultimate/"
-      );
+      const res = await fetch(url);
       const text = await res.text();
 
       // Load selector
@@ -26,5 +26,21 @@ export const useMetaTags = () => {
     }
   };
 
-  return { getMetaTagsFromURL };
+  const getMetaTagsFromYoutube = async (url) => {
+    try {
+      const videoId = getVideoId(url);
+      const youtubeAPI = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${YOUTUBE_API_KEY}`;
+
+      // Get HTML
+      const res = await fetch(youtubeAPI);
+      const data = await res.json();
+      const { description, title, thumbnails } = data.items[0].snippet;
+
+      return { description, title, thumbnails };
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  return { getMetaTagsFromURL, getMetaTagsFromYoutube };
 };

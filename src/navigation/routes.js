@@ -58,14 +58,6 @@ export default function Routes() {
   const isFetching = useIsFetching();
   const { user, initialized } = useUser();
 
-  // ! *******
-  const { getMetaTagsFromURL } = useMetaTags();
-
-  React.useEffect(() => {
-    getMetaTagsFromURL();
-  }, []);
-  // ! ********
-
   if (!initialized) return <Loading />;
 
   return (

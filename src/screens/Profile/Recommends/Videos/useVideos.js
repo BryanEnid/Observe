@@ -6,21 +6,21 @@ import { useUser } from "../../../../hooks/useUser";
 export const useVideos = () => {
   const { user } = useUser();
 
-  const getBooksByProfileId = async (uid) => {
-    const docRef = doc(db, "books", user.uid);
+  const getVideosByProfileId = async (uid) => {
+    const docRef = doc(db, "videos", user.uid);
     const snapshot = await getDoc(docRef);
     return snapshot.data();
   };
 
-  const updateBooks = (state) => {
-    const docRef = doc(db, "books", user.uid);
-    return setDoc(docRef, { books: state }, { merge: true });
+  const updateVideos = (state) => {
+    const docRef = doc(db, "videos", user.uid);
+    return setDoc(docRef, { videos: state }, { merge: true });
   };
 
-  const submitBook = async (body) => {
-    const docRef = doc(db, "books", user.uid);
-    return setDoc(docRef, { books: body }, { merge: true });
+  const submitVideo = async (body) => {
+    const docRef = doc(db, "videos", user.uid);
+    return setDoc(docRef, { videos: body }, { merge: true });
   };
 
-  return { getBooksByProfileId, submitBook, updateBooks };
+  return { getVideosByProfileId, submitVideo, updateVideos };
 };
