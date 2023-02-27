@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  setDoc,
-  doc,
-  getDoc,
-  Timestamp,
-  updateDoc,
-  collection,
-} from "firebase/firestore";
+import { setDoc, doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { db } from "../config/FirebaseConfig";
 import { useUser } from "./useUser";
 
@@ -32,7 +25,7 @@ export const useProfile = () => {
   const [profile, setProfile] = React.useState();
 
   React.useEffect(() => {
-    if (user) getProfile();
+    if (user && !profile) getProfile().then(setProfile);
   }, [initialized]);
 
   const createProfile = ({ uid, ...body }) => {
@@ -45,30 +38,23 @@ export const useProfile = () => {
     });
   };
 
-  const getProfile = () => {
+  const getProfile = async () => {
     const docRef = doc(db, "users", user.uid);
-    getDoc(docRef).then((doc) => {
-      setProfile(doc.data());
-    });
+
+    return new Promise((resolve, reject) =>
+      getDoc(docRef)
+        .then((doc) => resolve(doc.data()))
+        .catch(reject)
+    );
   };
 
-  const getSkills = async () => {
-    const output = [];
-    const docRef = collection(db, "skills");
-    const snapshot = await getDocs(docRef);
-    snapshot.forEach((docs) => {
-      const document = { id: docs.id, ...docs.data() };
-      output.push(document);
-    });
-    return output;
-  };
-
-  const updateProfile = (field, { isRef }) => {
+  const defaultOptions = { isRef: false, arrayUnion: false };
+  const updateProfile = (field, { isRef, arrayUnion } = defaultOptions) => {
     let output = field;
+
     if (isRef) {
       output = null;
       let fields = Object.entries(field);
-
       fields.forEach(([field, values]) => {
         output = {
           ...output,

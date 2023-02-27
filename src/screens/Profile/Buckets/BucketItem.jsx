@@ -29,6 +29,7 @@ export function BucketItem({ data }) {
   return (
     <Box style={styles.bucket}>
       <Image
+        alt="demo"
         style={styles.bucketImage}
         source={{ uri: data.video_pictures[0].picture }}
       />

@@ -6,16 +6,26 @@ import { useAuth } from "../../hooks/useAuth";
 
 export const Settings = () => {
   const { signOut } = useAuth();
+  const navigation = useNavigation();
+
+  const handleEditProfile = () => {
+    navigation.navigate("Profile", { editMode: true });
+  };
 
   return (
     <>
-      <NavigationBar safeAreaTop />
+      <NavigationBar color="black" safeAreaTop />
 
       <Box flex={1}>
-        <Button w="100%" variant="outline" onPress={signOut}>
-          <Text>Sign out</Text>
+        {/* Options ... */}
+
+        <Button variant="outline" mb={10} onPress={handleEditProfile}>
+          <Text>Edit profile</Text>
         </Button>
       </Box>
+      <Button mx={5} mb={10} onPress={signOut}>
+        <Text color="white">Sign out</Text>
+      </Button>
     </>
   );
 };

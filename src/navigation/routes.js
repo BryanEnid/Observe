@@ -16,6 +16,7 @@ import { AskQuestionScreen } from "../screens/Question/AskQuestion";
 import { CaptureScreen } from "../screens/Capture/Capture";
 import { useUser } from "../hooks/useUser";
 import { QuestionPool } from "../screens/Question/QuestionPool";
+import { useMetaTags } from "../hooks/useMetaTags";
 
 // TODO: REMOVE
 const linking = {

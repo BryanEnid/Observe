@@ -20,7 +20,6 @@ export const useRandomVideos = ({ key = [], ...rest } = { key: [] }) => {
       ...rest,
       ...{ staleTime: Infinity },
       retry: false,
-      onError: (err) => reactotron.error(err),
     }
   );
 

@@ -12,17 +12,23 @@ import {
   IconButton,
   Icon,
   VStack,
+  Spinner,
+  Modal,
 } from "native-base";
 import Animated from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
-
-import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SCREENS } from "./Screens";
 import { Dimensions } from "./const";
 import useProfileAnimations from "./useProfileAnimations";
+import { useProfile } from "../../hooks/useProfile";
+import { ProfilePictureActionMenu } from "./Resume/ProfilePictureActionMenu";
+import { scrollTo } from "../../utils/scrollTo";
+import { useStorage } from "../../hooks/useStorage";
+import uuid from "react-native-uuid";
+import { ImagePreview } from "../../components/ImagePreview";
 
 const {
   PROFILE_NAME_H,
@@ -36,17 +42,16 @@ const {
   NAVBAR_H,
 } = Dimensions;
 
-export const Profile = () => {
+const defaultPicture =
+  "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg";
+
+export const Profile = (props) => {
   // Hooks
   const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
-  const { data: profile } = useRandomUsers({
-    select: ({ results }) => ({
-      ...results[0],
-      quote: "Seagulls are the eagles of the sea.",
-    }),
-    key: ["user", { amount: 1 }],
-  });
+  const { profile, updateProfile } = useProfile();
+  const { savePicture } = useStorage();
+  const route = useRoute();
   const {
     handleNavSelect,
     handleNavPanGesture,
@@ -61,12 +66,44 @@ export const Profile = () => {
     sv_x_ref,
   } = useProfileAnimations();
 
+  // State
+  const [isActionMenuOpen, setActionMenuOpen] = React.useState(false);
+  const [profilePicture, setProfilePicture] = React.useState(defaultPicture);
+  const [isPictureLoading, setPictureLoading] = React.useState(false);
+  const [isEditMode, setEditMode] = React.useState(false);
+  const [uriToPreview, setURItoPreview] = React.useState("");
+  const [isPreviewImageVisible, setPreviewImageVisible] = React.useState(false);
+
+  // Go to resume subscreen after pressing edit mode
+  React.useEffect(() => {
+    // if (route?.params?.editMode) {
+    //   scrollTo(sv_x_ref, { animated: false }, false);
+    //   refs.forEach((ref) => {
+    //     scrollTo(ref, { animated: false }, false);
+    //   });
+    // }
+  }, [route?.params]);
+
+  React.useEffect(() => {
+    if (profile?.picture) {
+      setProfilePicture(profile.picture);
+      setURItoPreview(profile.picture);
+      setPictureLoading(false);
+    }
+  }, [profile]);
+
+  React.useEffect(() => {
+    setEditMode(route?.params?.editMode ?? false);
+  }, [route?.params]);
+
   // Styles
   const styles = StyleSheet.create({
     profile_picture: {
       width: PROFILE_DIMENSIONS.width - PROFILE_DIMENSIONS.padding,
       aspectRatio: 1,
       borderRadius: PROFILE_DIMENSIONS.width - PROFILE_DIMENSIONS.padding / 2,
+      borderWidth: !profile?.picture && 3,
+      borderColor: !profile?.picture && "rgb(143, 147, 161)",
     },
     header: {
       height: PROFILE_H,
@@ -99,7 +136,39 @@ export const Profile = () => {
     },
   });
 
-  if (!profile?.name) return <></>;
+  const handleProfilePictureActions = () => {
+    setActionMenuOpen(true);
+  };
+
+  const handlePicturePreview = (uri) => {
+    setActionMenuOpen(false);
+    setPreviewImageVisible(true);
+    setURItoPreview(uri);
+  };
+
+  const handleSelectedFile = (file) => {
+    setPictureLoading(true);
+    const fileName = "profile_picture_" + uuid.v4();
+    savePicture(fileName, file, {
+      onSuccess: (downloadURL) => {
+        updateProfile({ picture: downloadURL });
+        setProfilePicture(file);
+        setURItoPreview(file);
+        setPictureLoading(false);
+      },
+      onError: (e) => {
+        if (e.code === "storage/quota-exceeded") {
+          setProfilePicture(file);
+        }
+        console.error(e);
+        setPictureLoading(false);
+      },
+    })
+      .catch(console.error)
+      .finally(() => {
+        setActionMenuOpen(false);
+      });
+  };
 
   // Components
   const Navbar = ({ onChange }) => {
@@ -136,18 +205,57 @@ export const Profile = () => {
     );
   };
 
+  const handleEditMode = (props) => {
+    setEditMode(props);
+  };
+
+  if (!profile) return <></>;
+
   return (
     <>
-      <Box overflowX={"hidden"} flex={1} backgroundColor="white">
+      {isEditMode && (
+        <>
+          <Box w={2} h={height} bg="green.500" position="absolute" zIndex={1} />
+          <Box
+            w={2}
+            h={height}
+            bg="green.500"
+            position="absolute"
+            right={0}
+            zIndex={1}
+          />
+        </>
+      )}
+
+      <ImagePreview
+        visible={isPreviewImageVisible}
+        source={{ uri: uriToPreview }}
+        onClose={() => setPreviewImageVisible(false)}
+      />
+
+      <ProfilePictureActionMenu
+        currentProfileURI={profilePicture}
+        isOpen={isActionMenuOpen}
+        onClose={() => setActionMenuOpen(false)}
+        onSelectedFile={handleSelectedFile}
+        onPreview={handlePicturePreview}
+      />
+
+      <Box
+        overflowX={"hidden"}
+        flex={1}
+        backgroundColor="white"
+        borderColor={"green.500"}
+      >
         <StatusBar barStyle={"dark-content"} />
 
         {/* User */}
         <Animated.View style={[styles.username, r_profile_name_y_translate]}>
           <Center>
             <Text bold>
-              {profile.name.first} {profile.name.last}
+              {profile.firstName} {profile.lastName}
             </Text>
-            <Text>@{profile.login.username}</Text>
+            <Text>@ {profile.email}</Text>
           </Center>
 
           <Center>
@@ -185,7 +293,7 @@ export const Profile = () => {
                   pt={10}
                   minHeight={height - PROFILE_NAME_H - NAVBAR_H}
                 >
-                  <Screen />
+                  <Screen isEditMode={isEditMode} onEditMode={handleEditMode} />
                   <Box height={MENU_H} />
                 </Column>
               </Animated.ScrollView>
@@ -217,23 +325,39 @@ export const Profile = () => {
               </VStack>
 
               <Center>
-                <Pressable onPress={() => {}}>
+                <Pressable onPress={handleProfilePictureActions}>
                   <Box>
-                    <Image
-                      source={{ uri: profile?.picture?.large }}
-                      fallbackSource={{
-                        uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
-                      }}
-                      style={styles.profile_picture}
-                      alt="profile picture"
-                    />
+                    {!isPictureLoading ? (
+                      <Image
+                        source={{ uri: profilePicture }}
+                        fallbackSource={{
+                          uri: "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg",
+                        }}
+                        style={styles.profile_picture}
+                        alt="profile picture"
+                      />
+                    ) : (
+                      <Box
+                        borderWidth={2}
+                        borderRadius={100}
+                        borderColor="blue.200"
+                      >
+                        <Center>
+                          <Spinner
+                            style={styles.profile_picture}
+                            color="blue.200"
+                          />
+                        </Center>
+                      </Box>
+                    )}
                   </Box>
                 </Pressable>
               </Center>
 
               <Center>
+                {/* TODO: Fix this hard coded text */}
                 <Text>Software Engineer at Facebook</Text>
-                <Text>"{profile.quote}"</Text>
+                {profile?.quote && <Text>"{profile.quote}"</Text>}
               </Center>
             </Box>
           </Box>

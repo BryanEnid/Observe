@@ -123,7 +123,7 @@ export const SignUp = () => {
 
     signUp(email, password, profilePayload).catch((err) => {
       // TODO: Handle firebase errors
-      reactotron.error(err);
+
       console.error(err);
       setError(err.message);
       setLoadingRequest(false);

@@ -30,10 +30,13 @@ export default function useProfileAnimations() {
   // Refs
   const sv_x_ref = useAnimatedRef();
 
+  // ! DECLARE SCREEN REFS HERE!
+  // ! VERY IMPORTANT FOR MAKING NAV ANIMATIONS WORK!
   // ! Animation Refs -> check Screens.js file
   const bucket_sv_y_ref = useAnimatedRef();
   const resume_sv_y_ref = useAnimatedRef();
-  const refs = [bucket_sv_y_ref, resume_sv_y_ref];
+  const recommends = useAnimatedRef();
+  const refs = [resume_sv_y_ref, recommends, bucket_sv_y_ref];
 
   const current_screen = useDerivedValue(() => {
     const result = Math.floor(translateX.value / width);
@@ -143,19 +146,27 @@ export default function useProfileAnimations() {
     scrollTo(sv_x_ref, { x: index * width });
   };
 
+  /**
+   * ? ==== Notes ====
+   * * sv: Scroll View
+   * * ref: Reanimated Reference
+   * * r: (Reanimated 2) Animations done with useAnimationStyle
+   * * handle: Reanimated handlers
+   */
   return {
-    sv_x_ref,
+    refs,
     bucket_sv_y_ref,
     resume_sv_y_ref,
-    refs,
-    handleSubscreenXScroll,
-    handleSubscreenYScroll,
-    handleNavPanGesture,
+    sv_x_ref,
+
     r_header,
     r_profile_name_y_translate,
     r_nav_y_translate,
-    r_nav_x_translate_gesture,
     r_nav_x_translate,
+    r_nav_x_translate_gesture,
     handleNavSelect,
+    handleSubscreenXScroll,
+    handleSubscreenYScroll,
+    handleNavPanGesture,
   };
 }

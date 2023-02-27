@@ -8,6 +8,7 @@ import { useRandomUsers } from "../../hooks/query/useRandomUsers";
 import { Actionsheet } from "native-base";
 import { useRouteName } from "../../hooks/useRouteName";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useProfile } from "../../hooks/useProfile";
 
 // Constants
 export const MENU_H = 60;
@@ -73,11 +74,7 @@ const ActionMenu = ({ isOpen, onClose }) => {
 export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
   // Hooks
   const { width } = useWindowDimensions();
-
-  const { data: profile } = useRandomUsers({
-    select: ({ results }) => results[0],
-    key: ["user", { amount: 1 }],
-  });
+  const { profile } = useProfile();
 
   // State
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
@@ -141,18 +138,14 @@ export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
                 p={isFocused ? 1 : 0}
                 borderRadius="50%"
               >
-                <Avatar
-                  bg="green.500"
-                  size="sm"
-                  source={{ uri: profile?.picture?.medium }}
-                />
+                <Avatar size="sm" source={{ uri: props.avatar }} />
               </Box>
             )}
           </Box>
         </Pressable>
       );
     },
-    [state, profile]
+    [state]
   );
 
   const handleClick = () => {
@@ -166,7 +159,6 @@ export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
   if (!isVisible) return <></>;
 
   // ! FIXME: Why is there two UIs (?)
-
   if (!state)
     return (
       <>
@@ -179,7 +171,7 @@ export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
               <ObserveSphere pressable scale={0.8} onClick={handleClick} />
             </Box>
             <MenuItem iconName="message-square" />
-            <MenuItem avatar index={1} />
+            <MenuItem avatar={profile?.picture} index={1} />
           </Row>
 
           {/* Safe area */}
@@ -205,7 +197,11 @@ export const BottomMenu = ({ state, descriptors, navigation, transparent }) => {
             index={1}
             route={state.routes[1]}
           />
-          <MenuItem avatar index={2} route={state.routes[2]} />
+          <MenuItem
+            avatar={profile?.picture}
+            index={2}
+            route={state.routes[2]}
+          />
         </Row>
 
         {/* Safe area */}

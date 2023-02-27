@@ -1,29 +1,38 @@
 import React from "react";
-import { Box, Row, Text, Heading, Icon } from "native-base";
-import { Experience, Education } from "./Experience";
+import { Box, Row, Text, Heading, Icon, Button } from "native-base";
+import { Experience } from "./Experience/Experience";
+import { Education } from "./Education/Education";
 import { Feather } from "@expo/vector-icons";
 import { Keyboard } from "react-native";
 import { useKeyboardDisplay } from "../../../hooks/useKeyboardDisplay";
 import { SkillItem } from "./Skills/SkillItem";
 import { SkillsActionMenu } from "./Skills/SkillsActionMenu";
 import { useProfile } from "../../../hooks/useProfile";
-import { useSkills } from "../../../hooks/useSkills";
+import { useSkills } from "./Skills/useSkills";
+import { useRoute } from "@react-navigation/native";
 
 const HEADERS_SIZE = "lg";
 const HEADERS_EXTRA_BUTTON_SIZE = "sm";
 
-export const ResumeScreen = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
+// TODO: Refactor this to reuse similar code
+export const ResumeScreen = ({ isEditMode, onEditMode: setEditMode }) => {
+  // Hooks
   const { isKeyboardVisible } = useKeyboardDisplay();
   const { profile, updateProfile } = useProfile();
+  const { getSkillsByRef } = useSkills();
+  const { params } = useRoute();
+
+  // States
   const [skills, setSkills] = React.useState(null);
   const [currentSkillsRefs, setCurrentSkillRefs] = React.useState([]);
-  const { getSkillsByRef } = useSkills();
+
+  // Modal Flags
+  const [isSkillsOpen, setSkillsIsOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (profile && !skills) {
       // Skills
-      getSkillsByRef(profile.skills).then((data) => {
+      getSkillsByRef(profile.skills ?? []).then((data) => {
         let refs = [];
         data.forEach(({ id }) => refs.push(id));
         setSkills(data);
@@ -33,30 +42,50 @@ export const ResumeScreen = () => {
   }, [profile, skills]);
 
   const handleAddSkills = () => {
-    setIsOpen(true);
+    setSkillsIsOpen(true);
   };
 
   const handleUpdateSkills = (data) => {
+    // If data includes target => it is an event, and it should be skipped.
+    if (data?.target) return;
+
     // Closed by tapping out
-    if (!data) return isKeyboardVisible ? Keyboard.dismiss() : setIsOpen(false);
+    if (!data) {
+      isKeyboardVisible ? Keyboard.dismiss() : setSkillsIsOpen(false);
+      return;
+    }
+
     updateProfile({ skills: Object.keys(data) }, { isRef: true });
     setSkills(Object.values(data));
     setCurrentSkillRefs(Object.keys(data));
-    return setIsOpen(false);
+    return setSkillsIsOpen(false);
   };
 
   if (!skills || !profile) return <></>;
 
   return (
     <>
+      {/* TODO: This can be a reusable component in which we can pass children UI */}
       <SkillsActionMenu
-        isOpen={isOpen}
+        isOpen={isSkillsOpen}
         onClose={handleUpdateSkills}
         currentSkills={currentSkillsRefs}
       />
 
       <Box mx={3}>
-        <Box pb={3}>
+        {/* TODO: Hard coded text */}
+        <Box m={2} />
+
+        {isEditMode && (
+          <Box m={2}>
+            <Button bg="green.500" onPress={() => setEditMode(false)}>
+              <Text fontSize={"15px"} color="white">
+                Done editing
+              </Text>
+            </Button>
+          </Box>
+        )}
+        {/* <Box pb={3}>
           <Box px={4} py={2}>
             <Row justifyContent={"space-between"}>
               <Heading fontSize={HEADERS_SIZE}>About</Heading>
@@ -76,7 +105,7 @@ export const ResumeScreen = () => {
               www.earltheseagull.com
             </Text>
           </Box>
-        </Box>
+        </Box> */}
 
         <Box pb={3}>
           <Box px={4} py={2}>
@@ -97,37 +126,32 @@ export const ResumeScreen = () => {
                 </SkillItem>
               ))}
 
-              <SkillItem
-                onPress={handleAddSkills}
-                key="plus"
-                logo={
-                  <Icon as={Feather} name="plus" size="4xl" color="blue.400" />
-                }
-              />
+              {isEditMode && (
+                <SkillItem
+                  onPress={handleAddSkills}
+                  key="plus"
+                  logo={
+                    <Icon
+                      as={Feather}
+                      name="plus"
+                      size="4xl"
+                      color="blue.400"
+                    />
+                  }
+                />
+              )}
             </Row>
           </Box>
         </Box>
 
         {/* Experience */}
         <Box pb={3}>
-          <Box px={4} py={2}>
-            <Row justifyContent={"space-between"}>
-              <Heading fontSize={HEADERS_SIZE}>Experience</Heading>
-            </Row>
-          </Box>
-
-          <Experience />
+          <Experience isEditMode={isEditMode} />
         </Box>
 
         {/* Education */}
         <Box pb={3}>
-          <Box px={4} py={2}>
-            <Row justifyContent={"space-between"}>
-              <Heading fontSize={HEADERS_SIZE}>Education</Heading>
-            </Row>
-          </Box>
-
-          <Education />
+          <Education isEditMode={isEditMode} />
         </Box>
       </Box>
     </>
