@@ -17,6 +17,8 @@ import { CaptureScreen } from "../screens/Capture/Capture";
 import { useUser } from "../hooks/useUser";
 import { QuestionPool } from "../screens/Question/QuestionPool";
 import { useMetaTags } from "../hooks/useMetaTags";
+import { BucketListScreen } from "../screens/Profile/Buckets/Buckets";
+import { PreviewScreen } from "../components/Preview";
 
 // TODO: REMOVE
 const linking = {
@@ -37,7 +39,7 @@ const HomeTabs = () => {
   return (
     <Tab.Navigator
       backBehavior="history"
-      initialRouteName="Feed"
+      initialRouteName="Profile" // ! dev: change as you develop; default: "Feed"
       screenOptions={screenConfig}
       tabBar={(props) => <BottomMenu {...props} />}
     >
@@ -47,7 +49,11 @@ const HomeTabs = () => {
       <Tab.Screen name="Profile" component={Profile} />
 
       {/* Extras */}
-      <Tab.Screen name="Settings" component={Settings} />
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
+        <Tab.Screen name="Settings" component={Settings} />
+        <Tab.Screen name="Bucket" component={BucketListScreen} />
+        <Tab.Screen name="Preview" component={PreviewScreen} />
+      </Stack.Group>
     </Tab.Navigator>
   );
 };

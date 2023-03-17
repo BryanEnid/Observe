@@ -1,7 +1,9 @@
 import React from "react";
 import { Image, StyleSheet, Dimensions } from "react-native";
 import { Video } from "expo-av";
-import { Box, Text } from "native-base";
+import { Box, Button, Icon, Pressable, Text } from "native-base";
+import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("screen");
 const gap = 20;
@@ -23,28 +25,42 @@ const styles = StyleSheet.create({
   title: { textAlign: "center" },
 });
 
+export function BucketAddButton({ onPress }) {
+  return (
+    <Pressable variant="unstyled" style={styles.bucket} onPress={onPress}>
+      <Box
+        style={styles.bucketImage}
+        bg="#eee"
+        borderWidth={3}
+        borderColor="#ddd"
+        justifyContent="center"
+        alignItems={"center"}
+      >
+        <Icon as={Feather} name="plus" color="#ccc" size="50px" />
+      </Box>
+    </Pressable>
+  );
+}
+
 export function BucketItem({ data }) {
-  const video = React.useRef(null);
+  const { videos } = data;
+
+  const navigation = useNavigation();
+
+  const handleOpenBucket = () => {
+    navigation.navigate("Bucket", data);
+  };
 
   return (
-    <Box style={styles.bucket}>
+    <Pressable style={styles.bucket} onPress={handleOpenBucket}>
       <Image
         alt="demo"
         style={styles.bucketImage}
-        source={{ uri: data.video_pictures[0].picture }}
-      />
-      <Video
-        ref={video}
-        style={styles.bucketImage}
-        isMuted
-        shouldPlay
-        source={{ uri: data.video_files[0].link }}
-        resizeMode="cover"
-        isLooping
+        source={{ uri: videos[0].details.thumbnail }}
       />
       <Text variant="h2" style={styles.title}>
         {data.name}
       </Text>
-    </Box>
+    </Pressable>
   );
 }

@@ -18,15 +18,15 @@ export const useStorage = () => {
   // TODO: Test progress
   // TODO: Change this to use another that can read the file in bytes
   const saveVideo = async (name, fileURI, handleEvents) => {
-    // ! Version 1
-
     const storageRef = ref(storage, `videos/${name}`);
     const req = await fetch(fileURI);
     const fileBlob = await req.blob();
-
     const uploadTask = uploadBytesResumable(storageRef, fileBlob);
     uploadTask.on("state_changed", {
-      complete: handleEvents.onSuccess,
+      complete: async (e) => {
+        const videoURI = await getDownloadURL(storageRef);
+        handleEvents.onSuccess(videoURI);
+      },
       error: handleEvents.onError,
       next: handleEvents.onNext,
     });
@@ -47,10 +47,6 @@ export const useStorage = () => {
     });
   };
 
-  // const savePicture = async (name, fileURI, handleEvents) => {
-  //   setTimeout(() => handleEvents.onSuccess({ name, fileURI }), 1000);
-  // };
-
   const saveMultiplePictures = async (images, events) => {
     Promise.allSettled(
       images.map((image, i) => {
@@ -68,5 +64,22 @@ export const useStorage = () => {
       .catch(events.onError);
   };
 
-  return { saveVideo, savePicture, saveMultiplePictures };
+  const saveMultipleVideos = async (videos, events) => {
+    Promise.allSettled(
+      videos.map((video, i) => {
+        return new Promise((res, rej) => {
+          const id = uuid.v4();
+          const events = {
+            onError: rej,
+            onSuccess: (uri) => res({ id, uri, order: i, details: video }),
+          };
+          saveVideo(id, video.uri, events);
+        });
+      })
+    )
+      .then((res) => events.onSuccess(res.map(({ value }) => value)))
+      .catch(events.onError);
+  };
+
+  return { saveVideo, savePicture, saveMultiplePictures, saveMultipleVideos };
 };

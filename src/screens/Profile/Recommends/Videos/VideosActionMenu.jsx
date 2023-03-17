@@ -80,8 +80,6 @@ export const VideosActionMenu = ({ isOpen, onClose }) => {
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [18, 9],
@@ -225,21 +223,16 @@ export const VideosActionMenu = ({ isOpen, onClose }) => {
 
           <Actionsheet.Item
             bg="primary.500"
+            py={2}
             borderRadius={10}
             alignItems="center"
             onPress={handleSubmit}
             _pressed={{ bg: "primary.700" }}
             disabled={isSubmitEnabled}
           >
-            {!isLoading ? (
-              <Text fontSize={"md"} fontWeight="bold" color="white">
-                Done
-              </Text>
-            ) : (
-              <Text fontSize={"md"} fontWeight="bold" color="white">
-                Uploading ...
-              </Text>
-            )}
+            <Text fontSize={"md"} fontWeight="bold" color="white">
+              {!isLoading ? "Done" : " Uploading ..."}
+            </Text>
           </Actionsheet.Item>
         </VStack>
       </Actionsheet.Content>

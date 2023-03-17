@@ -1,5 +1,5 @@
 import React, { createContext } from "react";
-import { Box, Icon, Text, useDisclose } from "native-base";
+import { Box, Icon, Text, useDisclose, VStack } from "native-base";
 import { Feather } from "@expo/vector-icons";
 import { Actionsheet } from "native-base";
 import { useNavigation } from "@react-navigation/native";
@@ -57,27 +57,52 @@ export const ProfilePictureActionMenu = ({
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose}>
       <Actionsheet.Content pt={4}>
-        <Actionsheet.Item onPress={handlePreviewImage}>
-          <Box py={2} flexDir={"row"}>
-            <Icon as={Feather} name="user" size="lg" mr={3} />
-            <Text fontSize="16">See profile picture</Text>
-          </Box>
-        </Actionsheet.Item>
+        <VStack w="100%" space={3}>
+          <Actionsheet.Item onPress={handlePreviewImage}>
+            <Box flexDir="row">
+              <Icon
+                color="primary.500"
+                as={Feather}
+                name="user"
+                size="lg"
+                mr={3}
+              />
+              <Text color="primary.500" fontSize="16">
+                See profile picture
+              </Text>
+            </Box>
+          </Actionsheet.Item>
 
-        <Actionsheet.Item onPress={handlePickFile}>
-          <Box py={2} flexDir={"row"}>
-            <Icon as={Feather} name="edit" size="lg" mr={3} />
-            <Text fontSize="16">Edit profile picture</Text>
-          </Box>
-        </Actionsheet.Item>
+          <Actionsheet.Item onPress={handlePickFile}>
+            <Box flexDir="row">
+              <Icon
+                color="primary.500"
+                as={Feather}
+                name="edit"
+                size="lg"
+                mr={3}
+              />
+              <Text color="primary.500" fontSize="16">
+                Edit profile picture
+              </Text>
+            </Box>
+          </Actionsheet.Item>
 
-        <Actionsheet.Item onPress={onClose}>
-          <Box py={2} flexDir={"row"}>
-            {/* <Icon as={Feather} name="corner-down-left" size="lg" mr={3} /> */}
-            <Icon as={Feather} name="x-circle" size="lg" mr={3} />
-            <Text fontSize="16">Cancel</Text>
-          </Box>
-        </Actionsheet.Item>
+          <Actionsheet.Item onPress={onClose}>
+            <Box flexDir="row">
+              <Icon
+                color="primary.500"
+                as={Feather}
+                name="x-circle"
+                size="lg"
+                mr={3}
+              />
+              <Text color="primary.500" fontSize="16">
+                Cancel
+              </Text>
+            </Box>
+          </Actionsheet.Item>
+        </VStack>
       </Actionsheet.Content>
     </Actionsheet>
   );
