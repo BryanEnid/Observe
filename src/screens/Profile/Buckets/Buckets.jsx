@@ -46,16 +46,15 @@ export const BucketScreen = ({ isEditMode, onEditMode: setEditMode }) => {
     setShowModal(false);
   };
 
-  if (!buckets) return <></>;
-
   return (
     <Row flexWrap={"wrap"}>
       {/* Modal */}
       <BooksActionMenu isOpen={isModalVisible} onClose={handleBucketClose} />
 
-      {buckets.map(([name, data], index) => (
-        <BucketItem data={{ ...data, name }} key={data.id} />
-      ))}
+      {buckets &&
+        buckets.map(([name, data], index) => (
+          <BucketItem data={{ ...data, name }} key={data.id} />
+        ))}
 
       <BucketAddButton onPress={handleAddBucket} />
     </Row>
