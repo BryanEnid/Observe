@@ -9,7 +9,7 @@ import {
   Quicksand_400Regular,
   Quicksand_300Light,
 } from "@expo-google-fonts/quicksand";
-// import { Routes } from "./Versioning";
+// // import { Routes } from "./Versioning";
 import { App as V2 } from "./src/App";
 
 // Disable unnecessary warnings
@@ -22,7 +22,7 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
 export default function App() {
-  // Fonts
+  // // Fonts
   const [fontsLoaded] = useFonts({
     Quicksand_700: Quicksand_700Bold,
     Quicksand_600: Quicksand_600SemiBold,
@@ -31,7 +31,7 @@ export default function App() {
     Quicksand_300: Quicksand_300Light,
   });
 
-  // TODO: Update this to use splash screen
+  // // TODO: Update this to use splash screen
   if (!fontsLoaded) return <></>;
 
   return <V2 />;

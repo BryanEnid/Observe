@@ -1,7 +1,6 @@
 import { GlobalProvider } from "./components/GlobalProvider";
 import Routes from "./navigation/routes";
-import "./config/ReactotronConfig";
-import { View } from "react-native";
+// import "./config/ReactotronConfig";
 
 export const App = () => {
   return (

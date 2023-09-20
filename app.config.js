@@ -1,7 +1,7 @@
 module.exports = {
   expo: {
-    name: "Observe",
-    slug: "Observe",
+    name: "observe",
+    slug: "observe",
     owner: "observe",
     version: "1.0.0",
     orientation: "portrait",
@@ -12,9 +12,13 @@ module.exports = {
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
-    updates: {
-      fallbackToCacheTimeout: 0,
-    },
+    // updates: {
+    //   fallbackToCacheTimeout: 0,
+    //   url: "https://u.expo.dev/9dcf67e9-bc5b-479c-9f71-69564a0952a7",
+    // },
+    // runtimeVersion: {
+    //   policy: "appVersion",
+    // },
     plugins: [
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
@@ -45,7 +49,7 @@ module.exports = {
     },
     extra: {
       eas: {
-        projectId: "9dcf67e9-bc5b-479c-9f71-69564a0952a7",
+        projectId: "e798cc7d-754d-4e33-8ef8-4a927ff60e3d",
       },
     },
   },

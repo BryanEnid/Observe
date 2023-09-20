@@ -43,6 +43,8 @@ export const GlobalProvider = ({ children }) => {
     },
   });
 
+  // return children;
+
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
