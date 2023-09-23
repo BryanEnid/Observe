@@ -30,6 +30,7 @@ export const VideoPost = ({ data }) => {
       alignSelf: "stretch",
       width: null,
       borderRadius: 15,
+      backgroundColor: "grey",
     },
   });
 
@@ -42,7 +43,7 @@ export const VideoPost = ({ data }) => {
         </Text>
       </Column>
 
-      {/* <Pressable
+      <Pressable
         style={styles.video}
         justifyContent="center"
         alignItems={"center"}
@@ -66,7 +67,7 @@ export const VideoPost = ({ data }) => {
           size="xl"
           mr={1}
         />
-      </Pressable> */}
+      </Pressable>
 
       <Row alignItems="center" my={4}>
         <Avatar

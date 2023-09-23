@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React from "react";
+import React, { StrictMode } from "react";
 import { Text, TextInput, LogBox } from "react-native";
 import {
   useFonts,
@@ -10,7 +10,7 @@ import {
   Quicksand_300Light,
 } from "@expo-google-fonts/quicksand";
 // // import { Routes } from "./Versioning";
-import { App as V2 } from "./src/App";
+import { App as Root } from "./src/App";
 
 // Disable unnecessary warnings
 LogBox.ignoreLogs(["Require cycle:"]);
@@ -34,5 +34,9 @@ export default function App() {
   // // TODO: Update this to use splash screen
   if (!fontsLoaded) return <></>;
 
-  return <V2 />;
+  return (
+    <StrictMode>
+      <Root />
+    </StrictMode>
+  );
 }

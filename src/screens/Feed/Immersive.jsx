@@ -31,19 +31,32 @@ export const Immersive = () => {
     },
   });
 
+  if (!params.data?.video?.url)
+    return (
+      <Box flex={1} bg="black">
+        <Loading />
+
+        <Box style={{ position: "absolute", zIndex: 2 }}>
+          <NavigationBar safeAreaTop />
+        </Box>
+      </Box>
+    );
+
   return (
     <Box flex={1} bg="black">
       <Loading />
 
-      <Video
-        ref={video}
-        style={styles.video}
-        source={{ uri: params.data.video.link }}
-        resizeMode={ResizeMode.COVER}
-        isLooping
-        onLayout={() => video.current.playAsync()}
-        onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-      />
+      {
+        <Video
+          ref={video}
+          style={styles.video}
+          source={{ uri: params.data.video.link }}
+          resizeMode={ResizeMode.COVER}
+          isLooping
+          onLayout={() => video.current.playAsync()}
+          onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+        />
+      }
 
       <Box style={{ position: "absolute", zIndex: 2 }}>
         <NavigationBar safeAreaTop />

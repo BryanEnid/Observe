@@ -4,6 +4,8 @@ import { TopMenu } from "./TopMenu";
 import { usePosts } from "../../hooks/usePosts";
 import { RefreshControl } from "react-native";
 import { useRoute } from "@react-navigation/native";
+import { Question } from "./Posts/Question";
+import { VideoPost } from "./Posts/VideoPost";
 
 export const Feed = () => {
   const { getPosts } = usePosts();
@@ -47,11 +49,11 @@ export const Feed = () => {
       >
         <TopMenu />
 
-        <Text>Feed is under construction ...</Text>
+        {/* <Text>Feed is under construction ...</Text> */}
 
-        {/* {questions.map((data) => (
+        {questions.map((data) => (
           <Question key={data.id} data={data} />
-        ))} */}
+        ))}
       </ScrollView>
     </>
   );

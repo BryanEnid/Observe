@@ -30,6 +30,7 @@
     "expo-av": "~13.4.1",
     "expo-build-properties": "~0.8.3",
     "expo-camera": "~13.4.4",
+    "expo-constants": "~14.4.2",
     "expo-dev-client": "~2.4.10",
     "expo-file-system": "~15.4.4",
     "expo-font": "~11.4.0",

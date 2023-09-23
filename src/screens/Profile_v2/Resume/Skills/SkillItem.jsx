@@ -1,9 +1,8 @@
 import React from "react";
-import { Box, Icon, Image, Button } from "native-base";
+import { Box, Icon, Image } from "native-base";
+
 import { Feather } from "@expo/vector-icons";
 import { TouchableWithoutFeedback } from "react-native";
-import reactotron from "reactotron-react-native";
-// import { reactotron } from "../../../../config/ReactotronConfig";
 
 export const SkillItem = ({
   children,
@@ -22,16 +21,14 @@ export const SkillItem = ({
   }, [isCurrent]);
 
   const handleSelected = (wasSelected) => {
-    console.log(wasSelected);
-    const action = !isSelected ? "add" : "remove";
+    const action = wasSelected ?? !isSelected ? "add" : "remove";
     const payload = { id, name: children, action, logoUri: logo };
-
-    setSelected(!isSelected);
+    setSelected(wasSelected ?? !isSelected);
     onPress && onPress(payload);
   };
 
   return (
-    <Button variant="unstyled" onPress={selectable ? handleSelected : onPress}>
+    <TouchableWithoutFeedback onPress={selectable ? handleSelected : onPress}>
       <>
         {isSelected && selectable && (
           <Box
@@ -77,6 +74,6 @@ export const SkillItem = ({
           {children}
         </Box>
       </>
-    </Button>
+    </TouchableWithoutFeedback>
   );
 };

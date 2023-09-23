@@ -34,38 +34,6 @@ export const Question = ({ data }) => {
           </Text>
         </Column>
 
-        {/* <Pressable
-          style={styles.video}
-          justifyContent="center"
-          alignItems={"center"}
-          onPress={() => {
-            navigation.navigate("Immersive", {
-              data: {
-                ...data,
-                likes: likes.current,
-                comments: comments.current,
-                shares: shares.current,
-                views: views.current,
-              },
-              user,
-            });
-          }}
-        >
-          <Image
-            source={{ uri: data.image }}
-            alt={data.image}
-            style={styles.backgroundImage}
-          />
-          <Icon
-            style={styles.playButton}
-            as={Feather}
-            name="play"
-            color={"white"}
-            size="xl"
-            mr={1}
-          />
-        </Pressable> */}
-
         <Row alignItems="center" my={4}>
           <Avatar size="xs" mr="2" source={{ uri: user?.picture?.thumbnail }} />
           <Text>
@@ -96,5 +64,7 @@ export const Question = ({ data }) => {
   if (data.questionType === "video")
     return <VideoPost data={{ ...data, likes, comments, shares, views }} />;
 
-  return <Center>No question type</Center>;
+  // console.log(data);
+  return <></>;
+  // return <Center>No question type</Center>;
 };

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   cancelAnimation,
   interpolate,
@@ -33,14 +34,18 @@ export default function useProfileAnimations() {
   // ! DECLARE SCREEN REFS HERE!
   // ! VERY IMPORTANT FOR MAKING NAV ANIMATIONS WORK!
   // ! Animation Refs -> check Screens.js file
-  const bucket_sv_y_ref = useAnimatedRef();
   const resume_sv_y_ref = useAnimatedRef();
-  const recommends = useAnimatedRef();
-  const refs = [resume_sv_y_ref, recommends, bucket_sv_y_ref];
+  const recommends_sv_y_ref = useAnimatedRef();
+  const bucket_sv_y_ref = useAnimatedRef();
+
+  const refs = React.useMemo(
+    () => [resume_sv_y_ref, recommends_sv_y_ref, bucket_sv_y_ref],
+    [resume_sv_y_ref, recommends_sv_y_ref, bucket_sv_y_ref]
+  );
 
   const current_screen = useDerivedValue(() => {
     const result = Math.floor(translateX.value / width);
-    return result < 0 ? 0 : result;
+    return result <= 0 ? 0 : result;
   });
 
   // Config Animations
@@ -72,16 +77,18 @@ export default function useProfileAnimations() {
     },
   });
 
-  const handleSubscreenYScroll = useAnimatedScrollHandler((event) => {
-    // Subscreen
-    translateY.value = event.contentOffset.y;
+  const handleSubscreenYScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      // Subscreen
+      translateY.value = event.contentOffset.y;
 
-    // Navbar
-    nav_translate_y.value = interpolate(
-      event.contentOffset.y,
-      [0, 1, PROFILE_H, PROFILE_H + 1],
-      [0, -1, -PROFILE_H, -PROFILE_H]
-    );
+      // Navbar
+      nav_translate_y.value = interpolate(
+        event.contentOffset.y,
+        [0, 1, PROFILE_H, PROFILE_H + 1],
+        [0, -1, -PROFILE_H, -PROFILE_H]
+      );
+    },
   });
 
   const handleNavPanGesture = useAnimatedGestureHandler({
@@ -155,8 +162,9 @@ export default function useProfileAnimations() {
    */
   return {
     refs,
-    bucket_sv_y_ref,
     resume_sv_y_ref,
+    recommends_sv_y_ref,
+    bucket_sv_y_ref,
     sv_x_ref,
 
     r_header,

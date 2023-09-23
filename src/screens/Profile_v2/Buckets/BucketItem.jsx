@@ -4,7 +4,7 @@ import { Video } from "expo-av";
 import { Box, Text } from "native-base";
 
 const { width } = Dimensions.get("screen");
-const gap = 15;
+const gap = 20;
 
 const styles = StyleSheet.create({
   bucket: {

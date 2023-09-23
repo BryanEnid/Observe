@@ -4,9 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useKeepAwake } from "expo-keep-awake";
 import { useIsFetching } from "react-query";
+
 import { Loading } from "../components/Loading";
 import { BottomMenu } from "../components/ObserveMenu/BottomMenu";
-import { Profile } from "../screens/Profile/Profile";
 import { Feed } from "../screens/Feed/Feed";
 import { SignIn } from "../screens/Authentication/SignIn";
 import { SignUp } from "../screens/Authentication/SignUp";
@@ -17,6 +17,8 @@ import { CaptureScreen } from "../screens/Capture/Capture";
 import { useUser } from "../hooks/useUser";
 import { QuestionPool } from "../screens/Question/QuestionPool";
 import { useMetaTags } from "../hooks/useMetaTags";
+import { Profile } from "../screens/Profile/Profile";
+// import { Profile } from "../screens/Profile_v2/Profile";
 
 // TODO: REMOVE
 const linking = {

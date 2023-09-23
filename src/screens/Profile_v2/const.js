@@ -1,5 +1,6 @@
 import { SCREENS } from "./Screens";
-import Constants from "expo-constants";
+import { getStatusBarHeight } from "react-native-status-bar-height";
+import { NativeConstants } from "expo-constants";
 
 export class Dimensions {
   static FONT_HEADER_SIZE = "lg";
@@ -11,5 +12,5 @@ export class Dimensions {
   static NAVBAR_W = this.NAV_BTN_W * SCREENS?.length;
   static HEADER_W = 400;
   static PROFILE_DIMENSIONS = { width: 180, height: 180, padding: 20 };
-  static statusBarHeight = Constants.statusBarHeight;
+  static statusBarHeight = NativeConstants.statusBarHeight;
 }

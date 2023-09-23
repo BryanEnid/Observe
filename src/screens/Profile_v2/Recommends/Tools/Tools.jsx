@@ -33,13 +33,7 @@ const ToolItem = ({
     <Box variant="elevated" bg="white" padding={3} borderRadius={20}>
       <Row alignItems="center" justifyContent={"space-between"}>
         <Row alignItems="center" space={2}>
-          <Image
-            source={{ uri: image }}
-            w={10}
-            h={10}
-            resizeMode="contain"
-            alt="tool"
-          />
+          <Image source={{ uri: image }} w={10} h={10} resizeMode="contain" />
           <Text>{title}</Text>
         </Row>
 

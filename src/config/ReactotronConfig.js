@@ -11,5 +11,6 @@ Reactotron
   .connect(); // let's connect!
 
 export const reactotron = Reactotron;
+// global.console = Reactotron;
 
 // global.reactotron = Reactotron;

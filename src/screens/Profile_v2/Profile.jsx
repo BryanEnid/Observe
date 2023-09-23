@@ -1,6 +1,11 @@
 // import ConicalGradient from '../../components/ConicalGradient/ConicalGradient';
 import React from "react";
 import { StyleSheet, useWindowDimensions, StatusBar } from "react-native";
+import Animated from "react-native-reanimated";
+import { PanGestureHandler } from "react-native-gesture-handler";
+import { Feather } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import uuid from "react-native-uuid";
 import {
   Text,
   Box,
@@ -13,26 +18,19 @@ import {
   Icon,
   VStack,
   Spinner,
-  Modal,
+  View,
+  ScrollView,
 } from "native-base";
-import Animated, {
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-} from "react-native-reanimated";
-import { PanGestureHandler } from "react-native-gesture-handler";
-import { Feather } from "@expo/vector-icons";
+
 import { MENU_H } from "../../components/ObserveMenu/BottomMenu";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { SCREENS } from "./Screens";
 import { Dimensions } from "./const";
-import useProfileAnimations from "./useProfileAnimations";
 import { useProfile } from "../../hooks/useProfile";
 import { ProfilePictureActionMenu } from "./Resume/ProfilePictureActionMenu";
-// import { scrollTo } from "../../utils/scrollTo";
 import { useStorage } from "../../hooks/useStorage";
-import uuid from "react-native-uuid";
 import { ImagePreview } from "../../components/ImagePreview";
-import reactotron from "reactotron-react-native";
+// import { scrollTo } from "../../utils/scrollTo";
+// import useProfileAnimations from "./useProfileAnimations";
 
 const {
   PROFILE_NAME_H,
@@ -49,11 +47,6 @@ const {
 const defaultPicture =
   "https://az-pe.com/wp-content/uploads/2018/05/kemptons-blank-profile-picture.jpg";
 
-const ResumeScreen = SCREENS[0][1];
-const RecommendsScreen = SCREENS[1][1];
-const BucketScreen = SCREENS[2][1];
-// console.log(BucketScreen);
-
 export const Profile = (props) => {
   // Hooks
   const { width, height } = useWindowDimensions();
@@ -61,30 +54,6 @@ export const Profile = (props) => {
   const { profile, updateProfile } = useProfile();
   const { savePicture } = useStorage();
   const route = useRoute();
-  const {
-    handleNavSelect,
-    handleNavPanGesture,
-    handleSubscreenXScroll,
-    // handleSubscreenYScroll,
-    r_header,
-    r_nav_x_translate,
-    r_nav_x_translate_gesture,
-    r_nav_y_translate,
-    r_profile_name_y_translate,
-
-    refs,
-    resume_sv_y_ref,
-    recommends_sv_y_ref,
-    bucket_sv_y_ref,
-
-    sv_x_ref,
-  } = useProfileAnimations();
-
-  const handleSubscreenYScroll = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      console.log(">", event.eventName);
-    },
-  });
 
   // State
   const [isActionMenuOpen, setActionMenuOpen] = React.useState(false);
@@ -93,16 +62,6 @@ export const Profile = (props) => {
   const [isEditMode, setEditMode] = React.useState(false);
   const [uriToPreview, setURItoPreview] = React.useState("");
   const [isPreviewImageVisible, setPreviewImageVisible] = React.useState(false);
-
-  // Go to resume subscreen after pressing edit mode
-  React.useEffect(() => {
-    // if (route?.params?.editMode) {
-    //   scrollTo(sv_x_ref, { animated: false }, false);
-    //   refs.forEach((ref) => {
-    //     scrollTo(ref, { animated: false }, false);
-    //   });
-    // }
-  }, [route?.params]);
 
   React.useEffect(() => {
     if (profile?.picture) {
@@ -190,8 +149,13 @@ export const Profile = (props) => {
       });
   };
 
+  const handleNavSelect = () => {};
+
   // Components
+  // TODO: REFACTOR
   const Navbar = ({ onChange }) => {
+    return <></>;
+
     const Item = ({ children, index }) => (
       <Button
         height={NAVBAR_H}
@@ -270,7 +234,7 @@ export const Profile = (props) => {
         <StatusBar barStyle={"dark-content"} />
 
         {/* User */}
-        <Animated.View style={[styles.username, r_profile_name_y_translate]}>
+        <View style={styles.username}>
           <Center>
             <Text bold>
               {profile.firstName} {profile.lastName}
@@ -281,7 +245,7 @@ export const Profile = (props) => {
           <Center>
             <Box borderTopWidth={1} borderColor="gray.500" w={170} />
           </Center>
-        </Animated.View>
+        </View>
 
         {/* Navbar */}
         <Navbar onChange={handleNavSelect} />
@@ -289,49 +253,41 @@ export const Profile = (props) => {
         {/* RENDER SUB SCREENS */}
         <Box height={height}>
           <Box height={PROFILE_NAME_H + NAVBAR_H + statusBarHeight} />
-
-          <Animated.ScrollView
+          <ScrollView
             pagingEnabled
             horizontal
-            ref={sv_x_ref}
+            // ref={sv_x_ref}
             showsHorizontalScrollIndicator={false}
-            onScroll={handleSubscreenXScroll}
+            // onScroll={handleSubscreenXScroll}
             scrollEventThrottle={16}
           >
-            {SCREENS.map(([screenName, Screen], index) => {
-              return (
-                <Animated.ScrollView
-                  // key={screenName}
-                  // showsVerticalScrollIndicator={false}
-                  scrollEventThrottle={16}
-                  // ref={refs[index]}
-                  onScroll={handleSubscreenYScroll}
+            {SCREENS.map(([screenName, Screen], index) => (
+              <ScrollView
+                key={screenName}
+                // onScroll={handleSubscreenYScroll}
+                showsVerticalScrollIndicator={false}
+                scrollEventThrottle={16}
+                // ref={refs[index]}
+              >
+                <Box height={PROFILE_DIMENSIONS.height + 25} />
+                <Column
+                  flex={1}
+                  space={10}
+                  width={width}
+                  pt={10}
+                  minHeight={height - PROFILE_NAME_H - NAVBAR_H}
                 >
-                  <>
-                    <Box height={PROFILE_DIMENSIONS.height + 25} />
-                    <Column
-                      flex={1}
-                      space={10}
-                      width={width}
-                      pt={10}
-                      minHeight={height - PROFILE_NAME_H - NAVBAR_H}
-                    >
-                      <Screen
-                        isEditMode={isEditMode}
-                        onEditMode={handleEditMode}
-                      />
-                      <Box height={MENU_H} />
-                    </Column>
-                  </>
-                </Animated.ScrollView>
-              );
-            })}
-          </Animated.ScrollView>
+                  <Screen isEditMode={isEditMode} onEditMode={handleEditMode} />
+                  <Box height={MENU_H} />
+                </Column>
+              </ScrollView>
+            ))}
+          </ScrollView>
         </Box>
 
         {/* Profile */}
         {/* This is at the end so the "on" events triggers */}
-        <Animated.View style={[r_header, styles.header]}>
+        <View style={styles.header}>
           <Box>
             <Box height={PROFILE_H} justifyContent="space-evenly">
               <VStack style={styles.menu_button} space={3}>
@@ -345,10 +301,8 @@ export const Profile = (props) => {
                 <IconButton
                   icon={<Icon as={Feather} name="more-horizontal" size="md" />}
                   variant="outline"
-                  onPress={() => {
-                    // Show more options
-                    // console.log("in");
-                  }}
+                  // Show more options
+                  onPress={() => {}}
                 />
               </VStack>
 
@@ -389,7 +343,7 @@ export const Profile = (props) => {
               </Center>
             </Box>
           </Box>
-        </Animated.View>
+        </View>
       </Box>
     </>
   );

@@ -1,7 +1,7 @@
-import { getStatusBarHeight } from "react-native-status-bar-height";
+import Constants from "expo-constants";
 
 export const useStatusBarHeight = () => {
-  const statusBarHeight = getStatusBarHeight();
+  const statusBarHeight = Constants.statusBarHeight;
 
   return { statusBarHeight };
 };

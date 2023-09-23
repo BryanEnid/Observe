@@ -1,6 +1,6 @@
 import { GlobalProvider } from "./components/GlobalProvider";
 import Routes from "./navigation/routes";
-// import "./config/ReactotronConfig";
+import "./config/ReactotronConfig";
 
 export const App = () => {
   return (
